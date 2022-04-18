@@ -10,6 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DirectXMath.h>
+using namespace DirectX; 
 
 /// <summary>
 /// ゲームシーン
@@ -66,6 +67,8 @@ class GameScene {
 	uint32_t voiceHandle_ = 0;
 
 	uint32_t value_ = 0;
+
+	XMFLOAT3 direction;
 
 	//float a = 0.0f;
 

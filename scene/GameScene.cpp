@@ -11,14 +11,15 @@ GameScene::~GameScene() {
 	delete sprite_;
 }
 
-void GameScene::Initialize() 
-{
+void GameScene::Initialize() {
 	model_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
-	worldTransform_.scale_ = {5.0f, 5.0f, 5.0f};
-	worldTransform_.rotation_ = {0.0f, XM_PI / 4.0f, 0.0f};
-	worldTransform_.translation_ = {0.0f, 0.0f, 15.0f};
+	textureHandle_ = TextureManager::Load("cube//cube.jpg");
+
+	worldTransform_.scale_ = {3.0f, 3.0f, 3.0f};
+	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
@@ -27,40 +28,52 @@ void GameScene::Initialize()
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+
+	direction = {0, 0, 1};
 }
 
-void GameScene::Update() 
-{
+void GameScene::Update() {
 	//視点の移動ベクトル
-	XMFLOAT3 move = {0, 0, 0};
+	// XMFLOAT3 move = {0, 0, 0};
 
 	//視点の移動速度
-	const float kEyeSpeed = 0.02f;
+	const float kRSpeed = 0.02f;
 
-	if (input_->PushKey(DIK_LEFT))
-	{
-		//a += kEyeSpeed;
-	} 
-	else if (input_->PushKey(DIK_RIGHT))
-	{
-		//a -= kEyeSpeed;
+	//正面への移動速度
+	const float kTSpeed = 0.2f;
+
+	//横回転
+	if (input_->PushKey(DIK_LEFT)) {
+		worldTransform_.rotation_.y += 0.05f;
+
+		direction.x = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.z));
+		direction.z = (sin(worldTransform_.rotation_.x) + cos(worldTransform_.rotation_.z));
+
+		// 2π超えたら0にする
+		// worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
+	} else if (input_->PushKey(DIK_RIGHT)) {
+		worldTransform_.rotation_.y -= 0.05f;
+
+		direction.x = (cos(worldTransform_.rotation_.z) * sin(worldTransform_.rotation_.y));
+		direction.z = (cos(worldTransform_.rotation_.x) * sin(worldTransform_.rotation_.y));
+
+		// 2π超えたら0にする
+		// worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
 	}
 
-	if (input_->PushKey(DIK_UP))
-	{
-		// a += kEyeSpeed;
-	}
-	else if (input_->PushKey(DIK_DOWN)) 
-	{
-		// a -= kEyeSpeed;
+	//正面に進む
+	if (input_->PushKey(DIK_UP)) {
+		worldTransform_.translation_.x += kTSpeed * direction.x;
+		worldTransform_.translation_.z += kTSpeed * direction.z;
+	} else if (input_->PushKey(DIK_DOWN)) {
+		worldTransform_.translation_.x -= kTSpeed * direction.x;
+		worldTransform_.translation_.z -= kTSpeed * direction.z;
 	}
 
 	//視点移動
-	viewProjection_.eye.x += move.x;
-	viewProjection_.eye.y += move.y;
-	viewProjection_.eye.z += move.z;
-
-	//worldTransform_.rotation_ = {0, a, 0};
+	// viewProjection_.eye.x += move.x;
+	// viewProjection_.eye.y += move.y;
+	// viewProjection_.eye.z += move.z;
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
@@ -111,7 +124,16 @@ void GameScene::Draw() {
 	//でバック
 	debugText_->SetPos(50, 70);
 	debugText_->Printf(
-	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+	  "t r e:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.rotation_.y,
+	  viewProjection_.eye.z);
+
+	debugText_->SetPos(50, 90);
+	debugText_->Printf(
+	  "rotation:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y,
+	  worldTransform_.rotation_.z);
+
+	debugText_->SetPos(50, 110);
+	debugText_->Printf("direction:(%f,%f,%f)", direction.x, direction.y, direction.z);
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
