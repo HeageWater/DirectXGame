@@ -28,7 +28,19 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() 
+{
+	const float kEyeSpeed = 0.2f;
+
+	if (input_->PushKey(DIK_W))
+	{
+		move = {0, 0, kEyeSpeed};
+	} 
+	else if (input_->PushKey(DIK_S))
+	{
+		move = {0, 0, -kEyeSpeed};
+	}
+}
 
 void GameScene::Draw() {
 
