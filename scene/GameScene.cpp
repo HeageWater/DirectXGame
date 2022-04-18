@@ -20,7 +20,6 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 
 	model_ = Model::Create();
-
 	
 	worldTransform_.scale_ = {5.0f, 5.0f, 5.0f};
 	worldTransform_.rotation_ = {XM_PI / 4.0, XM_PI / 4.0f, 0.0f};
@@ -30,13 +29,10 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	//ビュープロじぇくション
 	viewProjection_.Initialize();
-
 }
 
 void GameScene::Update() 
 { 
-	std::string strDebug = std::string("translation:") + std::to_string(value_);
-	debugText_->Print(strDebug, 50, 50, 1.0f); 
 }
 
 void GameScene::Draw() {
@@ -78,6 +74,27 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+	  "translation:(%f,%f,%f)",
+		worldTransform_.translation_.x ,
+		worldTransform_.translation_.y, 
+		worldTransform_.translation_.z);
+
+	debugText_->SetPos(50, 90);
+	debugText_->Printf(
+	  "rotation:(%f,%f,%f)", 
+		worldTransform_.rotation_.x, 
+		worldTransform_.rotation_.y,
+		worldTransform_.rotation_.z);
+
+	debugText_->SetPos(50, 110);
+	debugText_->Printf(
+	  "scale:(%f,%f,%f)", 
+		worldTransform_.scale_.x, 
+		worldTransform_.scale_.y,
+	  worldTransform_.scale_.z);
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
