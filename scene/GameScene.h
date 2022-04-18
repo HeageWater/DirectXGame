@@ -67,6 +67,8 @@ class GameScene {
 
 	uint32_t value_ = 0;
 
+	//float a = 0.0f;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

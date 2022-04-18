@@ -11,7 +11,8 @@ GameScene::~GameScene() {
 	delete sprite_;
 }
 
-void GameScene::Initialize() {
+void GameScene::Initialize() 
+{
 	model_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
@@ -30,16 +31,40 @@ void GameScene::Initialize() {
 
 void GameScene::Update() 
 {
-	const float kEyeSpeed = 0.2f;
+	//視点の移動ベクトル
+	XMFLOAT3 move = {0, 0, 0};
 
-	if (input_->PushKey(DIK_W))
+	//視点の移動速度
+	const float kEyeSpeed = 0.02f;
+
+	if (input_->PushKey(DIK_LEFT))
 	{
-		move = {0, 0, kEyeSpeed};
+		//a += kEyeSpeed;
 	} 
-	else if (input_->PushKey(DIK_S))
+	else if (input_->PushKey(DIK_RIGHT))
 	{
-		move = {0, 0, -kEyeSpeed};
+		//a -= kEyeSpeed;
 	}
+
+	if (input_->PushKey(DIK_UP))
+	{
+		// a += kEyeSpeed;
+	}
+	else if (input_->PushKey(DIK_DOWN)) 
+	{
+		// a -= kEyeSpeed;
+	}
+
+	//視点移動
+	viewProjection_.eye.x += move.x;
+	viewProjection_.eye.y += move.y;
+	viewProjection_.eye.z += move.z;
+
+	//worldTransform_.rotation_ = {0, a, 0};
+
+	//行列の再計算
+	viewProjection_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -82,6 +107,11 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	sprite_->Draw();
 	/// </summary>
+
+	//でバック
+	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
