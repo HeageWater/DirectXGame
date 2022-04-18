@@ -7,17 +7,28 @@ using namespace DirectX;
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
+	delete model_;
+	delete sprite_;
 }
 
 void GameScene::Initialize() {
+	model_ = Model::Create();
+	sprite_ = Sprite::Create(textureHandle_, {100, 50});
+
+	worldTransform_.scale_ = {5.0f, 5.0f, 5.0f};
+	worldTransform_.rotation_ = {0.0f, XM_PI / 4.0f, 0.0f};
+	worldTransform_.translation_ = {0.0f, 0.0f, 15.0f};
+
+	worldTransform_.Initialize();
+	viewProjection_.Initialize();
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 }
 
-void GameScene::Update() {
-}
+void GameScene::Update() {}
 
 void GameScene::Draw() {
 
@@ -44,6 +55,7 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
+	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
@@ -56,6 +68,7 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
+	sprite_->Draw();
 	/// </summary>
 
 	// デバッグテキストの描画
