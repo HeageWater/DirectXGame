@@ -13,7 +13,6 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 	model_ = Model::Create();
-	model2_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
 	textureHandle_ = TextureManager::Load("cube//cube.jpg");
@@ -126,7 +125,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-	model2_->Draw(worldTransform2_, viewProjection2_, textureHandle_);
+	model_->Draw(worldTransform2_, viewProjection2_, textureHandle_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
