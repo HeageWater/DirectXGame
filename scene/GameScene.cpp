@@ -13,6 +13,7 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 	model_ = Model::Create();
+	model2_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
 	textureHandle_ = TextureManager::Load("cube//cube.jpg");
@@ -21,15 +22,23 @@ void GameScene::Initialize() {
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 
+	worldTransform2_.scale_ = {1.0f, 1.0f, 1.0f};
+	worldTransform2_.rotation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform2_.translation_ = {0.0f, 0.0f, 0.0f};
+
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
+
+	worldTransform2_.Initialize();
+	viewProjection2_.Initialize();
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	direction = {0, 0, 1};
+	//物体の移動ベクトル
+	direction = {0, 0, 0};
 }
 
 void GameScene::Update() {
@@ -45,29 +54,37 @@ void GameScene::Update() {
 	//横回転
 	if (input_->PushKey(DIK_LEFT)) {
 		worldTransform_.rotation_.y += 0.05f;
+		worldTransform2_.rotation_.y += 0.05f;
 
-		direction.x = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.z));
-		direction.z = (sin(worldTransform_.rotation_.x) + cos(worldTransform_.rotation_.z));
+		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
+		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
 
 		// 2π超えたら0にする
-		// worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
+		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
 	} else if (input_->PushKey(DIK_RIGHT)) {
-		worldTransform_.rotation_.y -= 0.05f;
+		worldTransform_.rotation_.y += 0.05f;
+		worldTransform2_.rotation_.y += 0.05f;
 
-		direction.x = (cos(worldTransform_.rotation_.z) * sin(worldTransform_.rotation_.y));
-		direction.z = (cos(worldTransform_.rotation_.x) * sin(worldTransform_.rotation_.y));
+		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
+		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
 
 		// 2π超えたら0にする
-		// worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
+		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
 	}
 
 	//正面に進む
 	if (input_->PushKey(DIK_UP)) {
 		worldTransform_.translation_.x += kTSpeed * direction.x;
 		worldTransform_.translation_.z += kTSpeed * direction.z;
+
+		worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
+		worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
 	} else if (input_->PushKey(DIK_DOWN)) {
 		worldTransform_.translation_.x -= kTSpeed * direction.x;
 		worldTransform_.translation_.z -= kTSpeed * direction.z;
+
+		worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
+		worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
 	}
 
 	//視点移動
@@ -78,6 +95,9 @@ void GameScene::Update() {
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
 	worldTransform_.UpdateMatrix();
+
+	viewProjection2_.UpdateMatrix();
+	worldTransform2_.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -106,6 +126,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	model2_->Draw(worldTransform2_, viewProjection2_, textureHandle_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
@@ -121,11 +142,11 @@ void GameScene::Draw() {
 	sprite_->Draw();
 	/// </summary>
 
-	//でバック
-	debugText_->SetPos(50, 70);
-	debugText_->Printf(
-	  "t r e:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.rotation_.y,
-	  viewProjection_.eye.z);
+	////でバック
+	// debugText_->SetPos(50, 70);
+	// debugText_->Printf(
+	//   "t r e:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.rotation_.y,
+	//   viewProjection_.eye.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(

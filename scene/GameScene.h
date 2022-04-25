@@ -57,6 +57,12 @@ class GameScene {
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
+	WorldTransform worldTransform2_;
+	ViewProjection viewProjection2_;
+
+	WorldTransform worldTransform[10];
+	ViewProjection viewProjection[10];
+	
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
