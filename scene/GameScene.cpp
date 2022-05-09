@@ -75,16 +75,13 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_UP)) {
 		worldTransform_.translation_.x += kTSpeed * direction.x;
 		worldTransform_.translation_.z += kTSpeed * direction.z;
-
-		worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
-		worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
 	} else if (input_->PushKey(DIK_DOWN)) {
 		worldTransform_.translation_.x -= kTSpeed * direction.x;
 		worldTransform_.translation_.z -= kTSpeed * direction.z;
-
-		worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
-		worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
 	}
+
+	worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
+	worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
 
 	//視点移動
 	// viewProjection_.eye.x += move.x;
@@ -132,7 +129,7 @@ void GameScene::Draw() {
 	Model::PostDraw();
 #pragma endregion
 
-#pragma region 前景スプライト描画
+#pragma region 前景スプライト描画p
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
