@@ -61,8 +61,8 @@ void GameScene::Update() {
 		// 2π超えたら0にする
 		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
 	} else if (input_->PushKey(DIK_RIGHT)) {
-		worldTransform_.rotation_.y += 0.05f;
-		worldTransform2_.rotation_.y += 0.05f;
+		worldTransform_.rotation_.y -= 0.05f;
+		worldTransform2_.rotation_.y -= 0.05f;
 
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
