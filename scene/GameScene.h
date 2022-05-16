@@ -10,7 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DirectXMath.h>
-using namespace DirectX; 
+using namespace DirectX;
 
 /// <summary>
 /// ゲームシーン
@@ -62,7 +62,9 @@ class GameScene {
 
 	WorldTransform worldTransform[10];
 	ViewProjection viewProjection[10];
-	
+
+	int size = 10;
+
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
@@ -75,8 +77,17 @@ class GameScene {
 	uint32_t value_ = 0;
 
 	XMFLOAT3 direction;
+	XMFLOAT3 camera;
 
-	//float a = 0.0f;
+
+
+  public:
+	enum PartId
+	{
+		Root,
+	};
+
+	// float a = 0.0f;
 
 	/// <summary>
 	/// ゲームシーン用
