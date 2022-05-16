@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "DebugCamera.h"
 #include <DirectXMath.h>
 using namespace DirectX;
 
@@ -57,14 +58,6 @@ class GameScene {
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
-	WorldTransform worldTransform2_;
-	ViewProjection viewProjection2_;
-
-	WorldTransform worldTransform[10];
-	ViewProjection viewProjection[10];
-
-	int size = 10;
-
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
@@ -74,20 +67,7 @@ class GameScene {
 	//音声再生
 	uint32_t voiceHandle_ = 0;
 
-	uint32_t value_ = 0;
-
-	XMFLOAT3 direction;
-	XMFLOAT3 camera;
-
-
-
-  public:
-	enum PartId
-	{
-		Root,
-	};
-
-	// float a = 0.0f;
+	DebugCamera* debugcamera_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
