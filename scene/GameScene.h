@@ -66,26 +66,6 @@ class GameScene {
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 
-
-	Model* model_ = nullptr;
-
-	//スプライト
-	Sprite* sprite_ = nullptr;
-
-	WorldTransform worldTransform_;
-	ViewProjection viewProjection_;
-
-	//テクスチャハンドル
-	uint32_t textureHandle_ = 0;
-
-	//サウンド
-	uint32_t soundDateHandle_ = 0;
-
-	//音声再生
-	uint32_t voiceHandle_ = 0;
-
-	DebugCamera* debugcamera_ = nullptr;
-
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
