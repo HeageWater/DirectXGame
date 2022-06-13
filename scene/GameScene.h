@@ -57,11 +57,16 @@ class GameScene {
 
 	//ワールドトランスフォーム
 	WorldTransform player_WorldTransform_;
+	WorldTransform worldTransform[10];
 	//ビュープロジェクション
 	ViewProjection player_ViewProjection_;
+	ViewProjection viewProjection[10];
 
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
+
+	//方向
+	XMFLOAT3 player_direction = {0, 0, 0};
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
