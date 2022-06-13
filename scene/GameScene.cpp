@@ -41,6 +41,7 @@ void GameScene::Initialize() {
 	//物体の移動ベクトル
 	direction = {0, 0, 0};
 
+	//背景的な
 	for (int i = 0; i < 10; i++) {
 		worldTransform[i].scale_ = {3.0f, 3.0f, 3.0f};
 		worldTransform[i].rotation_ = {0.0f, 0.0f, 0.0f};
@@ -69,8 +70,8 @@ void GameScene::Update() {
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
 
-		viewProjection_.target.x += sinf(direction.x);
-		viewProjection_.target.z += cosf(direction.z);
+		viewProjection_.eye.x += sinf(direction.x);
+		viewProjection_.eye.z += cosf(direction.z);
 
 		// 2π超えたら0にする
 		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
@@ -80,6 +81,9 @@ void GameScene::Update() {
 
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
+
+		viewProjection_.eye.x -= sinf(direction.x);
+		viewProjection_.eye.z -= cosf(direction.z);
 
 		// 2π超えたら0にする
 		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
@@ -162,6 +166,13 @@ void GameScene::Draw() {
 	// debugText_->Printf(
 	//   "t r e:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.rotation_.y,
 	//   viewProjection_.eye.z);
+
+	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+	  "eye:(%f,%f,%f)", 
+		viewProjection_.eye.x, 
+		viewProjection_.eye.y,
+		viewProjection_.eye.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(
