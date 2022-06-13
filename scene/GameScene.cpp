@@ -38,6 +38,16 @@ void GameScene::Initialize() {
 
 	//物体の移動ベクトル
 	direction = {0, 0, 0};
+
+	for (int i = 0; i < 10; i++) {
+		worldTransform[i].scale_ = {3.0f, 3.0f, 3.0f};
+		worldTransform[i].rotation_ = {0.0f, 0.0f, 0.0f};
+		worldTransform[i].translation_ = {i * 6.0f - (28.0f), 0.0f, 20.0f};
+
+		worldTransform[i].Initialize();
+		viewProjection[i].Initialize();
+	}
+
 }
 
 void GameScene::Update() {
@@ -54,9 +64,12 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_LEFT)) {
 		worldTransform_.rotation_.y += 0.05f;
 		worldTransform2_.rotation_.y += 0.05f;
-
+		
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
+
+		viewProjection_.target.x += sinf(direction.x);
+		viewProjection_.target.z += cosf(direction.z);
 
 		// 2π超えたら0にする
 		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
@@ -122,7 +135,12 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-	model_->Draw(worldTransform2_, viewProjection2_, textureHandle_);
+	model_->Draw(worldTransform2_, viewProjection_, textureHandle_);
+
+	for (int i = 0; i < 10; i++) {
+		model_->Draw(worldTransform[i], viewProjection_, textureHandle_);
+	}
+
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
