@@ -21,6 +21,8 @@ void GameScene::Initialize() {
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 
+	viewProjection_.up = {0.0f, 5.0f, 0.0f};
+
 	worldTransform2_.scale_ = {1.0f, 1.0f, 1.0f};
 	worldTransform2_.rotation_ = {0.0f, 0.0f, 0.0f};
 	worldTransform2_.translation_ = {0.0f, 0.0f, 0.0f};
@@ -47,7 +49,6 @@ void GameScene::Initialize() {
 		worldTransform[i].Initialize();
 		viewProjection[i].Initialize();
 	}
-
 }
 
 void GameScene::Update() {
@@ -64,7 +65,7 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_LEFT)) {
 		worldTransform_.rotation_.y += 0.05f;
 		worldTransform2_.rotation_.y += 0.05f;
-		
+
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
 
