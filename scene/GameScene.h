@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Vector3.h"
 #include <DirectXMath.h>
 using namespace DirectX; 
 
@@ -76,7 +77,21 @@ class GameScene {
 
 	XMFLOAT3 direction;
 
-	//float a = 0.0f;
+	bool chengeFlag = true;
+
+	float viewAngle = 0.0f;
+
+	//正面ベクトル
+	Vector3 centerDirection = {0, 0, 0};
+
+	float centerV;
+
+	Vector3 center = {0, 0, 0};
+
+	//右ベクトル
+	Vector3 rightV = {0, 0, 0};
+	//仮ベクトル
+	Vector3 temp = {0, 1, 0};
 
 	/// <summary>
 	/// ゲームシーン用
