@@ -75,7 +75,7 @@ class GameScene {
 
 	uint32_t value_ = 0;
 
-	XMFLOAT3 direction;
+	Vector3 direction;
 
 	bool chengeFlag = true;
 

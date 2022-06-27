@@ -14,10 +14,10 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Initialize() {
+	textureHandle_ = TextureManager::Load("cube//cube.jpg");
+
 	model_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
-
-	textureHandle_ = TextureManager::Load("cube//cube.jpg");
 
 	worldTransform_.scale_ = {3.0f, 3.0f, 3.0f};
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
@@ -163,7 +163,8 @@ void GameScene::Update() {
 			viewProjection_.eye.x -= kTSpeed;
 		}
 	}
-
+	
+	//
 	worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
 	worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
 
@@ -228,7 +229,7 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
-	sprite_->Draw();
+	//sprite_->Draw();
 	/// </summary>
 
 	////でバック
