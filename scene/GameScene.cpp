@@ -18,6 +18,7 @@ GameScene::~GameScene()
 {
 	delete model_;
 	delete debugCamera_;
+	delete player;
 }
 
 void GameScene::Initialize() {
@@ -33,7 +34,11 @@ void GameScene::Initialize() {
 	//3Dモデルの生成
 	model_ = Model::Create();
 
-	
+	//自キャラの生成
+	player = new Player();
+	//初期化
+	player->Initialize();
+
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
@@ -49,7 +54,8 @@ void GameScene::Update()
 	//デバッグカメラの更新
 	debugCamera_->Update();
 
-	
+	//自キャラの更新
+	player->Update();
 }
 
 void GameScene::Draw() {
@@ -77,7 +83,7 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	
+	player->Draw();
 
 	//ライン描画が参照するビューを指定する(アドレス渡し)
 	/*PrimitiveDrawer::GetInstance()->DrawLine3d

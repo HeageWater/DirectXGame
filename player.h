@@ -6,13 +6,14 @@
 class Player {
   public:
 	void Initialize();
+	void Initialize(Model* model,uint32_t textureHandle);
 	void Draw();
 	void Update();
 
   private:
 	Model* model = nullptr;
 	
+	WorldTransform worldTransform;
 
-
-	WorldTransform* worldTransform;
+	uint32_t textureHandle = 0u;
 };

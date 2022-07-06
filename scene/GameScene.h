@@ -9,6 +9,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include "Player.h"
 #include <DirectXMath.h>
 using namespace DirectX;
 
@@ -58,6 +59,7 @@ class GameScene {
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 
+	Player* player = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
