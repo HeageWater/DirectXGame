@@ -126,47 +126,17 @@ void Player::Update() {
 		//íPà çsóÒë„ì¸
 		matrotZ.Reset();
 
-		matrotZ.m[0][0] = cos(worldTransform.rotation_.z);
-		matrotZ.m[0][1] = sin(worldTransform.rotation_.z);
-		matrotZ.m[1][0] = -sin(worldTransform.rotation_.z);
-		matrotZ.m[1][1] = cos(worldTransform.rotation_.z);
-
-		//íPà çsóÒë„ì¸
-		worldTransform.matWorld_.Reset();
-
-		worldTransform.matWorld_ *= matrotZ;
-
-		worldTransform.TransferMatrix();
-
 		// Xé≤ÇÃâÒì]
 		Matrix4 matrotX;
 
 		//íPà çsóÒë„ì¸
 		matrotX.Reset();
 
-		matrotX.m[1][1] = cos(worldTransform.rotation_.x);
-		matrotX.m[1][2] = sin(worldTransform.rotation_.x);
-		matrotX.m[2][1] = -sin(worldTransform.rotation_.x);
-		matrotX.m[2][2] = cos(worldTransform.rotation_.x);
-
-		worldTransform.matWorld_ *= matrotX;
-
-		worldTransform.TransferMatrix();
-
 		// Yé≤ÇÃâÒì]
 		Matrix4 matrotY;
 
 		//íPà çsóÒë„ì¸
 		matrotY.Reset();
-
-		matrotY.m[0][0] = cos(worldTransform.rotation_.y);
-		matrotY.m[0][2] = -sin(worldTransform.rotation_.y);
-		matrotY.m[2][0] = sin(worldTransform.rotation_.y);
-		matrotY.m[2][2] = cos(worldTransform.rotation_.y);
-
-		worldTransform.matWorld_ *= matrotY;
-
-		worldTransform.TransferMatrix();
 
 		//çáê¨ópâÒì]çsóÒ
 		Matrix4 matRot;
@@ -211,14 +181,14 @@ void Player::Update() {
 
 //çUåÇ
 void Player::Attack() {
+	if (input->PushKey(DIK_SPACE)) {
+		//íeê∂ê¨
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model, worldTransform.translation_);
 
-	//íeê∂ê¨
-	PlayerBullet* newBullet = new PlayerBullet();
-	newBullet->Initialize(model, worldTransform.translation_);
-
-	//íeìoò^
-	bullet = newBullet;
-
+		//íeìoò^
+		bullet = newBullet;
+	}
 }
 
 //ê‡ñæ

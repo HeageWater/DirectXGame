@@ -14,7 +14,7 @@ class PlayerBullet {
 	void Draw(const ViewProjection& viewProjection);
 
   private:
-	WorldTransform worldTransform;
+	WorldTransform bulletW;
 	Model* model;
 	uint32_t textureHandle = 0u;
 };
