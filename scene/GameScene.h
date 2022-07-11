@@ -59,6 +59,8 @@ class GameScene {
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 
+	ViewProjection viewProjection;
+
 	Player* player = nullptr;
 
 	/// <summary>

@@ -2,14 +2,14 @@
 #include "Input.h"
 #include "Model.h"
 #include "WorldTransform.h"
+#include "ViewProjection.h"
 #include "DebugText.h"
 #include <cassert>
 
 class Player {
   public:
-	void Initialize();
 	void Initialize(Model* model,uint32_t textureHandle);
-	void Draw();
+	void Draw(ViewProjection viewProjection);
 	void Update();
 
   private:

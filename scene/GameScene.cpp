@@ -1,21 +1,17 @@
 ﻿#include "GameScene.h"
-#include "TextureManager.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+#include "TextureManager.h"
 #include <cassert>
 #include <random>
 
 #define PI 3.1415
 
-float ReturnRadian(float n)
-{
-	return n * PI / 180;
-}
+float ReturnRadian(float n) { return n * PI / 180; }
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene()
-{
+GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
 	delete player;
@@ -31,13 +27,13 @@ void GameScene::Initialize() {
 	//ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("Mario.jpg");
 
-	//3Dモデルの生成
+	// 3Dモデルの生成
 	model_ = Model::Create();
 
 	//自キャラの生成
 	player = new Player();
 	//初期化
-	player->Initialize();
+	player->Initialize(model_, textureHandle_);
 
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -45,14 +41,15 @@ void GameScene::Initialize() {
 	//軸方向の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 
+	viewProjection.Initialize();
+
 	//軸方向が参照するビューを指定する(アドレス渡し)
-	//AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+	// AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 
-void GameScene::Update()
-{
+void GameScene::Update() {
 	//デバッグカメラの更新
-	debugCamera_->Update();
+	// debugCamera_->Update();
 
 	//自キャラの更新
 	player->Update();
@@ -83,7 +80,7 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	player->Draw();
+	player->Draw(viewProjection);
 
 	//ライン描画が参照するビューを指定する(アドレス渡し)
 	/*PrimitiveDrawer::GetInstance()->DrawLine3d
