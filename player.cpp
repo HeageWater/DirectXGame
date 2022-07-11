@@ -46,9 +46,7 @@ void Player::Update()
 		move.x = -speed;
 	}
 
-	worldTransform.translation_.x += move.x;
-	worldTransform.translation_.y += move.y;
-	worldTransform.translation_.z += move.z;
+	worldTransform.translation_ += move;
 
 	worldTransform.TransferMatrix();
 }

@@ -43,11 +43,11 @@
     <Filter Include="ヘッダー ファイル\input">
       <UniqueIdentifier>{d461f61e-3cc4-4b11-b521-37a61c927ae5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\math">
-      <UniqueIdentifier>{4c21a99e-f783-4367-bdcb-0ebd1d434719}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\math">
       <UniqueIdentifier>{647f4977-924a-4954-923f-5619e5afc9a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scene\math">
+      <UniqueIdentifier>{4c21a99e-f783-4367-bdcb-0ebd1d434719}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,7 +67,7 @@
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
     <ClCompile Include="math\Matrix4.cpp">
-      <Filter>ソース ファイル\math</Filter>
+      <Filter>ソース ファイル\scene\math</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>ソース ファイル</Filter>
