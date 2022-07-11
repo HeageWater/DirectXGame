@@ -1,8 +1,13 @@
 #include "player.h"
 
-float ReturnRadian(float a) {
+#define PI 3.1415;
 
+float ReturnRadian(float n) {
+	n *= PI;
+	n /= 180;
+	return n;
 }
+
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
@@ -27,24 +32,45 @@ void Player::Draw(ViewProjection viewProjection) {
 }
 
 void Player::Update() {
+
+	//スピード
 	const float speed = 0.3f;
 
+	//最終的にransに足す値
 	Vector3 move = {0, 0, 0};
 
+	//回転フラグ
+	bool rotaFlg = false;
+
+	//
+	bool transFlg = false;
+
+	//y軸移動
 	if (input->PushKey(DIK_UP)) {
 		move.y = speed;
+		transFlg = true;
 	} else if (input->PushKey(DIK_DOWN)) {
 		move.y = -speed;
+		transFlg = true;
 	}
 
+	//x軸移動
 	if (input->PushKey(DIK_RIGHT)) {
 		move.x = speed;
+		transFlg = true;
 	} else if (input->PushKey(DIK_LEFT)) {
 		move.x = -speed;
+		transFlg = true;
 	}
 
-	if (input->PushKey(DIK_SPACE)) {
-		move.z = speed;
+	//回転
+	if (input->PushKey(DIK_E)) {
+		worldTransform.rotation_.y += 0.1f;
+		rotaFlg = true;
+	}
+	if (input->PushKey(DIK_Q)) {
+		worldTransform.rotation_.y -= 0.1f;
+		rotaFlg = true;
 	}
 
 	//移動限界
@@ -61,7 +87,8 @@ void Player::Update() {
 	worldTransform.translation_.y += move.y;
 	worldTransform.translation_.z += move.z;
 
-	if (move.x != 0 || move.y != 0 || move.z != 0) {
+	//平行移動
+	if (transFlg) {
 		//平行移動行列宣言
 		Matrix4 matTrans = MathUtility::Matrix4Identity();
 
@@ -75,10 +102,8 @@ void Player::Update() {
 		worldTransform.TransferMatrix();
 	}
 
-	if (true) {
-		// Z軸の回転
-		worldTransform.rotation_ = {0.0f, 0.0f, ReturnRadian(45.0f)};
-
+	//回転
+	if (rotaFlg) {
 		// Z軸回転行列
 		Matrix4 matrotZ;
 
@@ -98,8 +123,6 @@ void Player::Update() {
 		worldTransform.TransferMatrix();
 
 		// X軸の回転
-		worldTransform.rotation_ = {ReturnRadian(45.0f), 0.0f, 0.0f};
-
 		Matrix4 matrotX;
 
 		//単位行列代入
@@ -115,8 +138,6 @@ void Player::Update() {
 		worldTransform.TransferMatrix();
 
 		// Y軸の回転
-		worldTransform.rotation_ = {0.0f, ReturnRadian(45.0f), 0.0f};
-
 		Matrix4 matrotY;
 
 		//単位行列代入
@@ -131,14 +152,8 @@ void Player::Update() {
 
 		worldTransform.TransferMatrix();
 
-		// x,y,z
-		worldTransform.rotation_ = {ReturnRadian(45.0f), ReturnRadian(45.0f), ReturnRadian(45.0f)};
-
 		//合成用回転行列
 		Matrix4 matRot;
-
-		//各軸の回転行列
-		Matrix4 matrotX, matrotY, matrotZ;
 
 		//単位行列代入
 		matrotZ.Reset();

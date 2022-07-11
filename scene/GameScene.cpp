@@ -5,10 +5,6 @@
 #include <cassert>
 #include <random>
 
-#define PI 3.1415
-
-float ReturnRadian(float n) { return n * PI / 180; }
-
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
