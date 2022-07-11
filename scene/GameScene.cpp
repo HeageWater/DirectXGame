@@ -49,7 +49,7 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	//デバッグカメラの更新
-	// debugCamera_->Update();
+	//debugCamera_->Update();
 
 	//自キャラの更新
 	player->Update();
@@ -85,6 +85,7 @@ void GameScene::Draw() {
 	//ライン描画が参照するビューを指定する(アドレス渡し)
 	/*PrimitiveDrawer::GetInstance()->DrawLine3d
 	(Vector3(0,0,0), Vector3(1280,720,0), Vector4(255, 255, 0, 200));*/
+
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
