@@ -2,8 +2,8 @@
 #include "Input.h"
 #include "Model.h"
 #include "WorldTransform.h"
-#include "ViewProjection.h"
 #include "DebugText.h"
+#include "playerbullet.h"
 #include <cassert>
 
 class Player {
@@ -13,6 +13,9 @@ class Player {
 	void Update();
 
   private:
+
+	void Attack();
+
 	Model* model = nullptr;
 	
 	Input* input = nullptr;
@@ -22,4 +25,6 @@ class Player {
 	WorldTransform worldTransform;
 
 	uint32_t textureHandle = 0u;
+
+	PlayerBullet* bullet = nullptr;
 };

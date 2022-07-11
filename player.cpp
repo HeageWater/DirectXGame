@@ -2,13 +2,14 @@
 
 #define PI 3.1415;
 
+//ÉâÉfÉBÉAÉìï‘Ç∑
 float ReturnRadian(float n) {
 	n *= PI;
 	n /= 180;
 	return n;
 }
 
-
+//èâä˙âª
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 
@@ -22,15 +23,22 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform.Initialize();
 }
 
+//ï`âÊ
 void Player::Draw(ViewProjection viewProjection) {
 	model->Draw(worldTransform, viewProjection, textureHandle);
 
+	if (bullet) {
+		bullet->Draw(viewProjection);
+	}
+
+	//ç¿ïWï\é¶
 	debugText->SetPos(50, 110);
 	debugText->Printf(
 	  "trans:%f,%f,%f", worldTransform.translation_.x, worldTransform.translation_.y,
 	  worldTransform.translation_.z);
 }
 
+//çXêV
 void Player::Update() {
 
 	//ÉXÉsÅ[Éh
@@ -71,6 +79,14 @@ void Player::Update() {
 	if (input->PushKey(DIK_Q)) {
 		worldTransform.rotation_.y -= 0.1f;
 		rotaFlg = true;
+	}
+
+	//çUåÇ
+	Attack();
+
+	//íeçXêV
+	if (bullet) {
+		bullet->Update();
 	}
 
 	//à⁄ìÆå¿äE
@@ -191,6 +207,18 @@ void Player::Update() {
 
 	debugText->SetPos(50, 70);
 	debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
+}
+
+//çUåÇ
+void Player::Attack() {
+
+	//íeê∂ê¨
+	PlayerBullet* newBullet = new PlayerBullet();
+	newBullet->Initialize(model, worldTransform.translation_);
+
+	//íeìoò^
+	bullet = newBullet;
+
 }
 
 //ê‡ñæ
