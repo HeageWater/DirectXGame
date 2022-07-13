@@ -76,6 +76,8 @@ void Player::Update() {
 		worldTransform.scale_ = {1, 1, 1};
 	}
 
+	//worldTransform.rotation_.y = fmodf(worldTransform.rotation_.y, XM_2PI);
+
 	//çUåÇ
 	Attack();
 
