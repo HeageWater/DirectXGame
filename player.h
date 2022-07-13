@@ -14,6 +14,10 @@ class Player {
 
   private:
 
+	  void Trans();
+	  void Rota();
+	  void Scale();
+
 	void Attack();
 
 	Model* model = nullptr;
