@@ -27,9 +27,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 void Player::Draw(ViewProjection viewProjection) {
 	model->Draw(worldTransform, viewProjection, textureHandle);
 
-	if (bullet) {
-		bullet->Draw(viewProjection);
-	}
+	/*if (bullet) {
+	    bullet->Draw(viewProjection);
+	}*/
 
 	//座標表示
 	debugText->SetPos(50, 110);
@@ -47,47 +47,46 @@ void Player::Update() {
 	//最終的にransに足す値
 	Vector3 move = {0, 0, 0};
 
-	//回転フラグ
-	bool rotaFlg = false;
-
-	//
-	bool transFlg = false;
-
-	//y軸移動
+	// y軸移動
 	if (input->PushKey(DIK_UP)) {
 		move.y = speed;
-		transFlg = true;
 	} else if (input->PushKey(DIK_DOWN)) {
 		move.y = -speed;
-		transFlg = true;
 	}
 
-	//x軸移動
+	// x軸移動
 	if (input->PushKey(DIK_RIGHT)) {
 		move.x = speed;
-		transFlg = true;
 	} else if (input->PushKey(DIK_LEFT)) {
 		move.x = -speed;
-		transFlg = true;
 	}
 
 	//回転
 	if (input->PushKey(DIK_E)) {
 		worldTransform.rotation_.y += 0.1f;
-		rotaFlg = true;
 	}
 	if (input->PushKey(DIK_Q)) {
 		worldTransform.rotation_.y -= 0.1f;
-		rotaFlg = true;
+	}
+
+	//リセット
+	if (input->PushKey(DIK_R)) {
+		worldTransform.translation_ = {0, 0, 0};
+		worldTransform.rotation_ = {0, 0, 0};
+		worldTransform.scale_ = {1, 1, 1};
 	}
 
 	//攻撃
 	Attack();
 
-	//弾更新
-	if (bullet) {
-		bullet->Update();
+	if (effectF) {
+		Effect();
 	}
+
+	////弾更新
+	// if (bullet) {
+	//	bullet->Update();
+	// }
 
 	//移動限界
 	const float kMoveLimitX = 32;
@@ -103,77 +102,14 @@ void Player::Update() {
 	worldTransform.translation_.y += move.y;
 	worldTransform.translation_.z += move.z;
 
+	//拡縮
+	Scale();
+
 	//平行移動
-	if (transFlg) {
-		//平行移動行列宣言
-		Matrix4 matTrans = MathUtility::Matrix4Identity();
-
-		matTrans.m[3][0] = worldTransform.translation_.x;
-		matTrans.m[3][1] = worldTransform.translation_.y;
-		matTrans.m[3][2] = worldTransform.translation_.z;
-
-		//単位行列代入
-		worldTransform.matWorld_.Reset();
-		worldTransform.matWorld_ *= matTrans;
-		worldTransform.TransferMatrix();
-	}
+	Trans();
 
 	//回転
-	if (rotaFlg) {
-		// Z軸回転行列
-		Matrix4 matrotZ;
-
-		//単位行列代入
-		matrotZ.Reset();
-
-		// X軸の回転
-		Matrix4 matrotX;
-
-		//単位行列代入
-		matrotX.Reset();
-
-		// Y軸の回転
-		Matrix4 matrotY;
-
-		//単位行列代入
-		matrotY.Reset();
-
-		//合成用回転行列
-		Matrix4 matRot;
-
-		//単位行列代入
-		matrotZ.Reset();
-
-		matrotZ.m[0][0] = cos(worldTransform.rotation_.z);
-		matrotZ.m[0][1] = sin(worldTransform.rotation_.z);
-		matrotZ.m[1][0] = -sin(worldTransform.rotation_.z);
-		matrotZ.m[1][1] = cos(worldTransform.rotation_.z);
-
-		//単位行列代入
-		matrotX.Reset();
-
-		matrotX.m[1][1] = cos(worldTransform.rotation_.x);
-		matrotX.m[1][2] = sin(worldTransform.rotation_.x);
-		matrotX.m[2][1] = -sin(worldTransform.rotation_.x);
-		matrotX.m[2][2] = cos(worldTransform.rotation_.x);
-
-		//単位行列代入
-		matrotY.Reset();
-
-		matrotY.m[0][0] = cos(worldTransform.rotation_.y);
-		matrotY.m[0][2] = -sin(worldTransform.rotation_.y);
-		matrotY.m[2][0] = sin(worldTransform.rotation_.y);
-		matrotY.m[2][2] = cos(worldTransform.rotation_.y);
-
-		matRot = matrotZ;
-		matRot *= matrotX;
-		matRot *= matrotY;
-
-		//単位行列代入
-		worldTransform.matWorld_.Reset();
-		worldTransform.matWorld_ *= matRot;
-		worldTransform.TransferMatrix();
-	}
+	Rota();
 
 	debugText->SetPos(50, 70);
 	debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
@@ -181,13 +117,18 @@ void Player::Update() {
 
 //攻撃
 void Player::Attack() {
-	if (input->PushKey(DIK_SPACE)) {
+	if (input->PushKey(DIK_SPACE) && effectF != true) {
 		//弾生成
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model, worldTransform.translation_);
+		// PlayerBullet* newBullet = new PlayerBullet();
+		// newBullet->Initialize(model, worldTransform.translation_);
 
 		//弾登録
-		bullet = newBullet;
+		// bullet = newBullet;
+		effectF = true;
+
+		worldTransform.scale_.x = 0;
+		worldTransform.scale_.y = 0;
+		worldTransform.scale_.z = 0;
 	}
 }
 
@@ -305,4 +246,91 @@ void moveee() {
 	////worldTransform_.matWorld_.Reset();
 	// worldTransform_.matWorld_ *= matTrans;
 	// worldTransform_.TransferMatrix();
+}
+
+//回転しながら大きく
+void Player::Effect() {
+	worldTransform.scale_.x += 0.2f;
+	worldTransform.scale_.y += 0.2f;
+	worldTransform.scale_.z += 0.2f;
+}
+
+//移動
+void Player::Trans() {
+	//平行移動行列宣言
+	Matrix4 matTrans = MathUtility::Matrix4Identity();
+
+	matTrans.m[3][0] = worldTransform.translation_.x;
+	matTrans.m[3][1] = worldTransform.translation_.y;
+	matTrans.m[3][2] = worldTransform.translation_.z;
+
+	//単位行列代入
+	worldTransform.matWorld_.Reset();
+	worldTransform.matWorld_ *= matTrans;
+	worldTransform.TransferMatrix();
+}
+
+//拡縮
+void Player::Scale() {
+	//スケ－リング行列
+	Matrix4 matScale;
+	// matScale =
+	//  XMMatrixScaling(worldTransform.scale_.x, worldTransform.scale_.y, worldTransform.scale_.z);
+}
+
+//回転
+void Player::Rota() {
+	// Z軸回転行列
+	Matrix4 matrotZ;
+
+	//単位行列代入
+	matrotZ.Reset();
+
+	// X軸の回転
+	Matrix4 matrotX;
+
+	//単位行列代入
+	matrotX.Reset();
+
+	// Y軸の回転
+	Matrix4 matrotY;
+
+	//単位行列代入
+	matrotY.Reset();
+
+	//合成用回転行列
+	Matrix4 matRot;
+
+	//単位行列代入
+	matrotZ.Reset();
+
+	matrotZ.m[0][0] = cos(worldTransform.rotation_.z);
+	matrotZ.m[0][1] = sin(worldTransform.rotation_.z);
+	matrotZ.m[1][0] = -sin(worldTransform.rotation_.z);
+	matrotZ.m[1][1] = cos(worldTransform.rotation_.z);
+
+	//単位行列代入
+	matrotX.Reset();
+
+	matrotX.m[1][1] = cos(worldTransform.rotation_.x);
+	matrotX.m[1][2] = sin(worldTransform.rotation_.x);
+	matrotX.m[2][1] = -sin(worldTransform.rotation_.x);
+	matrotX.m[2][2] = cos(worldTransform.rotation_.x);
+
+	//単位行列代入
+	matrotY.Reset();
+
+	matrotY.m[0][0] = cos(worldTransform.rotation_.y);
+	matrotY.m[0][2] = -sin(worldTransform.rotation_.y);
+	matrotY.m[2][0] = sin(worldTransform.rotation_.y);
+	matrotY.m[2][2] = cos(worldTransform.rotation_.y);
+
+	matRot = matrotZ;
+	matRot *= matrotX;
+	matRot *= matrotY;
+
+	//単位行列代入
+	// worldTransform.matWorld_.Reset();
+	worldTransform.matWorld_ *= matRot;
+	worldTransform.TransferMatrix();
 }
