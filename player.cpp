@@ -1,6 +1,18 @@
 #include "player.h"
+#include "Audio.h"
+#include "DebugText.h"
+#include "DirectXCommon.h"
+#include "Input.h"
+#include "Model.h"
+#include "SafeDelete.h"
+#include "Sprite.h"
+#include "Vector3.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
+#include <DirectXMath.h>
 
-#define PI 3.1415;
+#define PI     3.1415;
+#define XM_2PI 6.2835;
 
 //ÉâÉfÉBÉAÉìï‘Ç∑
 float ReturnRadian(float n) {
@@ -69,6 +81,10 @@ void Player::Update() {
 		worldTransform.rotation_.y -= 0.1f;
 	}
 
+	if (input->PushKey(DIK_W)) {
+		worldTransform.scale_.x += 0.1f;
+	}
+
 	//ÉäÉZÉbÉg
 	if (input->PushKey(DIK_R)) {
 		worldTransform.translation_ = {0, 0, 0};
@@ -76,7 +92,9 @@ void Player::Update() {
 		worldTransform.scale_ = {1, 1, 1};
 	}
 
-	//worldTransform.rotation_.y = fmodf(worldTransform.rotation_.y, XM_2PI);
+	float rt = XM_2PI;
+
+	worldTransform.rotation_.y = fmodf(worldTransform.rotation_.y, rt);
 
 	//çUåÇ
 	Attack();
@@ -90,6 +108,10 @@ void Player::Update() {
 	//	bullet->Update();
 	// }
 
+	worldTransform.translation_.x += move.x;
+	worldTransform.translation_.y += move.y;
+	worldTransform.translation_.z += move.z;
+
 	//à⁄ìÆå¿äE
 	const float kMoveLimitX = 32;
 	const float kMoveLimitY = 18;
@@ -99,10 +121,6 @@ void Player::Update() {
 	worldTransform.translation_.x = min(worldTransform.translation_.x, +kMoveLimitX);
 	worldTransform.translation_.y = max(worldTransform.translation_.y, -kMoveLimitY);
 	worldTransform.translation_.y = min(worldTransform.translation_.y, +kMoveLimitY);
-
-	worldTransform.translation_.x += move.x;
-	worldTransform.translation_.y += move.y;
-	worldTransform.translation_.z += move.z;
 
 	//ägèk
 	Scale();
@@ -114,7 +132,7 @@ void Player::Update() {
 	Rota();
 
 	debugText->SetPos(50, 70);
-	debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
+	debugText->Printf("move:%f,%f,%f", worldTransform.scale_.x, move.y, move.z);
 }
 
 //çUåÇ
@@ -126,6 +144,7 @@ void Player::Attack() {
 
 		//íeìoò^
 		// bullet = newBullet;
+
 		effectF = true;
 
 		worldTransform.scale_.x = 0;
@@ -252,9 +271,9 @@ void moveee() {
 
 //âÒì]ÇµÇ»Ç™ÇÁëÂÇ´Ç≠
 void Player::Effect() {
-	worldTransform.scale_.x += 0.2f;
-	worldTransform.scale_.y += 0.2f;
-	worldTransform.scale_.z += 0.2f;
+	worldTransform.scale_.x = 2.0f;
+	worldTransform.scale_.y = 2.0f;
+	worldTransform.scale_.z = 2.0f;
 }
 
 //à⁄ìÆ
@@ -276,8 +295,14 @@ void Player::Trans() {
 void Player::Scale() {
 	//ÉXÉPÅ|ÉäÉìÉOçsóÒ
 	Matrix4 matScale;
-	// matScale =
-	//  XMMatrixScaling(worldTransform.scale_.x, worldTransform.scale_.y, worldTransform.scale_.z);
+	matScale.m[0][0] = worldTransform.scale_.x;
+	matScale.m[1][1] = worldTransform.scale_.y;
+	matScale.m[2][2] = worldTransform.scale_.z;
+
+	//íPà çsóÒë„ì¸
+	worldTransform.matWorld_.Reset();
+	worldTransform.matWorld_ *= matScale;
+	worldTransform.TransferMatrix();
 }
 
 //âÒì]
