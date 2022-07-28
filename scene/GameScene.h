@@ -77,7 +77,7 @@ class GameScene {
 	uint32_t value_ = 0;
 
 	XMFLOAT3 direction;
-	XMFLOAT3 camera;
+	//XMFLOAT3 camera;
 
   public:
 	enum PartId
