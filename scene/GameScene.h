@@ -79,8 +79,6 @@ class GameScene {
 	XMFLOAT3 direction;
 	XMFLOAT3 camera;
 
-
-
   public:
 	enum PartId
 	{

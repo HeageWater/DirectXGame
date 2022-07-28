@@ -21,15 +21,8 @@ void GameScene::Initialize() {
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 
-	worldTransform2_.scale_ = {1.0f, 1.0f, 1.0f};
-	worldTransform2_.rotation_ = {0.0f, 0.0f, 0.0f};
-	worldTransform2_.translation_ = {0.0f, 0.0f, 0.0f};
-
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
-
-	worldTransform2_.Initialize();
-	viewProjection2_.Initialize();
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
@@ -40,6 +33,7 @@ void GameScene::Initialize() {
 	direction = {0, 0, 0};
 	camera = {0, 0, 0};
 
+	worldTransform[0].translation_ = {4.5f, 0.0f, 0.0f};
 	worldTransform[0].Initialize();
 
 	for (int i = 1; i < size; i++) {
@@ -64,7 +58,6 @@ void GameScene::Update() {
 	//横回転
 	if (input_->PushKey(DIK_LEFT)) {
 		worldTransform_.rotation_.y += RoteSpeed;
-		worldTransform2_.rotation_.y += RoteSpeed;
 
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
@@ -72,9 +65,15 @@ void GameScene::Update() {
 		// 2π超えたら0にする
 		worldTransform_.rotation_.y = fmodf(worldTransform_.rotation_.y, XM_2PI);
 
+		viewProjection_.eye.x += RoteSpeed * direction.x;
+		viewProjection_.eye.z += RoteSpeed * direction.z;
+	
+
+
 	} else if (input_->PushKey(DIK_RIGHT)) {
 		worldTransform_.rotation_.y -= RoteSpeed;
-		worldTransform2_.rotation_.y -= RoteSpeed;
+
+		viewProjection_.eye.x -= RoteSpeed;
 
 		direction.x = (cos(worldTransform_.rotation_.y) - sin(worldTransform_.rotation_.z));
 		direction.z = (cos(worldTransform_.rotation_.x) - sin(worldTransform_.rotation_.y)) - 1;
@@ -104,45 +103,18 @@ void GameScene::Update() {
 		viewProjection_.eye.z -= kTSpeed * direction.z;
 	}
 
-	// worldTransform2_.translation_.x = worldTransform_.translation_.x + (10 * direction.x);
-	// worldTransform2_.translation_.z = worldTransform_.translation_.z + (10 * direction.z);
-	
-	//worldTransform_.translation_.x += move.x;
-	//worldTransform_.translation_.y += move.y;
-	//worldTransform_.translation_.z += move.z;
-	
 	//視点移動
-	//viewProjection_.eye.x += move.x;
-	//viewProjection_.eye.y += move.y;
-	//viewProjection_.eye.z += move.z;
+	viewProjection_.target.x = worldTransform_.translation_.x;
+	viewProjection_.target.y = worldTransform_.translation_.y;
+	viewProjection_.target.z = worldTransform_.translation_.z;
 
-	viewProjection->target = {
-	  worldTransform_.translation_.x, 
-	  worldTransform_.translation_.y,
-	  worldTransform_.translation_.z};
-
-	viewProjection_.up = {0.0f, cosf(XM_PI / 4.0f), 0.0f};
+	// viewProjection_.eye.x = viewProjection_.target.x+10;
+	//  viewProjection_.eye.y = viewProjection_.target.y ;
+	// viewProjection_.eye.z = viewProjection_.target.z+10;
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
 	worldTransform_.UpdateMatrix();
-
-	viewProjection2_.UpdateMatrix();
-	worldTransform2_.UpdateMatrix();
-
-	// XMFLOAT3 move = {0, 0, 0};
-
-	// const float kCharacterSpeed = 0.2f;
-
-	// if (input_->PushKey(DIK_LEFT)) {
-	//	move = {-kCharacterSpeed, 0, 0};
-	// } else if (input_->PushKey(DIK_RIGHT)) {
-	//	move = {kCharacterSpeed, 0, 0};
-	// }
-
-	// worldTransform[PartId::Root].translation_.x += move.x;
-	// worldTransform[PartId::Root].translation_.y += move.y;
-	// worldTransform[PartId::Root].translation_.z += move.z;
 
 	for (int i = 0; i < size; i++) {
 		worldTransform[i].UpdateMatrix();
@@ -175,7 +147,6 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-	model_->Draw(worldTransform2_, viewProjection2_, textureHandle_);
 
 	for (int i = 0; i < size; i++) {
 		model_->Draw(worldTransform[i], viewProjection_, textureHandle_);
