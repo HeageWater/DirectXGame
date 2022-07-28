@@ -37,12 +37,24 @@ void GameScene::Initialize() {
 	}
 
 	//カメラ支店
-	viewProjection_.eye = {0, 0, -10};
+	viewProjection_.eye = {0, 0, -50};
 
-	viewProjection_.target = {10, 0, 0};
+	viewProjection_.target = {0, 0, 0};
 
 	//上方向
-	viewProjection_.up = {cosf(XM_PI / 4.0f), sinf(XM_PI / 4.0f),0.0f};
+	viewProjection_.up = {0.0f,1.0f,0.0f};
+
+	//カメラ垂直方向視野角
+	viewProjection_.fovAngleY = XMConvertToRadians(45.0f);
+
+	//アスペクト比
+	viewProjection_.aspectRatio = 1.0f;
+
+	//ニアクリップ距離を設定
+	viewProjection_.nearZ = 52.0f;
+
+	//ファークリップ距離を設定
+	viewProjection_.farZ = 53.0f;
 
 	//ビュープロじぇくション
 	viewProjection_.Initialize();
@@ -56,6 +68,12 @@ void GameScene::Update() {
 	//視点の移動速度
 	const float kEyeSpeed = 0.2f;
 
+	if (input_->PushKey(DIK_UP)) {
+		viewProjection_.nearZ += 0.1f;
+	} else if (input_->PushKey(DIK_DOWN)) {
+		viewProjection_.nearZ -= 0.1f;
+	}
+
 	//押した方向のベクトル
 	if (input_->PushKey(DIK_W)) {
 		move = {0, 0, kEyeSpeed};
@@ -67,37 +85,6 @@ void GameScene::Update() {
 	viewProjection_.eye.x += move.x;
 	viewProjection_.eye.y += move.y;
 	viewProjection_.eye.z += move.z;
-
-	//XMFLOAT3 move = {0, 0, 0};
-
-	const float kTargetSpeed = 0.2f;
-
-	if (input_->PushKey(DIK_LEFT)) {
-		move = {-kTargetSpeed, 0, 0};
-	} else if (input_->PushKey(DIK_RIGHT)) {
-		move = {kTargetSpeed, 0, 0};
-	}
-
-	//視点移動
-	viewProjection_.target.x += move.x;
-	viewProjection_.target.y += move.y;
-	viewProjection_.target.z += move.z;
-
-	//上方向回転処理
-
-	//上方向回転速度
-	const float kUpRotSpeed = 0.05f;
-
-	if (input_->PushKey(DIK_SPACE))
-	{
-		viewAngle += kUpRotSpeed;
-
-		//2π超えたら0にする
-		viewAngle = fmodf(viewAngle,XM_2PI);
-	}
-
-	//上方向ベクトル計算
-	viewProjection_.up = {cosf(viewAngle), sinf(viewAngle),0.0f};
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
@@ -166,6 +153,14 @@ void GameScene::Draw() {
 		viewProjection_.up.x,
 		viewProjection_.up.y,
 	  viewProjection_.up.z);
+
+	debugText_->SetPos(50, 130);
+	debugText_->Printf("forAngle(Degree:)%f", XMConvertToDegrees(viewProjection_.fovAngleY));
+
+	debugText_->SetPos(50, 150);
+	debugText_->Printf(
+	  "nearZ:%f", viewProjection_.nearZ);
+
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
