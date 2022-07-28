@@ -19,36 +19,28 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
+	worldTransform_[0].scale_ = {4.0f, 4.0f, 4.0f};
+	worldTransform_[0].translation_ = {-35.0f, 18.0f, 0};
 	worldTransform_[0].Initialize();
 
-	//頭
-	worldTransform_[1].translation_ = {0, 4.5f, 0};
-	worldTransform_[1].parent_ = &worldTransform_[0];
-	worldTransform_[1].Initialize();
+	for (int i = 0; i < size / 2; i++) {
+		worldTransform_[i].scale_ = {4.0f, 4.0f, 4.0f};
+		worldTransform_[i].translation_ = {
+		  worldTransform_[0].translation_.x + (worldTransform_[i].scale_.x * i * 2), 18.0f, 0};
+		worldTransform_[i].Initialize();
+	}
 
-	//右腕
-	worldTransform_[2].translation_ = {4.5f, 0, 0};
-	worldTransform_[2].parent_ = &worldTransform_[0];
-	worldTransform_[2].Initialize();
+	worldTransform_[size / 2].scale_ = {4.0f, 4.0f, 4.0f};
+	worldTransform_[size / 2].translation_ = {-35.0f, -18.0f, 0};
+	worldTransform_[size / 2].Initialize();
 
-	//左腕
-	worldTransform_[3].translation_ = {-4.5f, 0, 0};
-	worldTransform_[3].parent_ = &worldTransform_[0];
-	worldTransform_[3].Initialize();
-
-	//右足
-	worldTransform_[4].translation_ = {4.5f, -4.5f, 0};
-	worldTransform_[4].parent_ = &worldTransform_[6];
-	worldTransform_[4].Initialize();
-
-	//左足
-	worldTransform_[5].translation_ = {-4.5f, -4.5f, 0};
-	worldTransform_[5].parent_ = &worldTransform_[6];
-	worldTransform_[5].Initialize();
-
-	//下半身
-	worldTransform_[6].translation_ = {0, -4.5f, 0};
-	worldTransform_[6].Initialize();
+	for (int i = size / 2 + 1; i < size; i++) {
+		worldTransform_[i].scale_ = {4.0f, 4.0f, 4.0f};
+		worldTransform_[i].translation_ = {
+		  worldTransform_[size / 2].translation_.x + (worldTransform_[i].scale_.x * 2 * (i - (size / 2))), -18.0f,
+		  0};
+		worldTransform_[i].Initialize();
+	}
 
 	//カメラ支店
 	viewProjection_.eye = {0, 0, -50};
@@ -62,51 +54,7 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 }
 
-void GameScene::Update() {
-
-	//視点の移動ベクトル
-	XMFLOAT3 move = {0, 0, 0};
-
-	//視点の移動速度
-	const float kCharaSpeed = 0.2f;
-
-	if (input_->PushKey(DIK_RIGHT)) {
-		move = {kCharaSpeed, 0, 0};
-	} else if (input_->PushKey(DIK_LEFT)) {
-		move = {-kCharaSpeed, 0, 0};
-	}
-
-	//回転速度
-	const float RCharaSpeed = 0.02f;
-
-	if (input_->PushKey(DIK_I)) {
-		worldTransform_[0].rotation_.y += RCharaSpeed;
-	} else if (input_->PushKey(DIK_U)) {
-		worldTransform_[0].rotation_.y -= RCharaSpeed;
-	}
-
-	if (input_->PushKey(DIK_J)) {
-		worldTransform_[6].rotation_.y += RCharaSpeed;
-	} else if (input_->PushKey(DIK_K)) {
-		worldTransform_[6].rotation_.y -= RCharaSpeed;
-	}
-
-	//注視点移動
-	worldTransform_[0].translation_.x += move.x;
-	worldTransform_[0].translation_.y += move.y;
-	worldTransform_[0].translation_.z += move.z;
-
-	worldTransform_[6].translation_.x += move.x;
-	worldTransform_[6].translation_.y += move.y;
-	worldTransform_[6].translation_.z += move.z;
-
-	for (int i = 0; i < 7; i++) {
-		worldTransform_[i].UpdateMatrix();
-	}
-
-	//行列の再計算
-	viewProjection_.UpdateMatrix();
-}
+void GameScene::Update() {}
 
 void GameScene::Draw() {
 
@@ -134,7 +82,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < size; i++) {
 		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
 	}
 	/// </summary>
@@ -152,7 +100,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	//でバック
-	debugText_->SetPos(50, 70);
+	/*debugText_->SetPos(50, 70);
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
@@ -163,7 +111,7 @@ void GameScene::Draw() {
 
 	debugText_->SetPos(50, 110);
 	debugText_->Printf(
-	  "up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
+	  "up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);*/
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
