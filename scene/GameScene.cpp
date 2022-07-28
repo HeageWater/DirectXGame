@@ -19,22 +19,36 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
-	std::random_device seed_gen;
+	worldTransform_[0].Initialize();
 
-	std::mt19937_64 engine(seed_gen());
+	//頭
+	worldTransform_[1].translation_ = {0, 4.5f, 0};
+	worldTransform_[1].parent_ = &worldTransform_[0];
+	worldTransform_[1].Initialize();
 
-	std::uniform_real_distribution<float> rotDist(0.0f, XM_2PI);
+	//右腕
+	worldTransform_[2].translation_ = {4.5f, 0, 0};
+	worldTransform_[2].parent_ = &worldTransform_[0];
+	worldTransform_[2].Initialize();
 
-	std::uniform_real_distribution<float> posDist(-10.0f, 10.0f);
+	//左腕
+	worldTransform_[3].translation_ = {-4.5f, 0, 0};
+	worldTransform_[3].parent_ = &worldTransform_[0];
+	worldTransform_[3].Initialize();
 
-	for (size_t i = 0; i < _countof(worldTransform_); i++) {
-		worldTransform_[i].scale_ = {1.0f, 1.0f, 1.0f};
-		worldTransform_[i].rotation_ = {rotDist(engine), rotDist(engine), rotDist(engine)};
-		worldTransform_[i].translation_ = {posDist(engine), posDist(engine), posDist(engine)};
+	//右足
+	worldTransform_[4].translation_ = {4.5f, -4.5f, 0};
+	worldTransform_[4].parent_ = &worldTransform_[6];
+	worldTransform_[4].Initialize();
 
-		//ワールドトランスフォーム
-		worldTransform_[i].Initialize();
-	}
+	//左足
+	worldTransform_[5].translation_ = {-4.5f, -4.5f, 0};
+	worldTransform_[5].parent_ = &worldTransform_[6];
+	worldTransform_[5].Initialize();
+
+	//下半身
+	worldTransform_[6].translation_ = {0, -4.5f, 0};
+	worldTransform_[6].Initialize();
 
 	//カメラ支店
 	viewProjection_.eye = {0, 0, -50};
@@ -42,19 +56,7 @@ void GameScene::Initialize() {
 	viewProjection_.target = {0, 0, 0};
 
 	//上方向
-	viewProjection_.up = {0.0f,1.0f,0.0f};
-
-	//カメラ垂直方向視野角
-	viewProjection_.fovAngleY = XMConvertToRadians(45.0f);
-
-	//アスペクト比
-	viewProjection_.aspectRatio = 1.0f;
-
-	//ニアクリップ距離を設定
-	viewProjection_.nearZ = 52.0f;
-
-	//ファークリップ距離を設定
-	viewProjection_.farZ = 53.0f;
+	viewProjection_.up = {0.0f, 1.0f, 0.0f};
 
 	//ビュープロじぇくション
 	viewProjection_.Initialize();
@@ -66,25 +68,41 @@ void GameScene::Update() {
 	XMFLOAT3 move = {0, 0, 0};
 
 	//視点の移動速度
-	const float kEyeSpeed = 0.2f;
+	const float kCharaSpeed = 0.2f;
 
-	if (input_->PushKey(DIK_UP)) {
-		viewProjection_.nearZ += 0.1f;
-	} else if (input_->PushKey(DIK_DOWN)) {
-		viewProjection_.nearZ -= 0.1f;
+	if (input_->PushKey(DIK_RIGHT)) {
+		move = {kCharaSpeed, 0, 0};
+	} else if (input_->PushKey(DIK_LEFT)) {
+		move = {-kCharaSpeed, 0, 0};
 	}
 
-	//押した方向のベクトル
-	if (input_->PushKey(DIK_W)) {
-		move = {0, 0, kEyeSpeed};
-	} else if (input_->PushKey(DIK_S)) {
-		move = {0, 0, -kEyeSpeed};
+	//回転速度
+	const float RCharaSpeed = 0.02f;
+
+	if (input_->PushKey(DIK_I)) {
+		worldTransform_[0].rotation_.y += RCharaSpeed;
+	} else if (input_->PushKey(DIK_U)) {
+		worldTransform_[0].rotation_.y -= RCharaSpeed;
 	}
 
-	//視点移動
-	viewProjection_.eye.x += move.x;
-	viewProjection_.eye.y += move.y;
-	viewProjection_.eye.z += move.z;
+	if (input_->PushKey(DIK_J)) {
+		worldTransform_[6].rotation_.y += RCharaSpeed;
+	} else if (input_->PushKey(DIK_K)) {
+		worldTransform_[6].rotation_.y -= RCharaSpeed;
+	}
+
+	//注視点移動
+	worldTransform_[0].translation_.x += move.x;
+	worldTransform_[0].translation_.y += move.y;
+	worldTransform_[0].translation_.z += move.z;
+
+	worldTransform_[6].translation_.x += move.x;
+	worldTransform_[6].translation_.y += move.y;
+	worldTransform_[6].translation_.z += move.z;
+
+	for (int i = 0; i < 7; i++) {
+		worldTransform_[i].UpdateMatrix();
+	}
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
@@ -115,7 +133,8 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	for (size_t i = 0; i < _countof(worldTransform_); i++) {
+
+	for (int i = 0; i < 7; i++) {
 		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
 	}
 	/// </summary>
@@ -135,32 +154,16 @@ void GameScene::Draw() {
 	//でバック
 	debugText_->SetPos(50, 70);
 	debugText_->Printf(
-	  "eye:(%f,%f,%f)", 
-		viewProjection_.eye.x, 
-		viewProjection_.eye.y, 
-		viewProjection_.eye.z);
+	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(
-	  "target:(%f,%f,%f)", 
-		viewProjection_.target.x, 
-		viewProjection_.target.y,
-		viewProjection_.target.z);
+	  "target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
+	  viewProjection_.target.z);
 
 	debugText_->SetPos(50, 110);
 	debugText_->Printf(
-	  "up:(%f,%f,%f)", 
-		viewProjection_.up.x,
-		viewProjection_.up.y,
-	  viewProjection_.up.z);
-
-	debugText_->SetPos(50, 130);
-	debugText_->Printf("forAngle(Degree:)%f", XMConvertToDegrees(viewProjection_.fovAngleY));
-
-	debugText_->SetPos(50, 150);
-	debugText_->Printf(
-	  "nearZ:%f", viewProjection_.nearZ);
-
+	  "up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
