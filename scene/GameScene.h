@@ -52,10 +52,10 @@ class GameScene {
 
 	Model* model_ = nullptr;
 
-	const int size = 9;
+	const int size = 10;
 
 	//ワールドトランスフォーム
-	WorldTransform worldTransform_[9][9];
+	WorldTransform worldTransform_[10];
 	//ビュープロじぇくション
 	ViewProjection viewProjection_;
 
@@ -63,6 +63,8 @@ class GameScene {
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
+
+	bool flag = true;
 
 	/// <summary>
 	/// ゲームシーン用

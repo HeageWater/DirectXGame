@@ -19,17 +19,24 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			worldTransform_[i][j].scale_ = {1.0f, 1.0f, 1.0f};
-			worldTransform_[i][j].translation_ = {-14.0f + i * 4.0f, 15.0f - j * 4.0f, 0};
-			worldTransform_[i][j].Initialize();
-		}
-	}
+	/*for (int i = 0; i < size; i++) {
+	    int ij = 1;
+	    if (i % 2 == 0)
+	        ij = -1;
+	    worldTransform_[i].scale_ = {1.0f, 1.0f, 1.0f};
+	    worldTransform_[i].translation_ = {-5.0f, 0.0f, 0.0f};
+	    worldTransform_[i].Initialize();
+	}*/
+
+	worldTransform_[0].scale_ = {3.0f, 3.0f, 3.0f};
+	worldTransform_[0].rotation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_[0].translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_[0].Initialize();
 
 	//カメラ支店
 	viewProjection_.eye = {0, 0, -50};
 
+	//注視点
 	viewProjection_.target = {0, 0, 0};
 
 	//上方向
@@ -39,7 +46,13 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+
+	viewProjection_.eye.x += sinf(0.2f);
+	viewProjection_.eye.z += cosf(0.2f);
+
+	viewProjection_.UpdateMatrix();
+}
 
 void GameScene::Draw() {
 
@@ -67,12 +80,12 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			if (i % 2 == 0 || j % 2 == 0)
-				model_->Draw(worldTransform_[i][j], viewProjection_, textureHandle_);
-		}
-	}
+	/*for (int i = 0; i < size; i++) {
+	    model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
+	}*/
+
+	model_->Draw(worldTransform_[0], viewProjection_, textureHandle_);
+
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
@@ -88,11 +101,11 @@ void GameScene::Draw() {
 	/// </summary>
 
 	//でバック
-	/*debugText_->SetPos(50, 70);
+	debugText_->SetPos(50, 70);
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
-	debugText_->SetPos(50, 90);
+	/*debugText_->SetPos(50, 90);
 	debugText_->Printf(
 	  "target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
 	  viewProjection_.target.z);
