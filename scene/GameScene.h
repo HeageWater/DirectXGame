@@ -52,10 +52,10 @@ class GameScene {
 
 	Model* model_ = nullptr;
 
-	const int size = 20;
+	const int size = 9;
 
 	//ワールドトランスフォーム
-	WorldTransform worldTransform_[20];
+	WorldTransform worldTransform_[9][9];
 	//ビュープロじぇくション
 	ViewProjection viewProjection_;
 

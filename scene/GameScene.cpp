@@ -19,27 +19,12 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
-	worldTransform_[0].scale_ = {4.0f, 4.0f, 4.0f};
-	worldTransform_[0].translation_ = {-35.0f, 18.0f, 0};
-	worldTransform_[0].Initialize();
-
-	for (int i = 0; i < size / 2; i++) {
-		worldTransform_[i].scale_ = {4.0f, 4.0f, 4.0f};
-		worldTransform_[i].translation_ = {
-		  worldTransform_[0].translation_.x + (worldTransform_[i].scale_.x * i * 2), 18.0f, 0};
-		worldTransform_[i].Initialize();
-	}
-
-	worldTransform_[size / 2].scale_ = {4.0f, 4.0f, 4.0f};
-	worldTransform_[size / 2].translation_ = {-35.0f, -18.0f, 0};
-	worldTransform_[size / 2].Initialize();
-
-	for (int i = size / 2 + 1; i < size; i++) {
-		worldTransform_[i].scale_ = {4.0f, 4.0f, 4.0f};
-		worldTransform_[i].translation_ = {
-		  worldTransform_[size / 2].translation_.x + (worldTransform_[i].scale_.x * 2 * (i - (size / 2))), -18.0f,
-		  0};
-		worldTransform_[i].Initialize();
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			worldTransform_[i][j].scale_ = {1.0f, 1.0f, 1.0f};
+			worldTransform_[i][j].translation_ = {-14.0f + i * 4.0f, 15.0f - j * 4.0f, 0};
+			worldTransform_[i][j].Initialize();
+		}
 	}
 
 	//カメラ支店
@@ -83,7 +68,10 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 
 	for (int i = 0; i < size; i++) {
-		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
+		for (int j = 0; j < size; j++) {
+			if (i % 2 == 0 || j % 2 == 0)
+				model_->Draw(worldTransform_[i][j], viewProjection_, textureHandle_);
+		}
 	}
 	/// </summary>
 
