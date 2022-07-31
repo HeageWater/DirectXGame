@@ -66,6 +66,8 @@ class GameScene {
 
 	bool flag = true;
 
+	XMFLOAT3 direction = {0, 0, 0};
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

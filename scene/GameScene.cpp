@@ -51,6 +51,9 @@ void GameScene::Update() {
 	viewProjection_.eye.x += sinf(0.2f);
 	viewProjection_.eye.z += cosf(0.2f);
 
+	direction.x = (cos(worldTransform_[0].rotation_.y) - sin(worldTransform_[0].rotation_.z));
+	direction.z = (cos(worldTransform_[0].rotation_.x) - sin(worldTransform_[0].rotation_.y)) - 1;
+
 	viewProjection_.UpdateMatrix();
 }
 
