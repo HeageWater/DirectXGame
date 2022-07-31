@@ -10,6 +10,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() { delete model_; }
 
 void GameScene::Initialize() {
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -46,37 +47,13 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 }
 
-	//カメラ支店
-	viewProjection_.eye = {0, 0, -50};
-
-	viewProjection_.target = {0, 0, 0};
-
-	//上方向
-	viewProjection_.up = {0.0f,1.0f,0.0f};
-
-	//カメラ垂直方向視野角
-	viewProjection_.fovAngleY = XMConvertToRadians(45.0f);
-
-	//アスペクト比
-	viewProjection_.aspectRatio = 1.0f;
-
-	//ニアクリップ距離を設定
-	viewProjection_.nearZ = 52.0f;
-
-	//ファークリップ距離を設定
-	viewProjection_.farZ = 53.0f;
-
-	//ビュープロじぇくション
-	viewProjection_.Initialize();
-}
-
 void GameScene::Update() {
 
 	viewProjection_.eye.x += sinf(0.2f);
 	viewProjection_.eye.z += cosf(0.2f);
 
-	direction.x = (cos(worldTransform_[0].rotation_.y) - sin(worldTransform_[0].rotation_.z));
-	direction.z = (cos(worldTransform_[0].rotation_.x) - sin(worldTransform_[0].rotation_.y)) - 1;
+	//direction.x = (cos(worldTransform_[0].rotation_.y) - sin(worldTransform_[0].rotation_.z));
+	//direction.z = (cos(worldTransform_[0].rotation_.x) - sin(worldTransform_[0].rotation_.y)) - 1;
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
