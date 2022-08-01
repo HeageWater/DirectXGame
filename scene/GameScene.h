@@ -13,6 +13,16 @@
 #include <DirectXMath.h>
 using namespace DirectX; 
 
+typedef struct Ray {
+	Vector3 position;
+	Vector3 direction;
+};
+
+typedef struct Sphere {
+	Vector3 position;
+	float r;
+};
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -44,6 +54,8 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
+	bool dires(Ray ray, Sphere sphere);
+
   private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -56,13 +68,12 @@ class GameScene {
 	Sprite* sprite_ = nullptr;
 
 	WorldTransform worldTransform_;
+
+	WorldTransform worldTransformK_;
+
+	WorldTransform worldTransformA_;
+
 	ViewProjection viewProjection_;
-
-	WorldTransform worldTransform2_;
-	ViewProjection viewProjection2_;
-
-	WorldTransform worldTransform[10];
-	ViewProjection viewProjection[10];
 	
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
@@ -79,19 +90,24 @@ class GameScene {
 
 	bool chengeFlag = true;
 
-	float viewAngle = 0.0f;
+	//float viewAngle = 0.0f;
 
-	//正面ベクトル
-	Vector3 centerDirection = {0, 0, 0};
+	////正面ベクトル
+	//Vector3 centerDirection = {0, 0, 0};
 
-	float centerV;
+	//float centerV;
 
-	Vector3 center = {0, 0, 0};
+	//Vector3 center = {0, 0, 0};
 
-	//右ベクトル
-	Vector3 rightV = {0, 0, 0};
-	//仮ベクトル
-	Vector3 temp = {0, 1, 0};
+	////右ベクトル
+	//Vector3 rightV = {0, 0, 0};
+	////仮ベクトル
+	//Vector3 temp = {0, 1, 0};
+
+	bool f = false;
+
+	Ray ray;
+	Sphere sphere;
 
 	/// <summary>
 	/// ゲームシーン用
