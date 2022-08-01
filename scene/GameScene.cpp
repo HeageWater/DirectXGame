@@ -19,75 +19,85 @@ void GameScene::Initialize() {
 
 	model_ = Model::Create();
 
-	worldTransform.scale_ = {1.0f, 1.0f, 1.0f};
-	worldTransform.rotation_ = {0, 0, 0};
-	worldTransform.translation_ = {0, 0, 0};
+	worldTransform[0].scale_ = {3.0f, 3.0f, 3.0f};
+	worldTransform[1].scale_ = {3.0f, 3.0f, 3.0f};
+	worldTransform[2].scale_ = {3.0f, 3.0f, 3.0f};
+
+	worldTransform[0].translation_ = {0.0f, 5.0f, 0.0f};
+	worldTransform[1].translation_ = {-5.0f, -5.0f, 0.0f};
+	worldTransform[2].translation_ = {5.0f, -5.0f, 0.0f};
 
 	//ワールドトランスフォーム
-	worldTransform.Initialize();
+	worldTransform[0].Initialize();
+	worldTransform[1].Initialize();
+	worldTransform[2].Initialize();
 
 	//カメラ支店
-	viewProjection.eye = {10, 0, 0};
-
-	viewProjection.target = {0, 0, 0};
-
-	//上方向
-	viewProjection.up = {0, 1.0f, 0.0f};
-
+	viewProjection.target = worldTransform[0].translation_;
 	//ビュープロじぇくション
 	viewProjection.Initialize();
 }
 
 void GameScene::Update() {
 
-	//視点の移動ベクトル
-	XMFLOAT3 move = {0, 0, 0};
+	////視点の移動ベクトル
+	// XMFLOAT3 move = {0, 0, 0};
 
-	////視点の移動速度
-	// const float kEyeSpeed = 0.2f;
+	//////視点の移動速度
+	//// const float kEyeSpeed = 0.2f;
 
-	////押した方向のベクトル
-	// if (input_->PushKey(DIK_W)) {
-	//	move = {0, 0, kEyeSpeed};
-	// } else if (input_->PushKey(DIK_S)) {
-	//	move = {0, 0, -kEyeSpeed};
-	// }
+	//////押した方向のベクトル
+	//// if (input_->PushKey(DIK_W)) {
+	////	move = {0, 0, kEyeSpeed};
+	//// } else if (input_->PushKey(DIK_S)) {
+	////	move = {0, 0, -kEyeSpeed};
+	//// }
 
-	////視点移動
-	// viewProjection.eye.x += move.x;
-	// viewProjection.eye.y += move.y;
-	// viewProjection.eye.z += move.z;
+	//////視点移動
+	//// viewProjection.eye.x += move.x;
+	//// viewProjection.eye.y += move.y;
+	//// viewProjection.eye.z += move.z;
 
-	//// XMFLOAT3 move = {0, 0, 0};
+	////// XMFLOAT3 move = {0, 0, 0};
 
-	// const float kTargetSpeed = 0.2f;
+	//// const float kTargetSpeed = 0.2f;
 
-	// if (input_->PushKey(DIK_LEFT)) {
-	//	move = {-kTargetSpeed, 0, 0};
-	// } else if (input_->PushKey(DIK_RIGHT)) {
-	//	move = {kTargetSpeed, 0, 0};
-	// }
+	//// if (input_->PushKey(DIK_LEFT)) {
+	////	move = {-kTargetSpeed, 0, 0};
+	//// } else if (input_->PushKey(DIK_RIGHT)) {
+	////	move = {kTargetSpeed, 0, 0};
+	//// }
 
-	////視点移動
-	// viewProjection.target.x += move.x;
-	// viewProjection.target.y += move.y;
-	// viewProjection.target.z += move.z;
+	//////視点移動
+	//// viewProjection.target.x += move.x;
+	//// viewProjection.target.y += move.y;
+	//// viewProjection.target.z += move.z;
 
-	//上方向回転速度
-	const float kUpRotSpeed = 0.05f;
+	////上方向回転速度
+	// const float kUpRotSpeed = 0.05f;
 
-	// if (input_->PushKey(DIK_SPACE)) {
-	viewAngle += kUpRotSpeed;
+	//// if (input_->PushKey(DIK_SPACE)) {
+	// viewAngle += kUpRotSpeed;
 
-	// 2π超えたら0にする
-	viewAngle = fmodf(viewAngle, XM_2PI);
-	//}
+	//// 2π超えたら0にする
+	// viewAngle = fmodf(viewAngle, XM_2PI);
+	////}
 
-	viewProjection.eye.x = cosf(viewAngle);
-	viewProjection.eye.z = sinf(viewAngle);
+	// viewProjection.eye.x = cosf(viewAngle);
+	// viewProjection.eye.z = sinf(viewAngle);
 
-	//上方向ベクトル計算
-	//viewProjection.up = {cosf(viewAngle), sinf(viewAngle), 0.0f};
+	////上方向ベクトル計算
+	////viewProjection.up = {cosf(viewAngle), sinf(viewAngle), 0.0f};
+
+	if (input_->TriggerKey(DIK_SPACE)) {
+
+		fl++;
+
+		if (fl > 2) {
+			fl = 0;
+		}
+		viewProjection.target = worldTransform[fl].translation_;
+	}
 
 	//行列の再計算
 	viewProjection.UpdateMatrix();
@@ -119,7 +129,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 
-	model_->Draw(worldTransform, viewProjection, textureHandle_);
+	for (int i = 0; i < 3; i++) {
+		model_->Draw(worldTransform[i], viewProjection, textureHandle_);
+	}
 
 	/// </summary>
 
