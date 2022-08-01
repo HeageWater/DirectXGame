@@ -3,6 +3,30 @@
 #include "PrimitiveDrawer.h"
 #include <cassert>
 
+void UpdateMatrix(WorldTransform world) {
+
+	//Matrix4 matScale, matRot, matTrans;
+
+	////スケールなどの計算
+	//matScale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
+	//matRot = XMMatrixIdentity();
+	//matRot *= XMMatrixRotationZ(this->rotation.z);
+	//matRot *= XMMatrixRotationX(this->rotation.x);
+	//matRot *= XMMatrixRotationY(this->rotation.y);
+
+	//matTrans = XMMatrixTranslation(this->position.x, this->position.y, this->position.z);
+
+	//this->world = XMMatrixIdentity();
+	//this->world *= matScale;
+	//this->world *= matRot;
+	//this->world *= matTrans;
+
+	////データ転送
+	//this->constMapTransform->mat = this->matWorld * matView * matProjection;
+
+
+}
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() { delete debugcamera; }
@@ -15,9 +39,25 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 
 	debugcamera = new DebugCamera(1280,720);
+
+	worldTransform.Initialize();
+	viewProjection.Initialize();
+
+	worldTransform.scale_ = {1.0f,1.0f,1.0f};
+	worldTransform.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform.rotation_ = {0.0f, 0.0f, 0.0f};
+
+	viewProjection.target = {0, 0, 0};
+	viewProjection.up = {0, 0, 0};
+	viewProjection.eye = {0, 0, 0};
 }
 
-void GameScene::Update() { debugcamera->Update(); }
+void GameScene::Update() { 
+	debugcamera->Update();
+
+	//worldTransform.UpdateMatrix();
+	viewProjection.UpdateMatrix();
+}
 
 void GameScene::Draw() {
 
@@ -48,7 +88,10 @@ void GameScene::Draw() {
 
 	Vector4 color = {255, 255, 255, 0};
 
-	//PrimitiveDrawer::GetInstance()->DrawLine3d(, , color);
+	Vector3 a = {0, 0, 0};
+	Vector3 b = {100, 100, 100};
+
+	PrimitiveDrawer::GetInstance()->DrawLine3d(a, b, color);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理

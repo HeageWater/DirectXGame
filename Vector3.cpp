@@ -52,7 +52,7 @@ Vector3 Vector3::operator+()const
 
 Vector3 Vector3::operator-()const
 {
-	return Vector3(-*this);
+	return Vector3(-x,-y,-z);
 }
 
 Vector3& Vector3::operator+=(const Vector3& v)

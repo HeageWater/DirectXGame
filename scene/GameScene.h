@@ -49,8 +49,8 @@ class GameScene {
 	DebugText* debugText_ = nullptr;
 	DebugCamera* debugcamera = nullptr;
 
-	WorldTransform* worldTransform = nullptr;
-	ViewProjection* viewProjection = nullptr;
+	WorldTransform worldTransform;
+	ViewProjection viewProjection;
 
 	/// <summary>
 	/// ゲームシーン用
