@@ -105,6 +105,9 @@
     <ClCompile Include="AxisIndicator.cpp">
       <Filter>ソース ファイル\3d</Filter>
     </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>ソース ファイル\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">
@@ -170,8 +173,14 @@
     <ClInclude Include="AxisIndicator.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>ヘッダー ファイル\3d</Filter>
+    </ClInclude>
     <ClInclude Include="3d\PrimitiveDrawer.h">
-      <Filter>ソース ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
+      <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
