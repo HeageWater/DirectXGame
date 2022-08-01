@@ -47,20 +47,23 @@ class GameScene {
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
-	
+	Sprite* sprite_ = nullptr;
 	uint32_t textureHandle_ = 0;
+	uint32_t textureHandle2_ = 0;
 
 	Model* model_ = nullptr;
 
+	const int size = 9;
+
 	//ワールドトランスフォーム
-	WorldTransform worldTransform_[100];
+	WorldTransform worldTransform_[9][9];
 	//ビュープロじぇくション
 	ViewProjection viewProjection_;
 
 	uint32_t value_ = 0;
 
 	//カメラ上方向の角度
-	float viewAngle = 0.0f;
+	float viewAngle = 30.0f;
 
 	/// <summary>
 	/// ゲームシーン用
