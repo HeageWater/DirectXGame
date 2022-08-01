@@ -1,25 +1,35 @@
 ﻿#include "GameScene.h"
 #include "TextureManager.h"
 #include "PrimitiveDrawer.h"
+#include "MathUtility.h"
 #include <cassert>
+
 
 void UpdateMatrix(WorldTransform world) {
 
-	//XMMATRIX matScale, matRot, matTrans;
+	Matrix4 matScale, matRot, matTrans;
+	
+	// スケール、回転、平行移動行列の計算
+	matScale.m[0][0] = world.scale_.x;
+	matScale.m[1][1] = world.scale_.y;
+	matScale.m[2][2] = world.scale_.z;
+	matScale.m[3][3] = 1;
 
-	//// スケール、回転、平行移動行列の計算
-	//matScale = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
-	//matRot = XMMatrixIdentity();
-	//matRot *= XMMatrixRotationZ(rotation_.z);
-	//matRot *= XMMatrixRotationX(rotation_.x);
-	//matRot *= XMMatrixRotationY(rotation_.y);
-	//matTrans = XMMatrixTranslation(translation_.x, translation_.y, translation_.z);
+	world.matWorld_ = MathUtility::Matrix4Identity();
 
-	//// ワールド行列の合成
-	//matWorld_ = XMMatrixIdentity(); // 変形をリセット
-	//matWorld_ *= matScale;          // ワールド行列にスケーリングを反映
-	//matWorld_ *= matRot;            // ワールド行列に回転を反映
-	//matWorld_ *= matTrans;          // ワールド行列に平行移動を反映
+	matRot = MathUtility::Matrix4Identity();
+	matRot = MathUtility::Matrix4RotationX(world.rotation_.z);
+	matRot *= MathUtility::Matrix4RotationX(world.rotation_.x);
+	matRot *= MathUtility::Matrix4RotationX(world.rotation_.y);
+	
+	matTrans = MathUtility::Matrix4Translation(
+	  world.translation_.x, world.translation_.y, world.translation_.z);
+
+	// ワールド行列の合成
+	world.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
+	world.matWorld_ *= matScale;          // ワールド行列にスケーリングを反映
+	world.matWorld_ *= matRot;            // ワールド行列に回転を反映
+	world.matWorld_ *= matTrans;          // ワールド行列に平行移動を反映
 
 	//// 親行列の指定がある場合は、掛け算する
 	//if (parent_) {
@@ -58,7 +68,7 @@ void GameScene::Initialize() {
 void GameScene::Update() { 
 	debugcamera->Update();
 
-	worldTransform.UpdateMatrix();
+	UpdateMatrix(worldTransform);
 	viewProjection.UpdateMatrix();
 }
 
