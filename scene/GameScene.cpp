@@ -5,26 +5,29 @@
 
 void UpdateMatrix(WorldTransform world) {
 
-	//Matrix4 matScale, matRot, matTrans;
+	//XMMATRIX matScale, matRot, matTrans;
 
-	////スケールなどの計算
-	//matScale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
+	//// スケール、回転、平行移動行列の計算
+	//matScale = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
 	//matRot = XMMatrixIdentity();
-	//matRot *= XMMatrixRotationZ(this->rotation.z);
-	//matRot *= XMMatrixRotationX(this->rotation.x);
-	//matRot *= XMMatrixRotationY(this->rotation.y);
+	//matRot *= XMMatrixRotationZ(rotation_.z);
+	//matRot *= XMMatrixRotationX(rotation_.x);
+	//matRot *= XMMatrixRotationY(rotation_.y);
+	//matTrans = XMMatrixTranslation(translation_.x, translation_.y, translation_.z);
 
-	//matTrans = XMMatrixTranslation(this->position.x, this->position.y, this->position.z);
+	//// ワールド行列の合成
+	//matWorld_ = XMMatrixIdentity(); // 変形をリセット
+	//matWorld_ *= matScale;          // ワールド行列にスケーリングを反映
+	//matWorld_ *= matRot;            // ワールド行列に回転を反映
+	//matWorld_ *= matTrans;          // ワールド行列に平行移動を反映
 
-	//this->world = XMMatrixIdentity();
-	//this->world *= matScale;
-	//this->world *= matRot;
-	//this->world *= matTrans;
+	//// 親行列の指定がある場合は、掛け算する
+	//if (parent_) {
+	//	matWorld_ *= parent_->matWorld_;
+	//}
 
-	////データ転送
-	//this->constMapTransform->mat = this->matWorld * matView * matProjection;
-
-
+	//// 定数バッファに書き込み
+	//constMap->matWorld = matWorld_;
 }
 
 GameScene::GameScene() {}
@@ -55,7 +58,7 @@ void GameScene::Initialize() {
 void GameScene::Update() { 
 	debugcamera->Update();
 
-	//worldTransform.UpdateMatrix();
+	worldTransform.UpdateMatrix();
 	viewProjection.UpdateMatrix();
 }
 
