@@ -7,6 +7,7 @@
 #include "Model.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
+#include "DebugCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Vector3.h"
@@ -61,6 +62,7 @@ class GameScene {
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
+	DebugCamera* debugcamera = nullptr;
 
 	Model* model_ = nullptr;
 
@@ -87,22 +89,6 @@ class GameScene {
 	uint32_t value_ = 0;
 
 	Vector3 direction;
-
-	bool chengeFlag = true;
-
-	//float viewAngle = 0.0f;
-
-	////正面ベクトル
-	//Vector3 centerDirection = {0, 0, 0};
-
-	//float centerV;
-
-	//Vector3 center = {0, 0, 0};
-
-	////右ベクトル
-	//Vector3 rightV = {0, 0, 0};
-	////仮ベクトル
-	//Vector3 temp = {0, 1, 0};
 
 	bool f = false;
 
