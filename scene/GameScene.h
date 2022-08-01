@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "Audio.h"
-#include "DebugText.h"
 #include "DirectXCommon.h"
+#include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
 #include "SafeDelete.h"
@@ -10,19 +10,6 @@
 #include "DebugCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Vector3.h"
-#include <DirectXMath.h>
-using namespace DirectX; 
-
-typedef struct Ray {
-	Vector3 position;
-	Vector3 direction;
-};
-
-typedef struct Sphere {
-	Vector3 position;
-	float r;
-};
 
 /// <summary>
 /// ゲームシーン
@@ -55,8 +42,6 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
-	bool dires(Ray ray, Sphere sphere);
-
   private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -64,36 +49,8 @@ class GameScene {
 	DebugText* debugText_ = nullptr;
 	DebugCamera* debugcamera = nullptr;
 
-	Model* model_ = nullptr;
-
-	//スプライト
-	Sprite* sprite_ = nullptr;
-
-	WorldTransform worldTransform_;
-
-	WorldTransform worldTransformK_;
-
-	WorldTransform worldTransformA_;
-
-	ViewProjection viewProjection_;
-	
-	//テクスチャハンドル
-	uint32_t textureHandle_ = 0;
-
-	//サウンド
-	uint32_t soundDateHandle_ = 0;
-
-	//音声再生
-	uint32_t voiceHandle_ = 0;
-
-	uint32_t value_ = 0;
-
-	Vector3 direction;
-
-	bool f = false;
-
-	Ray ray;
-	Sphere sphere;
+	WorldTransform* worldTransform = nullptr;
+	ViewProjection* viewProjection = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
