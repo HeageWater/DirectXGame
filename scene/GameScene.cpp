@@ -47,6 +47,7 @@ GameScene::~GameScene() {
 	delete debugcamera;
 }
 
+//rayの当たり判定
 bool GameScene::dires(Ray ray, Sphere sphere) {
 
 	Vector3 tempV = sphere.position - ray.position;
