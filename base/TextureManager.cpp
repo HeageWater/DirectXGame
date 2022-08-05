@@ -105,7 +105,7 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName) {
 
 	// WICテクスチャのロード
 	result = LoadFromWICFile(wfilePath, WIC_FLAGS_NONE, &metadata, scratchImg);
-	assert(SUCCEEDED(result));
+	//assert(SUCCEEDED(result));
 
 	ScratchImage mipChain{};
 	// ミップマップ生成

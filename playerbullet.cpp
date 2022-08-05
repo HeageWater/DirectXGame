@@ -9,7 +9,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	this->model = model;
 
 	//‰æ‘œƒf[ƒ^
-	textureHandle = TextureManager::Load("reimu.png");
+	//textureHandle = TextureManager::Load("reimu.png");
 
 	//‰Šú‰»
 	bulletW.Initialize();
