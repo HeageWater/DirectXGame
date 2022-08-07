@@ -73,10 +73,6 @@ class GameScene {
 
 	WorldTransform worldTransform_;
 
-	WorldTransform worldTransformK_;
-
-	WorldTransform worldTransformA_;
-
 	ViewProjection viewProjection_;
 
 	//テクスチャハンドル
@@ -92,10 +88,6 @@ class GameScene {
 
 	Vector3 direction;
 
-	bool f = false;
-
-	Ray ray;
-	Sphere sphere;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

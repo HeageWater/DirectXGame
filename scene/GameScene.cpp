@@ -95,79 +95,19 @@ void GameScene::Initialize() {
 
 	//初期化
 	worldTransform_.Initialize();
-	worldTransformK_.Initialize();
-	worldTransformA_.Initialize();
-
 	viewProjection_.Initialize();
 
 	//移動する物体
 	worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
-
-	//表示される物体
-	worldTransformA_.scale_ = {5.0f, 5.0f, 5.0f};
-	worldTransformA_.translation_ = {-10.0f, 0.0f, 0.0f};
-
-	//判定取る物体
-	worldTransformK_.scale_ = {3.0f, 3.0f, 3.0f};
-	worldTransformK_.translation_ = {0.0f, 0.0f, 30.0f};
-
-	ray.direction = {100, 0, 0};
-
-	ray.position.x = worldTransform_.translation_.x;
-	ray.position.y = worldTransform_.translation_.y;
-	ray.position.z = worldTransform_.translation_.z;
-
-	sphere.position.x = worldTransformK_.translation_.x;
-	sphere.position.y = worldTransformK_.translation_.y;
-	sphere.position.z = worldTransformK_.translation_.z;
-
-	sphere.r = 3.0f;
 }
 
 void GameScene::Update() { 
 	debugcamera->Update();
 
-	//正面への移動速度
-	const float kTSpeed = 0.3f;
-
-	//バイオ移動
-	//横回転
-	if (input_->PushKey(DIK_W)) {
-		ray.position.y += kTSpeed;
-	} else if (input_->PushKey(DIK_S)) {
-		ray.position.y -= kTSpeed;
-	}
-
-	//正面に進む
-	if (input_->PushKey(DIK_D)) {
-		ray.position.x += kTSpeed;
-	} else if (input_->PushKey(DIK_A)) {
-		ray.position.x -= kTSpeed;
-	}
-
-	if (input_->PushKey(DIK_E)) {
-		ray.position.z += kTSpeed;
-	} else if (input_->PushKey(DIK_Q)) {
-		ray.position.z -= kTSpeed;
-	}
-
-	worldTransform_.translation_.x = ray.position.x;
-	worldTransform_.translation_.y = ray.position.y;
-	worldTransform_.translation_.z = ray.position.z;
-
-	f = false;
-
-	//レイの当たり判定
-	if (dires(ray, sphere)) {
-		f = true;
-	}
-
 	//行列の再計算
 	UpdateMatrix(worldTransform_);
-	UpdateMatrix(worldTransformA_);
-	UpdateMatrix(worldTransformK_);
 
 	viewProjection_.UpdateMatrix();
 }
@@ -201,19 +141,6 @@ void GameScene::Draw() {
 	//動かす物体
 	//model_->Draw(worldTransform_, debugcamera->GetViewProjection(), textureHandle_);
 	//判定される物体
-	model_->Draw(worldTransformK_, debugcamera->GetViewProjection(), textureHandle_);
-
-	//当たっていたら
-	if (f) {
-		model_->Draw(worldTransformA_, viewProjection_, textureHandle_);
-	}
-
-
-	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugcamera->GetViewProjection());
-	Vector4 color = {255, 255, 255, 255};
-	Vector3 a = ray.position;
-	Vector3 b = ray.position + ray.direction;
-	PrimitiveDrawer::GetInstance()->DrawLine3d(a, b, color);
 
 	
 	/// </summary>
@@ -230,13 +157,6 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	
 	////でバック
-	// debugText_->SetPos(50, 70);
-	// debugText_->Printf(
-	//   "t r e:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.rotation_.y,
-	//   viewProjection_.eye.z);
-
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("flag:(%d)", f);
 
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
