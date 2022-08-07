@@ -12,13 +12,15 @@ class Player {
 	void Draw(ViewProjection viewProjection);
 	void Update();
 
-  private:
+ // private:
 
 	  void Trans();
 	  void Rota();
 	  void Scale();
 
 	void Attack();
+
+	void UpdateMatrix(WorldTransform world);
 
 	Model* model = nullptr;
 	

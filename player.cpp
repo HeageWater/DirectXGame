@@ -48,25 +48,25 @@ void Player::Update() {
 	Vector3 move = {0, 0, 0};
 
 	//y軸移動
-	if (input->PushKey(DIK_UP)) {
+	if (input->PushKey(DIK_W)) {
 		move.y = speed;
-	} else if (input->PushKey(DIK_DOWN)) {
+	} else if (input->PushKey(DIK_S)) {
 		move.y = -speed;
 	}
 
 	//x軸移動
-	if (input->PushKey(DIK_RIGHT)) {
+	if (input->PushKey(DIK_D)) {
 		move.x = speed;
-	} else if (input->PushKey(DIK_LEFT)) {
+	} else if (input->PushKey(DIK_A)) {
 		move.x = -speed;
 	}
 
 	//回転
 	if (input->PushKey(DIK_E)) {
-		worldTransform.rotation_.y += 0.1f;
+		worldTransform.rotation_.z += 0.1f;
 	}
 	if (input->PushKey(DIK_Q)) {
-		worldTransform.rotation_.y -= 0.1f;
+		worldTransform.rotation_.z -= 0.1f;
 	}
 
 	//攻撃
@@ -92,13 +92,15 @@ void Player::Update() {
 	worldTransform.translation_.y = min(worldTransform.translation_.y, +kMoveLimitY);
 
 	//拡縮
-	Scale();
+	//Scale();
 
 	//回転
-	Rota();
+	//Rota();
 
 	//平行移動
-	Trans();
+	//Trans();
+
+	UpdateMatrix(worldTransform);
 
 	debugText->SetPos(50, 70);
 	debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
@@ -301,7 +303,8 @@ void Player::Rota() {
 	//単位行列代入
 	worldTransform.matWorld_.Reset();
 	worldTransform.matWorld_ *= matRot;
-	worldTransform.TransferMatrix();
+	UpdateMatrix(worldTransform);
+	//worldTransform.TransferMatrix();
 }
 
 //拡縮
@@ -309,4 +312,36 @@ void Player::Scale() {
 
 
 
+}
+
+//拡縮平行回転全部
+void Player::UpdateMatrix(WorldTransform world) {
+
+	Matrix4 matScale, matRot, matTrans;
+
+	// スケール、回転、平行移動行列の計算
+	matScale = MathUtility::Matrix4Identity();
+	matScale.m[0][0] = world.scale_.x;
+	matScale.m[1][1] = world.scale_.y;
+	matScale.m[2][2] = world.scale_.z;
+	matScale.m[3][3] = 1;
+
+	//回転
+	matRot = MathUtility::Matrix4Identity();
+	matRot = MathUtility::Matrix4RotationZ(world.rotation_.z);
+	matRot *= MathUtility::Matrix4RotationX(world.rotation_.x);
+	matRot *= MathUtility::Matrix4RotationY(world.rotation_.y);
+
+	//移動
+	matTrans = MathUtility::Matrix4Identity();
+	matTrans = MathUtility::Matrix4Translation(
+	  world.translation_.x, world.translation_.y, world.translation_.z);
+
+	// ワールド行列の合成
+	world.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
+	world.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
+	world.matWorld_ *= matRot;   // ワールド行列に回転を反映
+	world.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
+
+	world.TransferMatrix();
 }

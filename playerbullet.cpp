@@ -21,74 +21,73 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 void PlayerBullet::Update() {
 	// worldTransform更新
 	//スケ-リング行列の宣言
-	 Matrix4 matScale;
+	Matrix4 matScale;
 
 	//単位行列を代入
-	 matScale.Reset();
+	matScale.Reset();
 	//スケ-リング倍率を行列に設定する
-	 matScale.m[0][0] = bulletW.scale_.x;
-	 matScale.m[1][1] = bulletW.scale_.y;
-	 matScale.m[2][2] = bulletW.scale_.z;
+	matScale.m[0][0] = bulletW.scale_.x;
+	matScale.m[1][1] = bulletW.scale_.y;
+	matScale.m[2][2] = bulletW.scale_.z;
 
 	//単位行列を代入
-	 bulletW.matWorld_.Reset();
+	bulletW.matWorld_.Reset();
 
 	// matScaleを掛けて代入
-	 bulletW.matWorld_.m[0][0] *= matScale.m[0][0];
-	 bulletW.matWorld_.m[1][1] *= matScale.m[1][1];
-	 bulletW.matWorld_.m[2][2] *= matScale.m[2][2];
+	bulletW.matWorld_.m[0][0] *= matScale.m[0][0];
+	bulletW.matWorld_.m[1][1] *= matScale.m[1][1];
+	bulletW.matWorld_.m[2][2] *= matScale.m[2][2];
 
 	//合成用回転行列
-	 Matrix4 matRot;
+	Matrix4 matRot;
 
 	//各軸の回転行列
-	 Matrix4 matrotX, matrotY, matrotZ;
+	Matrix4 matrotX, matrotY, matrotZ;
 
 	//単位行列代入
-	 matrotZ.Reset();
+	matrotZ.Reset();
 
-	 matrotZ.m[0][0] = cos(bulletW.rotation_.z);
-	 matrotZ.m[0][1] = sin(bulletW.rotation_.z);
-	 matrotZ.m[1][0] = -sin(bulletW.rotation_.z);
-	 matrotZ.m[1][1] = cos(bulletW.rotation_.z);
-
-	//単位行列代入
-	 matrotX.Reset();
-
-	 matrotX.m[1][1] = cos(bulletW.rotation_.x);
-	 matrotX.m[1][2] = sin(bulletW.rotation_.x);
-	 matrotX.m[2][1] = -sin(bulletW.rotation_.x);
-	 matrotX.m[2][2] = cos(bulletW.rotation_.x);
+	matrotZ.m[0][0] = cos(bulletW.rotation_.z);
+	matrotZ.m[0][1] = sin(bulletW.rotation_.z);
+	matrotZ.m[1][0] = -sin(bulletW.rotation_.z);
+	matrotZ.m[1][1] = cos(bulletW.rotation_.z);
 
 	//単位行列代入
-	 matrotY.Reset();
+	matrotX.Reset();
 
-	 matrotY.m[0][0] = cos(bulletW.rotation_.y);
-	 matrotY.m[0][2] = -sin(bulletW.rotation_.y);
-	 matrotY.m[2][0] = sin(bulletW.rotation_.y);
-	 matrotY.m[2][2] = cos(bulletW.rotation_.y);
-
-	 matRot = matrotZ;
-	 matRot *= matrotX;
-	 matRot *= matrotY;
+	matrotX.m[1][1] = cos(bulletW.rotation_.x);
+	matrotX.m[1][2] = sin(bulletW.rotation_.x);
+	matrotX.m[2][1] = -sin(bulletW.rotation_.x);
+	matrotX.m[2][2] = cos(bulletW.rotation_.x);
 
 	//単位行列代入
-	// worldTransform_.matWorld_.Reset();
-	 bulletW.matWorld_ *= matRot;
-	 bulletW.TransferMatrix();
+	matrotY.Reset();
 
+	matrotY.m[0][0] = cos(bulletW.rotation_.y);
+	matrotY.m[0][2] = -sin(bulletW.rotation_.y);
+	matrotY.m[2][0] = sin(bulletW.rotation_.y);
+	matrotY.m[2][2] = cos(bulletW.rotation_.y);
+
+	matRot = matrotZ;
+	matRot *= matrotX;
+	matRot *= matrotY;
+
+	//単位行列代入
+	//worldTransform_.matWorld_.Reset();
+	bulletW.matWorld_ *= matRot;
+	bulletW.TransferMatrix();
 
 	//平行移動行列宣言
-	 Matrix4 matTrans = MathUtility::Matrix4Identity();
+	Matrix4 matTrans = MathUtility::Matrix4Identity();
 
-	 matTrans.m[3][0] = bulletW.translation_.x;
-	 matTrans.m[3][1] = bulletW.translation_.y;
-	 matTrans.m[3][2] = bulletW.translation_.z;
+	matTrans.m[3][0] = bulletW.translation_.x;
+	matTrans.m[3][1] = bulletW.translation_.y;
+	matTrans.m[3][2] = bulletW.translation_.z;
 
 	//単位行列代入
-	// worldTransform_.matWorld_.Reset();
-	 bulletW.matWorld_ *= matTrans;
-	 bulletW.TransferMatrix();
+	//worldTransform_.matWorld_.Reset();
+	bulletW.matWorld_ *= matTrans;
+	bulletW.TransferMatrix();
 }
 
 //弾描画

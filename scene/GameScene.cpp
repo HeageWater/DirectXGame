@@ -21,9 +21,9 @@ void UpdateMatrix(WorldTransform world) {
 
 	//回転
 	matRot = MathUtility::Matrix4Identity();
-	matRot = MathUtility::Matrix4RotationX(world.rotation_.z);
+	matRot = MathUtility::Matrix4RotationZ(world.rotation_.z);
 	matRot *= MathUtility::Matrix4RotationX(world.rotation_.x);
-	matRot *= MathUtility::Matrix4RotationX(world.rotation_.y);
+	matRot *= MathUtility::Matrix4RotationY(world.rotation_.y);
 	
 	//移動
 	matTrans = MathUtility::Matrix4Identity();
@@ -162,6 +162,10 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	
 	////でバック
+	debugText_->SetPos(50, 30);
+	debugText_->Printf(
+	  "player_r:(%f,%f,%f)", player->worldTransform.rotation_.y, worldTransform_.scale_.y,
+	  worldTransform_.scale_.z);
 
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
