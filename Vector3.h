@@ -1,4 +1,5 @@
 #pragma once
+#include "Matrix4.h"
 
 class Vector3
 {
@@ -14,6 +15,9 @@ public:
 	Vector3& normalize();
 	float dot(const Vector3& v)const;
 	Vector3 cross(const Vector3& v) const;
+
+	// VecŠ|‚¯ŽZ
+	Vector3 mat(Vector3 vec,Matrix4 m);
 
 	Vector3 operator+()const;
 	Vector3 operator-()const;

@@ -1,6 +1,6 @@
 #include "playerbullet.h"
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position) {
+void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 
 	// NULLポインタチェック
 	assert(model);
@@ -16,9 +16,19 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 
 	//場所代入
 	bulletW.translation_ = position;
+
+	this->velocity = velocity;
 }
 
 void PlayerBullet::Update() {
+
+	bulletW.translation_ += velocity;
+
+	if (--deathTimer <= 0) {
+
+		isDead_ = true;
+	}
+
 	// worldTransform更新
 	//スケ-リング行列の宣言
 	Matrix4 matScale;
@@ -73,7 +83,7 @@ void PlayerBullet::Update() {
 	matRot *= matrotY;
 
 	//単位行列代入
-	//worldTransform_.matWorld_.Reset();
+	// worldTransform_.matWorld_.Reset();
 	bulletW.matWorld_ *= matRot;
 	bulletW.TransferMatrix();
 
@@ -85,7 +95,7 @@ void PlayerBullet::Update() {
 	matTrans.m[3][2] = bulletW.translation_.z;
 
 	//単位行列代入
-	//worldTransform_.matWorld_.Reset();
+	// worldTransform_.matWorld_.Reset();
 	bulletW.matWorld_ *= matTrans;
 	bulletW.TransferMatrix();
 }

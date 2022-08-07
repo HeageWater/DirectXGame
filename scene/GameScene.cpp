@@ -162,11 +162,6 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	
 	////でバック
-	debugText_->SetPos(50, 30);
-	debugText_->Printf(
-	  "player_r:(%f,%f,%f)", player->worldTransform.rotation_.y, worldTransform_.scale_.y,
-	  worldTransform_.scale_.z);
-
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
 	  "scale:(%f,%f,%f)", worldTransform_.scale_.x, worldTransform_.scale_.y,

@@ -9,14 +9,6 @@ Matrix4 Matrix4::Queue() {
 	return *this;
 }
 
-// void Matrix4::RoteZ(Matrix4 z, float rz)
-//{
-//	z.m[0][0] = cos(rz);
-//	z.m[0][1] = sin(rz);
-//	z.m[1][0] = -sin(rz);
-//	z.m[1][1] = cos(rz);
-// }
-
 // 0‚ð‘ã“ü
 Matrix4 Matrix4::Reset() {
 	for (int i = 0; i < 4; i++) {
@@ -69,4 +61,12 @@ Matrix4 Matrix4::Reset() {
 //	//m[3][1] = m31;
 //	//m[3][2] = m32;
 //	//m[3][3] = m33;
+// }
+
+// void Matrix4::RoteZ(Matrix4 z, float rz)
+//{
+//	z.m[0][0] = cos(rz);
+//	z.m[0][1] = sin(rz);
+//	z.m[1][0] = -sin(rz);
+//	z.m[1][1] = cos(rz);
 // }

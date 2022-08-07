@@ -5,6 +5,8 @@
 #include "DebugText.h"
 #include "playerbullet.h"
 #include <cassert>
+#include <memory>
+#include <list>
 
 class Player {
   public:
@@ -12,7 +14,7 @@ class Player {
 	void Draw(ViewProjection viewProjection);
 	void Update();
 
- // private:
+  private:
 
 	  void Trans();
 	  void Rota();
@@ -20,7 +22,7 @@ class Player {
 
 	void Attack();
 
-	void UpdateMatrix(WorldTransform world);
+	void UpdateMatrix();
 
 	Model* model = nullptr;
 	
@@ -32,5 +34,5 @@ class Player {
 
 	uint32_t textureHandle = 0u;
 
-	PlayerBullet* bullet = nullptr;
+	std::list<std::unique_ptr<PlayerBullet>> bullets;
 };
