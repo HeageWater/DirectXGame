@@ -12,6 +12,7 @@
 #include "WorldTransform.h"
 #include "Vector3.h"
 #include <DirectXMath.h>
+#include "player.h"
 using namespace DirectX; 
 
 typedef struct Ray {
@@ -87,6 +88,8 @@ class GameScene {
 	uint32_t value_ = 0;
 
 	Vector3 direction;
+
+	Player* player = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

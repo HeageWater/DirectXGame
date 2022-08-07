@@ -92,7 +92,7 @@ void Player::Update() {
 	worldTransform.translation_.y = min(worldTransform.translation_.y, +kMoveLimitY);
 
 	//ägèk
-	//Scale();
+	Scale();
 
 	//âÒì]
 	Rota();
@@ -242,7 +242,7 @@ void Player::Trans() {
 	matTrans.m[3][2] = worldTransform.translation_.z;
 
 	//íPà çsóÒë„ì¸
-	//worldTransform.matWorld_.Reset();
+	worldTransform.matWorld_.Reset();
 	worldTransform.matWorld_ *= matTrans;
 	worldTransform.TransferMatrix();
 }
@@ -306,5 +306,7 @@ void Player::Rota() {
 
 //ägèk
 void Player::Scale() {
+
+
 
 }

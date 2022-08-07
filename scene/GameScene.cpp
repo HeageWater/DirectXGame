@@ -45,6 +45,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete sprite_;
 	delete debugcamera;
+	delete player;
 }
 
 //rayの当たり判定
@@ -93,6 +94,10 @@ void GameScene::Initialize() {
 	model_ = Model::Create();
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
+	player = new Player();
+
+	player->Initialize(model_, textureHandle_);
+
 	//初期化
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
@@ -104,7 +109,10 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() { 
+
 	debugcamera->Update();
+
+	player->Update();
 
 	//行列の再計算
 	UpdateMatrix(worldTransform_);
@@ -138,11 +146,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	
-	//動かす物体
-	//model_->Draw(worldTransform_, debugcamera->GetViewProjection(), textureHandle_);
-	//判定される物体
+	player->Draw(viewProjection_);
 
-	
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
