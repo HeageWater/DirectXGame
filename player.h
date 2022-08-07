@@ -30,7 +30,7 @@ class Player {
 
 	DebugText* debugText = nullptr;
 
-	WorldTransform worldTransform;
+	WorldTransform playerW;
 
 	uint32_t textureHandle = 0u;
 

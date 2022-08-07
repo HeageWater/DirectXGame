@@ -20,12 +20,12 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input = Input::GetInstance();
 	debugText = DebugText::GetInstance();
 
-	worldTransform.Initialize();
+	playerW.Initialize();
 }
 
 //描画
 void Player::Draw(ViewProjection viewProjection) {
-	model->Draw(worldTransform, viewProjection, textureHandle);
+	model->Draw(playerW, viewProjection, textureHandle);
 
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Draw(viewProjection);
@@ -60,10 +60,10 @@ void Player::Update() {
 
 	//回転
 	if (input->PushKey(DIK_E)) {
-		worldTransform.rotation_.y += 0.05f;
+		playerW.rotation_.y += 0.05f;
 	}
 	if (input->PushKey(DIK_Q)) {
-		worldTransform.rotation_.y -= 0.05f;
+		playerW.rotation_.y -= 0.05f;
 	}
 
 	//攻撃
@@ -77,15 +77,15 @@ void Player::Update() {
 	const float kMoveLimitX = 32;
 	const float kMoveLimitY = 18;
 
-	worldTransform.translation_.x += move.x;
-	worldTransform.translation_.y += move.y;
-	worldTransform.translation_.z += move.z;
+	playerW.translation_.x += move.x;
+	playerW.translation_.y += move.y;
+	playerW.translation_.z += move.z;
 
 	//範囲を超えない処理
-	worldTransform.translation_.x = max(worldTransform.translation_.x, -kMoveLimitX);
-	worldTransform.translation_.x = min(worldTransform.translation_.x, +kMoveLimitX);
-	worldTransform.translation_.y = max(worldTransform.translation_.y, -kMoveLimitY);
-	worldTransform.translation_.y = min(worldTransform.translation_.y, +kMoveLimitY);
+	playerW.translation_.x = max(playerW.translation_.x, -kMoveLimitX);
+	playerW.translation_.x = min(playerW.translation_.x, +kMoveLimitX);
+	playerW.translation_.y = max(playerW.translation_.y, -kMoveLimitY);
+	playerW.translation_.y = min(playerW.translation_.y, +kMoveLimitY);
 
 	//上全部
 	UpdateMatrix();
@@ -103,14 +103,11 @@ void Player::Attack() {
 		Vector3 velocity(0, 0, kBulletSpeed);
 
 		//ベクトルと行列の掛け算
-		velocity = velocity.mat(velocity, worldTransform.matWorld_);
-
-		debugText->SetPos(150, 170);
-		debugText->Printf("velocity:%f,%f,%f", velocity.x, velocity.y, velocity.z);
+		velocity = velocity.mat(velocity, playerW.matWorld_);
 	
 		//弾生成
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model, worldTransform.translation_, velocity);
+		newBullet->Initialize(model, playerW.translation_, velocity);
 
 		//弾登録
 		bullets.push_back(std::move(newBullet));
@@ -122,14 +119,14 @@ void Player::Trans() {
 	//平行移動行列宣言
 	Matrix4 matTrans = MathUtility::Matrix4Identity();
 
-	matTrans.m[3][0] = worldTransform.translation_.x;
-	matTrans.m[3][1] = worldTransform.translation_.y;
-	matTrans.m[3][2] = worldTransform.translation_.z;
+	matTrans.m[3][0] = playerW.translation_.x;
+	matTrans.m[3][1] = playerW.translation_.y;
+	matTrans.m[3][2] = playerW.translation_.z;
 
 	//単位行列代入
-	worldTransform.matWorld_.Reset();
-	worldTransform.matWorld_ *= matTrans;
-	worldTransform.TransferMatrix();
+	playerW.matWorld_.Reset();
+	playerW.matWorld_ *= matTrans;
+	playerW.TransferMatrix();
 }
 
 //回転
@@ -158,34 +155,34 @@ void Player::Rota() {
 	//単位行列代入
 	matrotZ.Reset();
 
-	matrotZ.m[0][0] = cos(worldTransform.rotation_.z);
-	matrotZ.m[0][1] = sin(worldTransform.rotation_.z);
-	matrotZ.m[1][0] = -sin(worldTransform.rotation_.z);
-	matrotZ.m[1][1] = cos(worldTransform.rotation_.z);
+	matrotZ.m[0][0] = cos(playerW.rotation_.z);
+	matrotZ.m[0][1] = sin(playerW.rotation_.z);
+	matrotZ.m[1][0] = -sin(playerW.rotation_.z);
+	matrotZ.m[1][1] = cos(playerW.rotation_.z);
 
 	//単位行列代入
 	matrotX.Reset();
 
-	matrotX.m[1][1] = cos(worldTransform.rotation_.x);
-	matrotX.m[1][2] = sin(worldTransform.rotation_.x);
-	matrotX.m[2][1] = -sin(worldTransform.rotation_.x);
-	matrotX.m[2][2] = cos(worldTransform.rotation_.x);
+	matrotX.m[1][1] = cos(playerW.rotation_.x);
+	matrotX.m[1][2] = sin(playerW.rotation_.x);
+	matrotX.m[2][1] = -sin(playerW.rotation_.x);
+	matrotX.m[2][2] = cos(playerW.rotation_.x);
 
 	//単位行列代入
 	matrotY.Reset();
 
-	matrotY.m[0][0] = cos(worldTransform.rotation_.y);
-	matrotY.m[0][2] = -sin(worldTransform.rotation_.y);
-	matrotY.m[2][0] = sin(worldTransform.rotation_.y);
-	matrotY.m[2][2] = cos(worldTransform.rotation_.y);
+	matrotY.m[0][0] = cos(playerW.rotation_.y);
+	matrotY.m[0][2] = -sin(playerW.rotation_.y);
+	matrotY.m[2][0] = sin(playerW.rotation_.y);
+	matrotY.m[2][2] = cos(playerW.rotation_.y);
 
 	matRot = matrotZ;
 	matRot *= matrotX;
 	matRot *= matrotY;
 
 	//単位行列代入
-	worldTransform.matWorld_.Reset();
-	worldTransform.matWorld_ *= matRot;
+	playerW.matWorld_.Reset();
+	playerW.matWorld_ *= matRot;
 	UpdateMatrix();
 	// worldTransform.TransferMatrix();
 }
@@ -200,29 +197,29 @@ void Player::UpdateMatrix() {
 
 	// スケール、回転、平行移動行列の計算
 	matScale = MathUtility::Matrix4Identity();
-	matScale.m[0][0] = worldTransform.scale_.x;
-	matScale.m[1][1] = worldTransform.scale_.y;
-	matScale.m[2][2] = worldTransform.scale_.z;
+	matScale.m[0][0] = playerW.scale_.x;
+	matScale.m[1][1] = playerW.scale_.y;
+	matScale.m[2][2] = playerW.scale_.z;
 	matScale.m[3][3] = 1;
 
 	//回転
 	matRot = MathUtility::Matrix4Identity();
-	matRot = MathUtility::Matrix4RotationZ(worldTransform.rotation_.z);
-	matRot *= MathUtility::Matrix4RotationX(worldTransform.rotation_.x);
-	matRot *= MathUtility::Matrix4RotationY(worldTransform.rotation_.y);
+	matRot = MathUtility::Matrix4RotationZ(playerW.rotation_.z);
+	matRot *= MathUtility::Matrix4RotationX(playerW.rotation_.x);
+	matRot *= MathUtility::Matrix4RotationY(playerW.rotation_.y);
 
 	//移動
 	matTrans = MathUtility::Matrix4Identity();
 	matTrans = MathUtility::Matrix4Translation(
-	  worldTransform.translation_.x, worldTransform.translation_.y, worldTransform.translation_.z);
+	  playerW.translation_.x, playerW.translation_.y, playerW.translation_.z);
 
 	// ワールド行列の合成
-	worldTransform.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
-	worldTransform.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
-	worldTransform.matWorld_ *= matRot;   // ワールド行列に回転を反映
-	worldTransform.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
+	playerW.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
+	playerW.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
+	playerW.matWorld_ *= matRot;   // ワールド行列に回転を反映
+	playerW.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
 
-	worldTransform.TransferMatrix();
+	playerW.TransferMatrix();
 }
 
 //説明

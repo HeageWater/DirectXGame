@@ -1,6 +1,6 @@
 #include "playerbullet.h"
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
+void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity_) {
 
 	// NULLポインタチェック
 	assert(model);
@@ -17,7 +17,8 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	//場所代入
 	bulletW.translation_ = position;
 
-	this->velocity = velocity;
+	//速度代入
+	velocity = velocity_;
 }
 
 void PlayerBullet::Update() {

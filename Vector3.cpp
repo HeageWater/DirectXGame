@@ -38,15 +38,15 @@ Vector3 Vector3::cross(const Vector3& v) const {
 Vector3 Vector3::mat(Vector3 vec, Matrix4 m) {
 
 	this->x = m.m[0][0] * vec.x;
-	this->x += m.m[1][0] * vec.x;
-	this->x += m.m[2][0] * vec.x;
+	this->x += m.m[1][0] * vec.y;
+	this->x += m.m[2][0] * vec.z;
 
-	this->y = m.m[0][1] * vec.y;
+	this->y = m.m[0][1] * vec.x;
 	this->y += m.m[1][1] * vec.y;
-	this->y += m.m[2][1] * vec.y;
+	this->y += m.m[2][1] * vec.z;
 
-	this->z = m.m[0][2] * vec.z;
-	this->z += m.m[1][2] * vec.z;
+	this->z = m.m[0][2] * vec.x;
+	this->z += m.m[1][2] * vec.y;
 	this->z += m.m[2][2] * vec.z;
 
 	return *this;
