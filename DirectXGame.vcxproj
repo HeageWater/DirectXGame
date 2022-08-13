@@ -99,11 +99,13 @@
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerbullet.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="Syodome.cpp" />
     <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +129,7 @@
     <ClInclude Include="base\SafeDelete.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\MathUtility.h" />
     <ClInclude Include="math\Matrix4.h" />
@@ -135,6 +138,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="playerbullet.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="Syodome.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>

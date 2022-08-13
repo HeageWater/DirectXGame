@@ -46,6 +46,9 @@ GameScene::~GameScene() {
 	delete sprite_;
 	delete debugcamera;
 	delete player;
+	delete enemy;
+	delete syodome;
+	delete modelSkydome;
 }
 
 //rayの当たり判定
@@ -89,6 +92,10 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 
 	textureHandle_ = TextureManager::Load("cube//cube.jpg");
+	textureHandle2_ = TextureManager::Load("mario.jpg");
+	textureHandle3_ = TextureManager::Load("skydome//Fine_Basin.jpg");
+
+	modelSkydome = Model::CreateFromOBJ("skydome", true);
 
 	debugcamera = new DebugCamera(1280, 720);
 	model_ = Model::Create();
@@ -97,6 +104,14 @@ void GameScene::Initialize() {
 	player = new Player();
 
 	player->Initialize(model_, textureHandle_);
+
+	enemy = new Enemy();
+
+	enemy->Initialize(model_, textureHandle2_);
+
+	syodome = new Syodome();
+
+	syodome->Initialize(modelSkydome, textureHandle3_);
 
 	//初期化
 	worldTransform_.Initialize();
@@ -113,6 +128,10 @@ void GameScene::Update() {
 	debugcamera->Update();
 
 	player->Update();
+
+	enemy->Update();
+
+	syodome->Update();
 
 	//行列の再計算
 	UpdateMatrix(worldTransform_);
@@ -145,9 +164,9 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	
-	player->Draw(viewProjection_);
-
+	syodome->Draw(debugcamera->GetViewProjection());
+	player->Draw(debugcamera->GetViewProjection());
+	enemy->Draw(debugcamera->GetViewProjection());
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
