@@ -79,6 +79,8 @@ class GameScene {
 
 	WorldTransform worldTransform_;
 
+	WorldTransform filed;
+
 	ViewProjection viewProjection_;
 
 	//テクスチャハンドル
@@ -100,7 +102,7 @@ class GameScene {
 	//std::list<std::unique_ptr<Enemy>> enemy;
 
 	Player* player = nullptr;
-	Enemy* enemy = nullptr;
+	//Enemy* enemy = nullptr;
 	Syodome* syodome = nullptr;
 
 	Model* modelSkydome = nullptr;

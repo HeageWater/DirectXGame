@@ -46,7 +46,7 @@ GameScene::~GameScene() {
 	delete sprite_;
 	delete debugcamera;
 	delete player;
-	delete enemy;
+	//delete enemy;
 	delete syodome;
 	delete modelSkydome;
 }
@@ -105,9 +105,11 @@ void GameScene::Initialize() {
 
 	player->Initialize(model_, textureHandle_);
 
-	enemy = new Enemy();
+	// enemy = new Enemy();
 
-	enemy->Initialize(model_, textureHandle2_);
+	// enemy->Initialize(model_, textureHandle2_);
+
+	// enemy->SetPlayer(player);
 
 	syodome = new Syodome();
 
@@ -121,6 +123,12 @@ void GameScene::Initialize() {
 	worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+
+	filed.Initialize();
+
+	filed.scale_ = {100, 30, 100};
+	filed.rotation_ = {0, 0, 0};
+	filed.translation_ = {0, -50, 0};
 }
 
 void GameScene::Update() { 
@@ -129,7 +137,7 @@ void GameScene::Update() {
 
 	player->Update();
 
-	enemy->Update();
+	//enemy->Update();
 
 	syodome->Update();
 
@@ -164,9 +172,10 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	syodome->Draw(debugcamera->GetViewProjection());
+	//syodome->Draw(debugcamera->GetViewProjection());
 	player->Draw(debugcamera->GetViewProjection());
-	enemy->Draw(debugcamera->GetViewProjection());
+	//enemy->Draw(debugcamera->GetViewProjection());
+	model_->Draw(filed,viewProjection_,textureHandle_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理

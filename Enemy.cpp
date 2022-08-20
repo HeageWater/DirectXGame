@@ -1,5 +1,15 @@
 #include "Enemy.h"
 
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = EnemyW.translation_.x;
+	worldPos.y = EnemyW.translation_.y;
+	worldPos.z = EnemyW.translation_.z;
+
+	return worldPos;
+}
+
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 
@@ -59,4 +69,8 @@ void Enemy::UpdateMatrix() {
 	EnemyW.matWorld_ *= matTrans;      // ワールド行列に平行移動を反映
 
 	EnemyW.TransferMatrix();
+}
+
+void Enemy::Fire() {
+
 }

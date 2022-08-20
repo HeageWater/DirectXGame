@@ -9,6 +9,16 @@ float ReturnRadian(float n) {
 	return n;
 }
 
+Vector3 Player::GetWorldPosition() { 
+	Vector3 worldPos;
+
+	worldPos.x = playerW.translation_.x;
+	worldPos.y = playerW.translation_.y;
+	worldPos.z = playerW.translation_.z;
+
+	return worldPos;
+}
+
 //‰Šú‰»
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
@@ -104,7 +114,7 @@ void Player::Attack() {
 
 		//ƒxƒNƒgƒ‹‚Æs—ñ‚ÌŠ|‚¯Z
 		velocity = velocity.mat(velocity, playerW.matWorld_);
-	
+
 		//’e¶¬
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 		newBullet->Initialize(model, playerW.translation_, velocity);

@@ -14,6 +14,7 @@ class Player {
 	void Draw(ViewProjection viewProjection);
 	void Update();
 
+	Vector3 GetWorldPosition();
   private:
 
 	  void Trans();
