@@ -1,17 +1,51 @@
 ﻿#include "GameScene.h"
-#include "TextureManager.h"
-#include "PrimitiveDrawer.h"
 #include "MathUtility.h"
+#include "PrimitiveDrawer.h"
+#include "TextureManager.h"
 #include <cassert>
 
 #define PI = 3.1415;
 
 using namespace DirectX;
 
+void GameScene::CheckAllCollisions() {
+	Vector3 posA, posB;
+
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player->GetBullets();
+
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+
+	//自キャラと敵の弾
+#pragma region
+
+	posB = player->GetWorldPosition();
+
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		posA = enemy->GetWorldPosition();
+
+		if (
+		  (posA.x - posB.x) * (posA.x - posB.x) + (posA.y - posB.y) * (posA.y - posB.y) +
+		    (posA.z - posB.z) * (posA.z - posB.z) <=
+		  (3 + 1) * (3 + 1)) {
+			player->OnCollision();
+
+			bullet->OnCollision();
+		}
+	}
+
+#pragma endregion
+
+//#pragma region
+//#pragma endregion
+//
+//#pragma region
+//#pragma endregion
+}
+
 void UpdateMatrix(WorldTransform world) {
 
 	Matrix4 matScale, matRot, matTrans;
-	
+
 	// スケール、回転、平行移動行列の計算
 	matScale = MathUtility::Matrix4Identity();
 	matScale.m[0][0] = world.scale_.x;
@@ -24,7 +58,7 @@ void UpdateMatrix(WorldTransform world) {
 	matRot = MathUtility::Matrix4RotationZ(world.rotation_.z);
 	matRot *= MathUtility::Matrix4RotationX(world.rotation_.x);
 	matRot *= MathUtility::Matrix4RotationY(world.rotation_.y);
-	
+
 	//移動
 	matTrans = MathUtility::Matrix4Identity();
 	matTrans = MathUtility::Matrix4Translation(
@@ -32,9 +66,9 @@ void UpdateMatrix(WorldTransform world) {
 
 	// ワールド行列の合成
 	world.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
-	world.matWorld_ *= matScale;          // ワールド行列にスケーリングを反映
-	world.matWorld_ *= matRot;            // ワールド行列に回転を反映
-	world.matWorld_ *= matTrans;          // ワールド行列に平行移動を反映
+	world.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
+	world.matWorld_ *= matRot;   // ワールド行列に回転を反映
+	world.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
 
 	world.TransferMatrix();
 }
@@ -46,12 +80,12 @@ GameScene::~GameScene() {
 	delete sprite_;
 	delete debugcamera;
 	delete player;
-	//delete enemy;
+	delete enemy;
 	delete syodome;
 	delete modelSkydome;
 }
 
-//rayの当たり判定
+// rayの当たり判定
 bool GameScene::dires(Ray ray, Sphere sphere) {
 
 	Vector3 tempV = sphere.position - ray.position;
@@ -94,6 +128,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("cube//cube.jpg");
 	textureHandle2_ = TextureManager::Load("mario.jpg");
 	textureHandle3_ = TextureManager::Load("skydome//Fine_Basin.jpg");
+	textureHandle4_ = TextureManager::Load("white.png");
 
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
 
@@ -105,11 +140,11 @@ void GameScene::Initialize() {
 
 	player->Initialize(model_, textureHandle_);
 
-	// enemy = new Enemy();
+	enemy = new Enemy();
 
-	// enemy->Initialize(model_, textureHandle2_);
+	enemy->Initialize(model_, textureHandle2_);
 
-	// enemy->SetPlayer(player);
+	enemy->SetPlayer(player);
 
 	syodome = new Syodome();
 
@@ -120,29 +155,51 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	//移動する物体
-	worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
-	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
-	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	// worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
+	// worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
+	// worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+
+	// viewProjection_.target = {};
+	viewProjection_.up = {0.0f, 0.1f, 0.0f};
+	// viewProjection_.eye = {};
 
 	filed.Initialize();
 
-	filed.scale_ = {100, 30, 100};
-	filed.rotation_ = {0, 0, 0};
-	filed.translation_ = {0, -50, 0};
+	filed.scale_ = {50.0f, 1.0f, 50.0f};
+	filed.rotation_ = {0.0f, 0.0f, 0.0f};
+	filed.translation_ = {0.0f, -20.f, 0.0f};
+
+	//敵に自キャラのアドレス渡し
+	enemy->SetPlayer(player);
+
+	UpdateMatrix(filed);
 }
 
-void GameScene::Update() { 
+void GameScene::Update() {
 
 	debugcamera->Update();
 
 	player->Update();
 
-	//enemy->Update();
+	enemy->Update();
 
 	syodome->Update();
 
+	CheckAllCollisions();
+
 	//行列の再計算
-	UpdateMatrix(worldTransform_);
+	// UpdateMatrix(worldTransform_);
+
+	/*const float kUpspeed = 0.05f;
+
+	if (input_->PushKey(DIK_SPACE)) {
+	    viewAngle += kUpspeed;
+	    viewAngle = fmodf(viewAngle, XM_PI);
+	}*/
+
+	viewProjection_.eye = {0.0f, 35.0f, -100.0f};
+
+	viewProjection_.target = {0.0f, -25.0f, 0.0f};
 
 	viewProjection_.UpdateMatrix();
 }
@@ -172,10 +229,15 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	//syodome->Draw(debugcamera->GetViewProjection());
-	player->Draw(debugcamera->GetViewProjection());
-	//enemy->Draw(debugcamera->GetViewProjection());
-	model_->Draw(filed,viewProjection_,textureHandle_);
+	//// syodome->Draw(debugcamera->GetViewProjection());
+	// player->Draw(debugcamera->GetViewProjection());
+	// enemy->Draw(debugcamera->GetViewProjection());
+	// model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);
+
+	// syodome->Draw(viewProjection_);
+	player->Draw(viewProjection_);
+	enemy->Draw(viewProjection_);
+	model_->Draw(filed, viewProjection_, textureHandle4_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
@@ -188,22 +250,20 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
-	
+
 	////でバック
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
-	  "scale:(%f,%f,%f)", worldTransform_.scale_.x, worldTransform_.scale_.y,
-	  worldTransform_.scale_.z);
+	  "viewProjection_:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y,
+	  viewProjection_.up.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(
-	  "rotation:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y,
-	  worldTransform_.rotation_.z);
+	  "rotation:(%f,%f,%f)", filed.rotation_.x, filed.rotation_.y, filed.rotation_.z);
 
 	debugText_->SetPos(50, 130);
 	debugText_->Printf(
-	  "trans:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	  worldTransform_.translation_.z);
+	  "trans:(%f,%f,%f)", filed.translation_.x, filed.translation_.y, filed.translation_.z);
 	/// </summary>
 
 	// デバッグテキストの描画

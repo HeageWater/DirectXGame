@@ -45,6 +45,6 @@ struct WorldTransform {
 	/// <summary>
 	/// 行列を更新する
 	/// </summary>
-	//void UpdateMatrix();
+	void UpdateMatrix();
 	void TransferMatrix();
 };

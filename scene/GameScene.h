@@ -61,6 +61,11 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 衝突判定と応答
+	/// </summary>
+	void CheckAllCollisions();
+
 	bool dires(Ray ray, Sphere sphere);
 
   private: // メンバ変数
@@ -87,6 +92,7 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	uint32_t textureHandle2_ = 0;
 	uint32_t textureHandle3_ = 0;
+	uint32_t textureHandle4_ = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
@@ -102,10 +108,13 @@ class GameScene {
 	//std::list<std::unique_ptr<Enemy>> enemy;
 
 	Player* player = nullptr;
-	//Enemy* enemy = nullptr;
+	Enemy* enemy = nullptr;
 	Syodome* syodome = nullptr;
 
 	Model* modelSkydome = nullptr;
+
+	float viewAngle = 0.0f;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

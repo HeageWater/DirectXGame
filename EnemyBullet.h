@@ -1,11 +1,11 @@
 #pragma once
+#include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
 #include "WorldTransform.h"
-#include "DebugText.h"
 #include <cassert>
 
-class PlayerBullet {
+class EnemyBullet {
   public:
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity_);
 
@@ -16,7 +16,7 @@ class PlayerBullet {
 	//“–‚½‚è”»’è
 	void OnCollision();
 
-  //private:
+	// private:
 	WorldTransform bulletW;
 	Model* model;
 	uint32_t textureHandle = 0u;

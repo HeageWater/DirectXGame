@@ -31,6 +31,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	debugText = DebugText::GetInstance();
 
 	playerW.Initialize();
+
+	playerW.translation_ = {0,0,-10};
+	playerW.scale_ = {3.0f,3.0f,3.0f};
 }
 
 //•`‰æ
@@ -68,11 +71,18 @@ void Player::Update() {
 		move.x = -speed;
 	}
 
-	//‰ñ“]
+	// zŽ²ˆÚ“®
 	if (input->PushKey(DIK_E)) {
+		move.z = speed;
+	} else if (input->PushKey(DIK_Q)) {
+		move.z = -speed;
+	}
+
+	//‰ñ“]
+	if (input->PushKey(DIK_R)) {
 		playerW.rotation_.y += 0.05f;
 	}
-	if (input->PushKey(DIK_Q)) {
+	if (input->PushKey(DIK_T)) {
 		playerW.rotation_.y -= 0.05f;
 	}
 
@@ -84,8 +94,8 @@ void Player::Update() {
 	}
 
 	//ˆÚ“®ŒÀŠE
-	const float kMoveLimitX = 32;
-	const float kMoveLimitY = 18;
+	const float kMoveLimitX = 48;
+	const float kMoveLimitY = 32;
 
 	playerW.translation_.x += move.x;
 	playerW.translation_.y += move.y;

@@ -1,6 +1,6 @@
-#include "playerbullet.h"
+#include "EnemyBullet.h"
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity_) {
+void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity_) {
 
 	// NULLポインタチェック
 	assert(model);
@@ -21,7 +21,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	velocity = velocity_;
 }
 
-void PlayerBullet::Update() {
+void EnemyBullet::Update() {
 
 	bulletW.translation_ += velocity;
 
@@ -102,9 +102,9 @@ void PlayerBullet::Update() {
 }
 
 //弾描画
-void PlayerBullet::Draw(const ViewProjection& viewProjection) {
+void EnemyBullet::Draw(const ViewProjection& viewProjection) {
 	model->Draw(bulletW, viewProjection, textureHandle);
 }
 
 //当たり判定
-void PlayerBullet::OnCollision() { isDead_ = true; }
+void EnemyBullet::OnCollision() { isDead_ = true; }

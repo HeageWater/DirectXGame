@@ -1,12 +1,16 @@
 #pragma once
+#include "EnemyBullet.h"
 #include "Model.h"
 #include "WorldTransform.h"
 #include <cassert>
 #include <list>
 #include <memory>
 
-enum class Phase {
-
+enum class Phase { 
+	Move,
+	Attack,
+	Stay, 
+	Jump,
 };
 
 class Player;
@@ -17,11 +21,25 @@ class Enemy {
 	void Draw(ViewProjection viewProjection);
 	void Update();
 
-	void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldPosition();
 
-  private:
+	//“–‚½‚è”»’è
+	void OnCollision();
+
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets; }
+
+	//”­ŽËŠÔŠu
+	static const int Kfire = 60;
+
 	Player* player_ = nullptr;
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+  private:
+	int32_t Ktimer = 60;
+
+	Phase phase_ = Phase::Stay;
+
 
 	Model* model = nullptr;
 
@@ -32,4 +50,6 @@ class Enemy {
 	void UpdateMatrix();
 
 	void Fire();
+
+	std::list<std::unique_ptr<EnemyBullet>> bullets;
 };

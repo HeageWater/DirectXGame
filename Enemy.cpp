@@ -19,21 +19,45 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	EnemyW.Initialize();
 
-	EnemyW.translation_ = {0,5,50};
+	EnemyW.translation_ = {0, 5, 10};
+	EnemyW.scale_ = {2.0f, 2.0f, 2.0};
 }
 
 void Enemy::Draw(ViewProjection viewProjection) {
 	model->Draw(EnemyW, viewProjection, textureHandle);
+
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+		bullet->Draw(viewProjection);
+	}
 }
 
 void Enemy::Update() {
+
+	Ktimer--;
+
+	if (Ktimer < 0) {
+		Fire();
+		Ktimer = Kfire;
+	}
+
 	//スピード
 	const float speed = 0.3f;
 
 	//最終的にransに足す値
 	Vector3 move = {0, 0, -speed};
 
-	EnemyW.translation_ += move;
+	switch (phase_) {
+
+	case Phase::Stay:
+		break;
+	default:
+		EnemyW.translation_ += move;
+		break;
+	}
+
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+		bullet->Update();
+	}
 
 	//上全部
 	UpdateMatrix();
@@ -64,13 +88,33 @@ void Enemy::UpdateMatrix() {
 
 	// ワールド行列の合成
 	EnemyW.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
-	EnemyW.matWorld_ *= matScale;  // ワールド行列にスケーリングを反映
+	EnemyW.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
 	EnemyW.matWorld_ *= matRot;   // ワールド行列に回転を反映
-	EnemyW.matWorld_ *= matTrans;      // ワールド行列に平行移動を反映
+	EnemyW.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
 
 	EnemyW.TransferMatrix();
 }
 
 void Enemy::Fire() {
+	assert(player_);
 
+	//弾速
+	const float kBulletSpeed = -1.0f;
+
+	//Vector3 E = GetWorldPosition();
+	//Vector3 P = GetWorldPosition();
+
+
+	Vector3 velocity(0, 0, kBulletSpeed);
+
+
+	//ベクトルと行列の掛け算
+	velocity = velocity.mat(velocity, EnemyW.matWorld_);
+
+	//弾生成
+	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+	newBullet->Initialize(model, EnemyW.translation_, velocity);
+
+	//弾登録
+	bullets.push_back(std::move(newBullet));
 }
