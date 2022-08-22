@@ -34,4 +34,6 @@ class EnemyBullet {
 	bool isDead_ = false;
 
 	bool IsDead() const { return isDead_; }
+
+	Vector3 GetWorldPosition();
 };

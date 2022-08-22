@@ -242,6 +242,10 @@ void Player::UpdateMatrix() {
 	playerW.TransferMatrix();
 }
 
+void Player::OnCollision() {
+
+}
+
 //à–¾
 // void moveee() {
 //	////Z²‚Ì‰ñ“]

@@ -18,15 +18,22 @@ void GameScene::CheckAllCollisions() {
 	//自キャラと敵の弾
 #pragma region
 
-	posB = player->GetWorldPosition();
+	posA = player->GetWorldPosition();
 
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-		posA = enemy->GetWorldPosition();
+		posB = enemy->GetWorldPosition();
 
-		if (
-		  (posA.x - posB.x) * (posA.x - posB.x) + (posA.y - posB.y) * (posA.y - posB.y) +
-		    (posA.z - posB.z) * (posA.z - posB.z) <=
-		  (3 + 1) * (3 + 1)) {
+		Vector3 anser;
+
+		float R1 = player->playerW.scale_.x;
+		float R2 = enemy->EnemyW.scale_.x;
+
+		anser.x = (posB.x - posA.x) * (posB.x - posA.x);
+		anser.y = (posB.y - posA.y) * (posB.y - posA.y);
+		anser.z = (posB.z - posA.z) * (posB.z - posA.z);
+
+		if (anser.x + anser.y +anser.z <=  (R1 + R2) * (R1 + R2)) {
+
 			player->OnCollision();
 
 			bullet->OnCollision();
@@ -229,12 +236,12 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	//// syodome->Draw(debugcamera->GetViewProjection());
-	// player->Draw(debugcamera->GetViewProjection());
-	// enemy->Draw(debugcamera->GetViewProjection());
-	// model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);
+	/* syodome->Draw(debugcamera->GetViewProjection());
+	 player->Draw(debugcamera->GetViewProjection());
+	 enemy->Draw(debugcamera->GetViewProjection());
+	 model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
 
-	// syodome->Draw(viewProjection_);
+	syodome->Draw(viewProjection_);
 	player->Draw(viewProjection_);
 	enemy->Draw(viewProjection_);
 	model_->Draw(filed, viewProjection_, textureHandle4_);

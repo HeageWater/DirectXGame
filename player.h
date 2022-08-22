@@ -21,6 +21,8 @@ class Player {
 
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets; }
 
+	WorldTransform playerW;
+
   private:
 	void Trans();
 	void Rota();
@@ -35,8 +37,6 @@ class Player {
 	Input* input = nullptr;
 
 	DebugText* debugText = nullptr;
-
-	WorldTransform playerW;
 
 	uint32_t textureHandle = 0u;
 

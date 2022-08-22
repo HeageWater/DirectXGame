@@ -99,7 +99,7 @@ void Enemy::Fire() {
 	assert(player_);
 
 	//’e‘¬
-	const float kBulletSpeed = -1.0f;
+	const float kBulletSpeed = -0.01f;
 
 	//Vector3 E = GetWorldPosition();
 	//Vector3 P = GetWorldPosition();
@@ -117,4 +117,8 @@ void Enemy::Fire() {
 
 	//’e“o˜^
 	bullets.push_back(std::move(newBullet));
+}
+
+void Enemy::OnCollision() {
+
 }

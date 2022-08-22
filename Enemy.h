@@ -29,27 +29,26 @@ class Enemy {
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets; }
 
 	//”­ŽËŠÔŠu
-	static const int Kfire = 60;
+	static const int Kfire = 120;
 
 	Player* player_ = nullptr;
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	WorldTransform EnemyW;
+
+	std::list<std::unique_ptr<EnemyBullet>> bullets;
+
   private:
-	int32_t Ktimer = 60;
+	int32_t Ktimer =10;
 
 	Phase phase_ = Phase::Stay;
 
-
 	Model* model = nullptr;
-
-	WorldTransform EnemyW;
 
 	uint32_t textureHandle = 0u;
 
 	void UpdateMatrix();
 
 	void Fire();
-
-	std::list<std::unique_ptr<EnemyBullet>> bullets;
 };
