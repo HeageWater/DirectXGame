@@ -188,7 +188,7 @@ void GameScene::Update() {
 
 	player->Update();
 
-	enemy->Update();
+	//enemy->Update();
 
 	syodome->Update();
 
@@ -243,7 +243,7 @@ void GameScene::Draw() {
 
 	syodome->Draw(viewProjection_);
 	player->Draw(viewProjection_);
-	enemy->Draw(viewProjection_);
+	//enemy->Draw(viewProjection_);
 	model_->Draw(filed, viewProjection_, textureHandle4_);
 	/// </summary>
 

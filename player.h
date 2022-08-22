@@ -28,9 +28,23 @@ class Player {
 	void Rota();
 	void Scale();
 
+	void Jump();
+
 	void Attack();
 
+	void Dush();
+
 	void UpdateMatrix();
+
+	float Gravity = 0;
+	float MaxGravity = 1.0f;
+
+	float jump = 0;
+	float Maxjump = 2;
+
+	bool dush_flg = false;
+	int dushcount = 0;
+
 
 	Model* model = nullptr;
 

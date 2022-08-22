@@ -9,7 +9,7 @@ float ReturnRadian(float n) {
 	return n;
 }
 
-Vector3 Player::GetWorldPosition() { 
+Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos;
 
 	worldPos.x = playerW.translation_.x;
@@ -32,8 +32,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	playerW.Initialize();
 
-	playerW.translation_ = {0,0,-10};
-	playerW.scale_ = {3.0f,3.0f,3.0f};
+	playerW.translation_ = {0, 0, -10};
+	playerW.scale_ = {3.0f, 3.0f, 3.0f};
 }
 
 //•`‰æ
@@ -58,9 +58,9 @@ void Player::Update() {
 	Vector3 move = {0, 0, 0};
 
 	// yŽ²ˆÚ“®
-	if (input->PushKey(DIK_W)) {
+	if (input->PushKey(DIK_E)) {
 		move.y = speed;
-	} else if (input->PushKey(DIK_S)) {
+	} else if (input->PushKey(DIK_Q)) {
 		move.y = -speed;
 	}
 
@@ -72,9 +72,9 @@ void Player::Update() {
 	}
 
 	// zŽ²ˆÚ“®
-	if (input->PushKey(DIK_E)) {
+	if (input->PushKey(DIK_W)) {
 		move.z = speed;
-	} else if (input->PushKey(DIK_Q)) {
+	} else if (input->PushKey(DIK_S)) {
 		move.z = -speed;
 	}
 
@@ -86,8 +86,24 @@ void Player::Update() {
 		playerW.rotation_.y -= 0.05f;
 	}
 
+	if (Gravity < MaxGravity) {
+		Gravity += 0.02f;
+	}
+
 	//UŒ‚
 	Attack();
+
+	Jump();
+
+	Dush();
+
+	if (jump > 0) {
+		playerW.translation_.y += jump;
+
+		jump -= 0.1f;
+	} else {
+		playerW.translation_.y -= Gravity;
+	}
 
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Update();
@@ -95,7 +111,9 @@ void Player::Update() {
 
 	//ˆÚ“®ŒÀŠE
 	const float kMoveLimitX = 48;
-	const float kMoveLimitY = 32;
+	const float kMoveLimitY = 14;
+
+	move = move.mat(move, playerW.matWorld_);
 
 	playerW.translation_.x += move.x;
 	playerW.translation_.y += move.y;
@@ -242,8 +260,39 @@ void Player::UpdateMatrix() {
 	playerW.TransferMatrix();
 }
 
-void Player::OnCollision() {
+void Player::OnCollision() {}
 
+void Player::Jump() {
+	if (input->TriggerKey(DIK_J)) {
+		Gravity = 0;
+
+		jump = Maxjump;
+	}
+}
+
+void Player::Dush() {
+	if (input->TriggerKey(DIK_K)) {
+		if (dush_flg != true) {
+			dush_flg = true;
+			dushcount = 10;
+		}
+	}
+
+	if (dush_flg == true) {
+
+		Vector3 move = {0.0f, 0.0f, 1.0f};
+		move = move.mat(move, playerW.matWorld_);
+
+		playerW.translation_.x += move.x;
+		playerW.translation_.y += move.y;
+		playerW.translation_.z += move.z;
+
+		dushcount--;
+	}
+
+	if (dushcount < 0) {
+		dush_flg = false;
+	}
 }
 
 //à–¾
