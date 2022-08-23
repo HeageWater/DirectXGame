@@ -51,4 +51,6 @@ class Enemy {
 	void UpdateMatrix();
 
 	void Fire();
+
+	bool isDead_ = false;
 };

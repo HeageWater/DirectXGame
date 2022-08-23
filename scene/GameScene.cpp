@@ -22,7 +22,7 @@ void GameScene::CheckAllCollisions() {
 
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
 		posB = enemy->GetWorldPosition();
-	//	EnemyBullet::bulletW
+		//	EnemyBullet::bulletW
 		Vector3 anser;
 
 		float R1 = player->playerW.scale_.x;
@@ -32,7 +32,7 @@ void GameScene::CheckAllCollisions() {
 		anser.y = (posB.y - posA.y) * (posB.y - posA.y);
 		anser.z = (posB.z - posA.z) * (posB.z - posA.z);
 
-		if (anser.x + anser.y +anser.z <=  (R1 + R2) * (R1 + R2)) {
+		if (anser.x + anser.y + anser.z <= (R1 + R2) * (R1 + R2)) {
 
 			player->OnCollision();
 
@@ -42,11 +42,30 @@ void GameScene::CheckAllCollisions() {
 
 #pragma endregion
 
-//#pragma region
-//#pragma endregion
-//
-//#pragma region
-//#pragma endregion
+#pragma region
+	posA = player->GetWorldPosition();
+
+	posB = enemy->GetWorldPosition();
+	Vector3 anser;
+
+	float R1 = player->playerW.scale_.x;
+	float R2 = enemy->EnemyW.scale_.x;
+
+	anser.x = (posB.x - posA.x) * (posB.x - posA.x);
+	anser.y = (posB.y - posA.y) * (posB.y - posA.y);
+	anser.z = (posB.z - posA.z) * (posB.z - posA.z);
+
+	if (anser.x + anser.y + anser.z <= (R1 + R2) * (R1 + R2)) {
+
+		player->OnCollision();
+
+		enemy->OnCollision();
+	}
+
+#pragma endregion
+
+	//#pragma region
+	//#pragma endregion
 }
 
 void UpdateMatrix(WorldTransform world) {
@@ -188,7 +207,7 @@ void GameScene::Update() {
 
 	player->Update();
 
-	//enemy->Update();
+	enemy->Update();
 
 	syodome->Update();
 
@@ -236,15 +255,15 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	/* syodome->Draw(debugcamera->GetViewProjection());
+	 syodome->Draw(debugcamera->GetViewProjection());
 	 player->Draw(debugcamera->GetViewProjection());
 	 enemy->Draw(debugcamera->GetViewProjection());
-	 model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
+	 model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);
 
-	syodome->Draw(viewProjection_);
+	/*syodome->Draw(viewProjection_);
 	player->Draw(viewProjection_);
-	//enemy->Draw(viewProjection_);
-	model_->Draw(filed, viewProjection_, textureHandle4_);
+	enemy->Draw(viewProjection_);
+	model_->Draw(filed, viewProjection_, textureHandle4_);*/
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理

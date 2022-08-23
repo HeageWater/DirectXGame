@@ -24,43 +24,48 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Enemy::Draw(ViewProjection viewProjection) {
-	model->Draw(EnemyW, viewProjection, textureHandle);
+	if (isDead_ != true) {
+		model->Draw(EnemyW, viewProjection, textureHandle);
 
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
-		bullet->Draw(viewProjection);
+		for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+			bullet->Draw(viewProjection);
+		}
 	}
 }
 
 void Enemy::Update() {
 
-	Ktimer--;
+	if (isDead_ != true) {
 
-	if (Ktimer < 0) {
-		Fire();
-		Ktimer = Kfire;
+		Ktimer--;
+
+		if (Ktimer < 0) {
+			Fire();
+			Ktimer = Kfire;
+		}
+
+		//スピード
+		const float speed = 0.3f;
+
+		//最終的にransに足す値
+		Vector3 move = {0, 0, -speed};
+
+		switch (phase_) {
+
+		case Phase::Stay:
+			break;
+		default:
+			EnemyW.translation_ += move;
+			break;
+		}
+
+		for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+			bullet->Update();
+		}
+
+		//上全部
+		UpdateMatrix();
 	}
-
-	//スピード
-	const float speed = 0.3f;
-
-	//最終的にransに足す値
-	Vector3 move = {0, 0, -speed};
-
-	switch (phase_) {
-
-	case Phase::Stay:
-		break;
-	default:
-		EnemyW.translation_ += move;
-		break;
-	}
-
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
-		bullet->Update();
-	}
-
-	//上全部
-	UpdateMatrix();
 }
 
 //拡縮平行回転全部
@@ -119,6 +124,4 @@ void Enemy::Fire() {
 	bullets.push_back(std::move(newBullet));
 }
 
-void Enemy::OnCollision() {
-
-}
+void Enemy::OnCollision() {  isDead_ = true; }
