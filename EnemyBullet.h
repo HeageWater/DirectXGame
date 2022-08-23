@@ -16,6 +16,8 @@ class EnemyBullet {
 	//“–‚½‚è”»’è
 	void OnCollision();
 
+	Vector3 GetWorldPosition();
+
 	// private:
 	WorldTransform bulletW;
 	Model* model;
@@ -34,6 +36,4 @@ class EnemyBullet {
 	bool isDead_ = false;
 
 	bool IsDead() const { return isDead_; }
-
-	Vector3 GetWorldPosition();
 };

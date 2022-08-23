@@ -22,7 +22,7 @@ void GameScene::CheckAllCollisions() {
 
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
 		posB = enemy->GetWorldPosition();
-
+	//	EnemyBullet::bulletW
 		Vector3 anser;
 
 		float R1 = player->playerW.scale_.x;
