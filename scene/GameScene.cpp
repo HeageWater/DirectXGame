@@ -22,7 +22,8 @@ void GameScene::CheckAllCollisions() {
 
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
 		posB = enemy->GetWorldPosition();
-		//	EnemyBullet::bulletW
+
+
 		Vector3 anser;
 
 		float R1 = player->playerW.scale_.x;
@@ -42,6 +43,7 @@ void GameScene::CheckAllCollisions() {
 
 #pragma endregion
 
+	//自キャラと敵キャラ
 #pragma region
 	posA = player->GetWorldPosition();
 
@@ -223,6 +225,8 @@ void GameScene::Update() {
 	    viewAngle = fmodf(viewAngle, XM_PI);
 	}*/
 
+
+
 	viewProjection_.eye = {0.0f, 35.0f, -100.0f};
 
 	viewProjection_.target = {0.0f, -25.0f, 0.0f};
@@ -255,15 +259,15 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	 syodome->Draw(debugcamera->GetViewProjection());
+	/* syodome->Draw(debugcamera->GetViewProjection());
 	 player->Draw(debugcamera->GetViewProjection());
 	 enemy->Draw(debugcamera->GetViewProjection());
-	 model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);
+	 model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
 
-	/*syodome->Draw(viewProjection_);
+	syodome->Draw(viewProjection_);
 	player->Draw(viewProjection_);
 	enemy->Draw(viewProjection_);
-	model_->Draw(filed, viewProjection_, textureHandle4_);*/
+	model_->Draw(filed, viewProjection_, textureHandle4_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理

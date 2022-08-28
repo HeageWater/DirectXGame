@@ -57,14 +57,23 @@ void Player::Update() {
 	//最終的にransに足す値
 	Vector3 move = {0, 0, 0};
 
-	// y軸移動
+	//コントローラー移動処理
+	//コントローラー未接続なら抜ける
+	 if(!Input::GetInstance()->GetJoystickState(0, joyState)){
+		return;
+	 } else if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		 move.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
+		 move.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
+	 }
+
+	 // y軸移動
 	if (input->PushKey(DIK_E)) {
 		move.y = speed;
 	} else if (input->PushKey(DIK_Q)) {
 		move.y = -speed;
 	}
 
-	// x軸移動
+	 // x軸移動
 	if (input->PushKey(DIK_D)) {
 		move.x = speed;
 	} else if (input->PushKey(DIK_A)) {
@@ -260,18 +269,34 @@ void Player::UpdateMatrix() {
 	playerW.TransferMatrix();
 }
 
+//当たった時の処理
 void Player::OnCollision() {}
 
+//ジャンプ
 void Player::Jump() {
 	if (input->TriggerKey(DIK_J)) {
 		Gravity = 0;
 
 		jump = Maxjump;
 	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+		Gravity = 0;
+
+		jump = Maxjump;
+	}
 }
 
+//ダッシュ
 void Player::Dush() {
-	if (input->TriggerKey(DIK_K)) {
+	if (input->PushKey(DIK_K)) {
+		if (dush_flg != true) {
+			dush_flg = true;
+			dushcount = 10;
+		}
+	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
 		if (dush_flg != true) {
 			dush_flg = true;
 			dushcount = 10;
@@ -409,4 +434,9 @@ void Player::Dush() {
 //	////worldTransform_.matWorld_.Reset();
 //	// worldTransform_.matWorld_ *= matTrans;
 //	// worldTransform_.TransferMatrix();
+//}
+
+//コントローラー未接続なら抜ける
+// if(!Input::GetInstance()->GetJoystickState(0, joyState){
+// return;
 //}

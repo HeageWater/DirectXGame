@@ -106,12 +106,10 @@ void Enemy::Fire() {
 	//íeë¨
 	const float kBulletSpeed = -0.01f;
 
-	//Vector3 E = GetWorldPosition();
-	//Vector3 P = GetWorldPosition();
-
+	// Vector3 E = GetWorldPosition();
+	// Vector3 P = GetWorldPosition();
 
 	Vector3 velocity(0, 0, kBulletSpeed);
-
 
 	//ÉxÉNÉgÉãÇ∆çsóÒÇÃä|ÇØéZ
 	velocity = velocity.mat(velocity, EnemyW.matWorld_);
@@ -124,4 +122,4 @@ void Enemy::Fire() {
 	bullets.push_back(std::move(newBullet));
 }
 
-void Enemy::OnCollision() {  isDead_ = true; }
+void Enemy::OnCollision() { isDead_ = true; }

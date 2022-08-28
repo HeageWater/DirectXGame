@@ -23,6 +23,8 @@ class Player {
 
 	WorldTransform playerW;
 
+	XINPUT_STATE joyState;
+
   private:
 	void Trans();
 	void Rota();
