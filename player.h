@@ -25,6 +25,8 @@ class Player {
 
 	XINPUT_STATE joyState;
 
+	Vector3 GetBulletWorldPosition();
+
   private:
 	void Trans();
 	void Rota();

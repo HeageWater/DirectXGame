@@ -6,10 +6,10 @@
 #include <list>
 #include <memory>
 
-enum class Phase { 
+enum class Phase {
 	Move,
 	Attack,
-	Stay, 
+	Stay,
 	Jump,
 };
 
@@ -39,8 +39,29 @@ class Enemy {
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets;
 
+	void Jump();
+
+	void Attack();
+
+	void Dush();
+
   private:
-	int32_t Ktimer =10;
+
+	  //ˆÚ“®ŒÀŠE
+	const float kMoveLimitX = 48;
+	const float kMoveLimitZ = 48;
+	const float kMoveLimitY = 14;
+
+	float Gravity = 0;
+	float MaxGravity = 1.0f;
+
+	float jump = 0;
+	float Maxjump = 2;
+
+	bool dush_flg = false;
+	int dushcount = 0;
+
+	int32_t Ktimer = 10;
 
 	Phase phase_ = Phase::Stay;
 

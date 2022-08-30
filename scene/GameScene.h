@@ -88,11 +88,16 @@ class GameScene {
 
 	ViewProjection viewProjection_;
 
+	WorldTransform titleEW;
+
+	ViewProjection titleEV;
+
 	//テクスチャハンドル
-	uint32_t textureHandle_ = 0;
-	uint32_t textureHandle2_ = 0;
-	uint32_t textureHandle3_ = 0;
-	uint32_t textureHandle4_ = 0;
+	uint32_t Cube = 0;
+	uint32_t Mario = 0;
+	uint32_t Skydome = 0;
+	uint32_t Filed = 0;
+	uint32_t titleE = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
@@ -115,7 +120,8 @@ class GameScene {
 
 	float viewAngle = 0.0f;
 
-	float x = 1;
+	float x = 600;
+	float y = 5;
 
 	enum Phase {
 		Start,
@@ -124,6 +130,10 @@ class GameScene {
 	};
 
 	int NowPhase = Start;
+
+	bool PlayFlg = false;
+
+	uint32_t BGM;
 
 	/// <summary>
 	/// ゲームシーン用

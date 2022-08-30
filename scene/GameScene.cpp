@@ -60,13 +60,14 @@ void GameScene::CheckAllCollisions() {
 
 		player->OnCollision();
 
-		enemy->OnCollision();
+		//enemy->OnCollision();
 	}
 
 #pragma endregion
 
-	//#pragma region
-	//#pragma endregion
+#pragma region
+
+#pragma endregion
 }
 
 void UpdateMatrix(WorldTransform world) {
@@ -152,34 +153,45 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	textureHandle_ = TextureManager::Load("cube//cube.jpg");
-	textureHandle2_ = TextureManager::Load("mario.jpg");
-	textureHandle3_ = TextureManager::Load("skydome//Fine_Basin.jpg");
-	textureHandle4_ = TextureManager::Load("white.png");
+	Cube = TextureManager::Load("cube//cube.jpg");
+	Mario = TextureManager::Load("mario.jpg");
+	Skydome = TextureManager::Load("skydome//Fine_Basin.jpg");
+	Filed = TextureManager::Load("white.png");
+	titleE = TextureManager::Load("title.png");
 
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
 
+
+	BGM = audio_->LoadWave("ryoutou.wav");
+
 	debugcamera = new DebugCamera(1280, 720);
 	model_ = Model::Create();
-	sprite_ = Sprite::Create(textureHandle_, {100, 50});
+	sprite_ = Sprite::Create(Cube, {100, 50});
 
 	player = new Player();
 
-	player->Initialize(model_, textureHandle_);
+	player->Initialize(model_, Cube);
 
 	enemy = new Enemy();
 
-	enemy->Initialize(model_, textureHandle2_);
+	enemy->Initialize(model_, Mario);
 
 	enemy->SetPlayer(player);
 
 	syodome = new Syodome();
 
-	syodome->Initialize(modelSkydome, textureHandle3_);
+	syodome->Initialize(modelSkydome, Skydome);
 
 	//初期化
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
+
+	//タイトル画面
+	titleEW.Initialize();
+	titleEV.Initialize();
+
+	titleEW.scale_ = {128, 72, 0};
+	UpdateMatrix(titleEW);
 
 	//移動する物体
 	// worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
@@ -204,6 +216,12 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
+	titleEW.scale_ = {40, 20, 0};
+	titleEW.translation_ = {0, 0, 0};
+	UpdateMatrix(titleEW);
+
+	
+
 	switch (NowPhase) {
 	case Start:
 
@@ -213,18 +231,45 @@ void GameScene::Update() {
 
 		break;
 	case Play:
-		debugcamera->Update();
+		//BGM
+		if (audio_->IsPlaying(BGM) != true)
+			audio_->PlayWave(BGM, false, 0.1);
 
-		player->Update();
+		if (x < 740) {
+			x += 1;
+		} else if (y < 10) {
+			y += 0.1f;
+		} else {
+			PlayFlg = true;
+		}
 
-		enemy->Update();
+		if (input_->TriggerKey(DIK_RIGHT)) {
+			x++;
+		}
+		if (input_->TriggerKey(DIK_LEFT)) {
+			y--;
+		}
 
-		syodome->Update();
+		if (PlayFlg) {
 
-		CheckAllCollisions();
+			x += 0.01;
+			if (x > 935) {
+				x = 740;
+			}
 
-		if (input_->TriggerKey(DIK_P)) {
-			NowPhase = Menu;
+			debugcamera->Update();
+
+			player->Update();
+
+			enemy->Update();
+
+			syodome->Update();
+
+			CheckAllCollisions();
+
+			if (input_->TriggerKey(DIK_P)) {
+				NowPhase = Menu;
+			}
 		}
 
 		break;
@@ -247,15 +292,12 @@ void GameScene::Update() {
 	    viewAngle = fmodf(viewAngle, XM_PI);
 	}*/
 
-	if (input_->PushKey(DIK_SPACE)) {
-		x += 0.1;
-	}
-
 	viewProjection_.up = {0.0f, 0.1f, 0.0f};
 
-	viewProjection_.eye = {cosf(x / XM_PI) * 100, 70.0f, sinf(x / XM_PI) * 100};
+	viewProjection_.eye = {
+	  cosf((x / 10) / XM_PI) * (x / 10), 80.0f, sinf((x / 10) / XM_PI) * (x / 10) - y};
 
-	viewProjection_.target = {cosf(x / XM_PI), -25.0f, sinf(x / XM_PI)};
+	viewProjection_.target = {cosf((x / 10) / XM_PI), -25.0f, sinf((x / 10) / XM_PI)};
 
 	viewProjection_.UpdateMatrix();
 }
@@ -287,7 +329,8 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	switch (NowPhase) {
 	case Start:
-
+		model_->Draw(titleEW, titleEV, titleE);
+		//model_->Draw(titleEW, debugcamera->GetViewProjection(), titleE);
 		break;
 	case Play:
 		/*syodome->Draw(debugcamera->GetViewProjection());
@@ -296,15 +339,17 @@ void GameScene::Draw() {
 		model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
 
 		syodome->Draw(viewProjection_);
-		player->Draw(viewProjection_);
-		enemy->Draw(viewProjection_);
-		model_->Draw(filed, viewProjection_, textureHandle4_);
+		model_->Draw(filed, viewProjection_, Filed);
+		if (PlayFlg) {
+			player->Draw(viewProjection_);
+			enemy->Draw(viewProjection_);
+		}
 		break;
 	case Menu:
 		syodome->Draw(viewProjection_);
 		player->Draw(viewProjection_);
 		enemy->Draw(viewProjection_);
-		model_->Draw(filed, viewProjection_, textureHandle4_);
+		model_->Draw(filed, viewProjection_, Filed);
 		break;
 	default:
 		break;
@@ -323,20 +368,18 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 
-	////でバック
-	//debugText_->SetPos(50, 50);
-	//debugText_->Printf(
-	//  "viewProjection_:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y,
-	//  viewProjection_.up.z);
+	//でバック
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("viewProjection_:(%f,%f,%f)", x, viewProjection_.up.y, viewProjection_.up.z);
 
-	//debugText_->SetPos(50, 90);
-	//debugText_->Printf(
-	//  "rotation:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+	debugText_->SetPos(50, 90);
+	debugText_->Printf(
+	  "rotation:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
-	//debugText_->SetPos(50, 130);
-	//debugText_->Printf(
-	//  "trans:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
-	//  viewProjection_.target.z);
+	debugText_->SetPos(50, 130);
+	debugText_->Printf(
+	  "trans:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
+	  viewProjection_.target.z);
 	/// </summary>
 
 	// デバッグテキストの描画

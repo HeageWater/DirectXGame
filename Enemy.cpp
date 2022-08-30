@@ -19,7 +19,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	EnemyW.Initialize();
 
-	EnemyW.translation_ = {0, 5, 10};
+	EnemyW.translation_ = {0, 5, -10};
 	EnemyW.scale_ = {2.0f, 2.0f, 2.0};
 }
 
@@ -50,21 +50,54 @@ void Enemy::Update() {
 		//最終的にransに足す値
 		Vector3 move = {0, 0, -speed};
 
-		switch (phase_) {
-
-		case Phase::Stay:
-			break;
-		default:
-			EnemyW.translation_ += move;
-			break;
-		}
-
 		for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
 			bullet->Update();
 		}
 
-		//上全部
-		UpdateMatrix();
+		switch (phase_) {
+		case Phase::Move:
+
+			//重力
+			if (Gravity < MaxGravity) {
+				Gravity += 0.02f;
+			}
+
+			if (jump > 0) {
+				EnemyW.translation_.y += jump;
+
+				jump -= 0.1f;
+			} else {
+				EnemyW.translation_.y -= Gravity;
+			}
+
+			move = move.mat(move, EnemyW.matWorld_);
+
+			EnemyW.translation_.x += move.x;
+			EnemyW.translation_.y += move.y;
+			EnemyW.translation_.z += move.z;
+
+			//範囲を超えない処理
+			EnemyW.translation_.x = max(EnemyW.translation_.x, -kMoveLimitX);
+			EnemyW.translation_.x = min(EnemyW.translation_.x, +kMoveLimitX);
+			EnemyW.translation_.y = max(EnemyW.translation_.y, -kMoveLimitY);
+			EnemyW.translation_.y = min(EnemyW.translation_.y, +kMoveLimitY);
+			EnemyW.translation_.z = max(EnemyW.translation_.z, -kMoveLimitZ);
+			EnemyW.translation_.z = min(EnemyW.translation_.z, +kMoveLimitZ);
+			//上全部
+			UpdateMatrix();
+			break;
+		case Phase::Stay:
+
+			//上全部
+			UpdateMatrix();
+			break;
+		default:
+			EnemyW.translation_ += move;
+
+			//上全部
+			UpdateMatrix();
+			break;
+		}
 	}
 }
 
@@ -106,8 +139,9 @@ void Enemy::Fire() {
 	//弾速
 	const float kBulletSpeed = -0.01f;
 
-	// Vector3 E = GetWorldPosition();
-	// Vector3 P = GetWorldPosition();
+	Vector3 E = GetWorldPosition();
+
+	// Player* P = player_;
 
 	Vector3 velocity(0, 0, kBulletSpeed);
 
@@ -123,3 +157,34 @@ void Enemy::Fire() {
 }
 
 void Enemy::OnCollision() { isDead_ = true; }
+
+//ジャンプ
+void Enemy::Jump() {
+	Gravity = 0;
+
+	jump = Maxjump;
+}
+
+//ダッシュ
+void Enemy::Dush() {
+	if (dush_flg != true) {
+		dush_flg = true;
+		dushcount = 10;
+	}
+
+	if (dush_flg == true) {
+
+		Vector3 move = {0.0f, 0.0f, 1.0f};
+		move = move.mat(move, EnemyW.matWorld_);
+
+		EnemyW.translation_.x += move.x;
+		EnemyW.translation_.y += move.y;
+		EnemyW.translation_.z += move.z;
+
+		dushcount--;
+	}
+
+	if (dushcount < 0) {
+		dush_flg = false;
+	}
+}

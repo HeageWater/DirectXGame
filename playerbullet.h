@@ -16,7 +16,7 @@ class PlayerBullet {
 	//“–‚½‚è”»’è
 	void OnCollision();
 
-  //private:
+  public:
 	WorldTransform bulletW;
 	Model* model;
 	uint32_t textureHandle = 0u;

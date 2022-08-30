@@ -136,11 +136,12 @@ void Player::Update() {
 	playerW.translation_.y = min(playerW.translation_.y, +kMoveLimitY);
 	playerW.translation_.z = max(playerW.translation_.z, -kMoveLimitZ);
 	playerW.translation_.z = min(playerW.translation_.z, +kMoveLimitZ);
+
 	//è„ëSïî
 	UpdateMatrix();
 
-	debugText->SetPos(50, 70);
-	debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
+	//debugText->SetPos(50, 70);
+	//debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
 }
 
 //çUåÇ
@@ -321,6 +322,11 @@ void Player::Dush() {
 		dush_flg = false;
 	}
 }
+
+//Vector3 Player::GetBulletWorldPosition() { 
+//	Vector3 a;
+//
+//}
 
 //ê‡ñæ
 // void moveee() {
