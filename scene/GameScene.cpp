@@ -23,7 +23,6 @@ void GameScene::CheckAllCollisions() {
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
 		posB = enemy->GetWorldPosition();
 
-
 		Vector3 anser;
 
 		float R1 = player->playerW.scale_.x;
@@ -205,15 +204,38 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	debugcamera->Update();
+	switch (NowPhase) {
+	case Start:
 
-	player->Update();
+		if (input_->TriggerKey(DIK_SPACE)) {
+			NowPhase = Play;
+		}
 
-	enemy->Update();
+		break;
+	case Play:
+		debugcamera->Update();
 
-	syodome->Update();
+		player->Update();
 
-	CheckAllCollisions();
+		enemy->Update();
+
+		syodome->Update();
+
+		CheckAllCollisions();
+
+		if (input_->TriggerKey(DIK_P)) {
+			NowPhase = Menu;
+		}
+
+		break;
+	case Menu:
+		if (input_->TriggerKey(DIK_P)) {
+			NowPhase = Play;
+		}
+		break;
+	default:
+		break;
+	}
 
 	//行列の再計算
 	// UpdateMatrix(worldTransform_);
@@ -225,11 +247,15 @@ void GameScene::Update() {
 	    viewAngle = fmodf(viewAngle, XM_PI);
 	}*/
 
+	if (input_->PushKey(DIK_SPACE)) {
+		x += 0.1;
+	}
 
+	viewProjection_.up = {0.0f, 0.1f, 0.0f};
 
-	viewProjection_.eye = {0.0f, 35.0f, -100.0f};
+	viewProjection_.eye = {cosf(x / XM_PI) * 100, 70.0f, sinf(x / XM_PI) * 100};
 
-	viewProjection_.target = {0.0f, -25.0f, 0.0f};
+	viewProjection_.target = {cosf(x / XM_PI), -25.0f, sinf(x / XM_PI)};
 
 	viewProjection_.UpdateMatrix();
 }
@@ -259,15 +285,31 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	/* syodome->Draw(debugcamera->GetViewProjection());
-	 player->Draw(debugcamera->GetViewProjection());
-	 enemy->Draw(debugcamera->GetViewProjection());
-	 model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
+	switch (NowPhase) {
+	case Start:
 
-	syodome->Draw(viewProjection_);
-	player->Draw(viewProjection_);
-	enemy->Draw(viewProjection_);
-	model_->Draw(filed, viewProjection_, textureHandle4_);
+		break;
+	case Play:
+		/*syodome->Draw(debugcamera->GetViewProjection());
+		player->Draw(debugcamera->GetViewProjection());
+		enemy->Draw(debugcamera->GetViewProjection());
+		model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
+
+		syodome->Draw(viewProjection_);
+		player->Draw(viewProjection_);
+		enemy->Draw(viewProjection_);
+		model_->Draw(filed, viewProjection_, textureHandle4_);
+		break;
+	case Menu:
+		syodome->Draw(viewProjection_);
+		player->Draw(viewProjection_);
+		enemy->Draw(viewProjection_);
+		model_->Draw(filed, viewProjection_, textureHandle4_);
+		break;
+	default:
+		break;
+	}
+
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
@@ -282,18 +324,19 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 
 	////でバック
-	debugText_->SetPos(50, 50);
-	debugText_->Printf(
-	  "viewProjection_:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y,
-	  viewProjection_.up.z);
+	//debugText_->SetPos(50, 50);
+	//debugText_->Printf(
+	//  "viewProjection_:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y,
+	//  viewProjection_.up.z);
 
-	debugText_->SetPos(50, 90);
-	debugText_->Printf(
-	  "rotation:(%f,%f,%f)", filed.rotation_.x, filed.rotation_.y, filed.rotation_.z);
+	//debugText_->SetPos(50, 90);
+	//debugText_->Printf(
+	//  "rotation:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
-	debugText_->SetPos(50, 130);
-	debugText_->Printf(
-	  "trans:(%f,%f,%f)", filed.translation_.x, filed.translation_.y, filed.translation_.z);
+	//debugText_->SetPos(50, 130);
+	//debugText_->Printf(
+	//  "trans:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
+	//  viewProjection_.target.z);
 	/// </summary>
 
 	// デバッグテキストの描画

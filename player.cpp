@@ -59,12 +59,12 @@ void Player::Update() {
 
 	//コントローラー移動処理
 	//コントローラー未接続なら抜ける
-	 if(!Input::GetInstance()->GetJoystickState(0, joyState)){
+	 /*if(!Input::GetInstance()->GetJoystickState(0, joyState)){
 		return;
 	 } else if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		 move.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
 		 move.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
-	 }
+	 }*/
 
 	 // y軸移動
 	if (input->PushKey(DIK_E)) {
@@ -120,6 +120,7 @@ void Player::Update() {
 
 	//移動限界
 	const float kMoveLimitX = 48;
+	const float kMoveLimitZ = 48;
 	const float kMoveLimitY = 14;
 
 	move = move.mat(move, playerW.matWorld_);
@@ -133,7 +134,8 @@ void Player::Update() {
 	playerW.translation_.x = min(playerW.translation_.x, +kMoveLimitX);
 	playerW.translation_.y = max(playerW.translation_.y, -kMoveLimitY);
 	playerW.translation_.y = min(playerW.translation_.y, +kMoveLimitY);
-
+	playerW.translation_.z = max(playerW.translation_.z, -kMoveLimitZ);
+	playerW.translation_.z = min(playerW.translation_.z, +kMoveLimitZ);
 	//上全部
 	UpdateMatrix();
 

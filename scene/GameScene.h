@@ -115,6 +115,16 @@ class GameScene {
 
 	float viewAngle = 0.0f;
 
+	float x = 1;
+
+	enum Phase {
+		Start,
+		Play,
+		Menu,
+	};
+
+	int NowPhase = Start;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
