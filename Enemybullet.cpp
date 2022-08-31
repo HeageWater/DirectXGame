@@ -9,7 +9,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	this->model = model;
 
 	//‰æ‘œƒf[ƒ^
-	textureHandle = TextureManager::Load("reimu.png");
+	textureHandle = TextureManager::Load("enemyBullet.png");
 
 	//‰Šú‰»
 	bulletW.Initialize();

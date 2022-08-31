@@ -33,14 +33,14 @@ void Enemy::Draw(ViewProjection viewProjection) {
 	}
 }
 
-void Enemy::Update(WorldTransform play) {
+void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 
 	if (isDead_ != true) {
 
 		Ktimer--;
 
 		if (Ktimer < 0) {
-			Fire(play);
+			Fire(play, bulletmodel);
 			Ktimer = Kfire;
 		}
 
@@ -133,7 +133,7 @@ void Enemy::UpdateMatrix() {
 	EnemyW.TransferMatrix();
 }
 
-void Enemy::Fire(WorldTransform play) {
+void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
 	assert(player_);
 
 	//’e‘¬
@@ -155,7 +155,7 @@ void Enemy::Fire(WorldTransform play) {
 
 	//’e¶¬
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-	newBullet->Initialize(model, EnemyW.translation_, velocity);
+	newBullet->Initialize(bulletmodel, EnemyW.translation_, velocity);
 
 	//’e“o˜^
 	bullets.push_back(std::move(newBullet));

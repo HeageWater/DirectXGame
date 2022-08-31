@@ -26,7 +26,7 @@ class Player {
 
 	WorldTransform playerW;
 
-	XINPUT_STATE joyState;
+	//XINPUT_STATE joyState;
 
   private:
 	void Trans();
@@ -35,7 +35,7 @@ class Player {
 
 	void Jump();
 
-	void Attack();
+	void Attack(WorldTransform enemy);
 
 	void Dush();
 

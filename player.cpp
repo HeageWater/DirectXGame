@@ -77,21 +77,21 @@ void Player::Update(WorldTransform enemy) {
 
 	//コントローラー移動処理
 	//コントローラー未接続なら抜ける
-	 /*if(!Input::GetInstance()->GetJoystickState(0, joyState)){
-		return;
-	 } else if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		 move.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
-		 move.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
-	 }*/
+	/*if(!Input::GetInstance()->GetJoystickState(0, joyState)){
+	   return;
+	} else if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+	    move.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
+	    move.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
+	}*/
 
-	 // y軸移動
+	// y軸移動
 	if (input->PushKey(DIK_E)) {
 		move.y = speed;
 	} else if (input->PushKey(DIK_Q)) {
 		move.y = -speed;
 	}
 
-	 // x軸移動
+	// x軸移動
 	if (input->PushKey(DIK_D)) {
 		move.x = speed;
 	} else if (input->PushKey(DIK_A)) {
@@ -113,23 +113,20 @@ void Player::Update(WorldTransform enemy) {
 		playerW.rotation_.y -= 0.05f;
 	}
 
-	Vector3 P = enemy.translation_;
-	Vector3 E = playerW.translation_;
-	E = E - P;
-	E.normalize();
+	//Vector3 E = enemy.translation_;
+	//Vector3 P = playerW.translation_;
+	//E = E - P;
+	//E.normalize();
 
-	//ベクトルと行列の掛け算
-	playerW.rotation_.x = E.x;
-	playerW.rotation_.y = E.y;
-	playerW.rotation_.z = E.z;
-
+	////ベクトルと行列の掛け算
+	//playerW.rotation_.y = E.y;
 
 	if (Gravity < MaxGravity) {
 		Gravity += 0.02f;
 	}
 
 	//攻撃
-	Attack();
+	Attack(enemy);
 
 	Jump();
 
@@ -169,12 +166,12 @@ void Player::Update(WorldTransform enemy) {
 	//上全部
 	UpdateMatrix();
 
-	//debugText->SetPos(50, 70);
-	//debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
+	// debugText->SetPos(50, 70);
+	// debugText->Printf("move:%f,%f,%f", move.x, move.y, move.z);
 }
 
 //攻撃
-void Player::Attack() {
+void Player::Attack(WorldTransform enemy) {
 	if (input->TriggerKey(DIK_SPACE)) {
 
 		if (audio->IsPlaying(Shot) != true) {
@@ -183,8 +180,18 @@ void Player::Attack() {
 		}
 
 		//弾速
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		const float kBulletSpeed = -0.5f;
+
+		Vector3 P = GetWorldPosition();
+		Vector3 E = enemy.translation_;
+		P = P - E;
+		P.normalize();
+
+		Vector3 velocity(kBulletSpeed, kBulletSpeed, kBulletSpeed);
+
+		velocity.x *= P.x;
+		velocity.y *= P.y;
+		velocity.z *= P.z;
 
 		//ベクトルと行列の掛け算
 		velocity = velocity.mat(velocity, playerW.matWorld_);
@@ -317,11 +324,11 @@ void Player::Jump() {
 		jump = Maxjump;
 	}
 
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
-		Gravity = 0;
+	/*if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+	    Gravity = 0;
 
-		jump = Maxjump;
-	}
+	    jump = Maxjump;
+	}*/
 }
 
 //ダッシュ
@@ -333,12 +340,12 @@ void Player::Dush() {
 		}
 	}
 
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
-		if (dush_flg != true) {
-			dush_flg = true;
-			dushcount = 10;
-		}
-	}
+	/*if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
+	    if (dush_flg != true) {
+	        dush_flg = true;
+	        dushcount = 10;
+	    }
+	}*/
 
 	if (dush_flg == true) {
 
@@ -357,10 +364,10 @@ void Player::Dush() {
 	}
 }
 
-//Vector3 Player::GetBulletWorldPosition() { 
+// Vector3 Player::GetBulletWorldPosition() {
 //	Vector3 a;
 //
-//}
+// }
 
 //説明
 // void moveee() {

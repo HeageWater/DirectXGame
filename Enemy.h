@@ -19,7 +19,7 @@ class Enemy {
   public:
 	void Initialize(Model* model, uint32_t textureHandle);
 	void Draw(ViewProjection viewProjection);
-	void Update(WorldTransform play);
+	void Update(WorldTransform play, Model* bulletmodel);
 
 	Vector3 GetWorldPosition();
 
@@ -71,7 +71,7 @@ class Enemy {
 
 	void UpdateMatrix();
 
-	void Fire(WorldTransform play);
+	void Fire(WorldTransform play, Model* bulletmodel);
 
 	bool isDead_ = false;
 };

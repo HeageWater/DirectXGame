@@ -60,7 +60,7 @@ void GameScene::CheckAllCollisions() {
 
 		player->OnCollision();
 
-		enemy->OnCollision();
+		//enemy->OnCollision();
 	}
 
 #pragma endregion
@@ -82,7 +82,7 @@ void GameScene::CheckAllCollisions() {
 
 			bullet->OnCollision();
 
-			enemy->OnCollision();
+			//enemy->OnCollision();
 		}
 	}
 #pragma endregion
@@ -301,7 +301,7 @@ void GameScene::Update() {
 
 			player->Update(enemy->EnemyW);
 
-			enemy->Update(player->playerW);
+			enemy->Update(player->playerW,Kyu);
 
 			syodome->Update();
 
