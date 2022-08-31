@@ -299,7 +299,7 @@ void GameScene::Update() {
 
 			debugcamera->Update();
 
-			player->Update(enemy->EnemyW);
+			player->Update(enemy->EnemyW,viewProjection_);
 
 			enemy->Update(player->playerW,Kyu);
 

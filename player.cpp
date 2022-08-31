@@ -64,7 +64,7 @@ void Player::Draw(ViewProjection viewProjection) {
 }
 
 //更新
-void Player::Update(WorldTransform enemy) {
+void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 
 	//デスフラグ
 	bullets.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
@@ -84,6 +84,24 @@ void Player::Update(WorldTransform enemy) {
 	    move.z = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
 	}*/
 
+	//正面ベクトル
+	centerDirection.z = viewProjection.target.z - viewProjection.eye.z;
+	centerDirection.x = viewProjection.target.x - viewProjection.eye.x;
+	centerDirection.y = viewProjection.target.y - viewProjection.eye.y;
+
+	//長さを取得する
+	centerV = sqrtf(
+	  centerDirection.x * centerDirection.x + centerDirection.y * centerDirection.y +
+	  centerDirection.z * centerDirection.z);
+
+	//正規化
+	center.z = centerDirection.z / centerV;
+	center.x = centerDirection.x / centerV;
+	center.y = centerDirection.y / centerV;
+
+	//仮ベクトルに代入
+//	rightV = temp.cross(center);
+
 	// y軸移動
 	if (input->PushKey(DIK_E)) {
 		move.y = speed;
@@ -93,16 +111,16 @@ void Player::Update(WorldTransform enemy) {
 
 	// x軸移動
 	if (input->PushKey(DIK_D)) {
-		move.x = speed;
+		move.x = speed * center.x;
 	} else if (input->PushKey(DIK_A)) {
-		move.x = -speed;
+		move.x = -speed * center.x;
 	}
 
 	// z軸移動
 	if (input->PushKey(DIK_W)) {
-		move.z = speed;
+		move.z = speed * center.z;
 	} else if (input->PushKey(DIK_S)) {
-		move.z = -speed;
+		move.z = -speed * center.z;
 	}
 
 	//回転

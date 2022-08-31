@@ -13,7 +13,7 @@ class Player {
   public:
 	void Initialize(Model* model, Model* model2, uint32_t textureHandle);
 	void Draw(ViewProjection viewProjection);
-	void Update(WorldTransform enemy);
+	void Update(WorldTransform enemy, ViewProjection viewProjection);
 
 	Vector3 GetWorldPosition();
 
@@ -64,4 +64,12 @@ class Player {
 	uint32_t Shot = 0u;
 
 	std::list<std::unique_ptr<PlayerBullet>> bullets;
+
+	float centerV;
+
+	Vector3 center;
+
+	Vector3 centerDirection;
+
+	Vector3 rightV;
 };
