@@ -64,7 +64,7 @@ void Player::Draw(ViewProjection viewProjection) {
 }
 
 //更新
-void Player::Update() {
+void Player::Update(WorldTransform enemy) {
 
 	//デスフラグ
 	bullets.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
@@ -112,6 +112,17 @@ void Player::Update() {
 	if (input->PushKey(DIK_T)) {
 		playerW.rotation_.y -= 0.05f;
 	}
+
+	Vector3 P = enemy.translation_;
+	Vector3 E = playerW.translation_;
+	E = E - P;
+	E.normalize();
+
+	//ベクトルと行列の掛け算
+	playerW.rotation_.x = E.x;
+	playerW.rotation_.y = E.y;
+	playerW.rotation_.z = E.z;
+
 
 	if (Gravity < MaxGravity) {
 		Gravity += 0.02f;

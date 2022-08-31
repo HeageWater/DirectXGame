@@ -17,6 +17,8 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	//êŠ‘ã“ü
 	bulletW.translation_ = position;
 
+	bulletW.scale_ = {2.0f, 2.0f, 2.0f};
+
 	//‘¬“x‘ã“ü
 	velocity = velocity_;
 }

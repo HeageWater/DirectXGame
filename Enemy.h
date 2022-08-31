@@ -22,7 +22,6 @@ class Enemy {
 	void Update(WorldTransform play);
 
 	Vector3 GetWorldPosition();
-	Vector3 GetBulletWorldPosition();
 
 	//“–‚½‚è”»’è
 	void OnCollision();

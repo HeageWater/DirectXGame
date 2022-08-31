@@ -1,17 +1,5 @@
 #include "Enemy.h"
 
-Vector3 Enemy::GetBulletWorldPosition() {
-	Vector3 worldPos;
-
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
-		worldPos.x = bullet->bulletW.translation_.x;
-		worldPos.y = bullet->bulletW.translation_.y;
-		worldPos.z = bullet->bulletW.translation_.z;
-	}
-
-	return worldPos;
-}
-
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos;
 
@@ -149,14 +137,18 @@ void Enemy::Fire(WorldTransform play) {
 	assert(player_);
 
 	//íeë¨
-	const float kBulletSpeed = -0.05f;
+	const float kBulletSpeed = -0.5f;
 
 	Vector3 E = GetWorldPosition();
 	Vector3 P = play.translation_;
+	E = E - P;
+	E.normalize();
 
+	Vector3 velocity(kBulletSpeed, kBulletSpeed, kBulletSpeed);
 
-
-	Vector3 velocity(0, 0, kBulletSpeed);
+	velocity.x *= E.x;
+	velocity.y *= E.y;
+	velocity.z *= E.z;
 
 	//ÉxÉNÉgÉãÇ∆çsóÒÇÃä|ÇØéZ
 	velocity = velocity.mat(velocity, EnemyW.matWorld_);

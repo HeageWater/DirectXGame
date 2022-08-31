@@ -88,12 +88,6 @@ class GameScene {
 
 	ViewProjection viewProjection_;
 
-	WorldTransform titleEW;
-
-	ViewProjection titleEV;
-
-	WorldTransform StartW;
-
 	//テクスチャハンドル
 	uint32_t Cube = 0;
 	uint32_t Mario = 0;
@@ -103,12 +97,14 @@ class GameScene {
 	uint32_t StartB = 0;
 	uint32_t P = 0;
 	uint32_t shot = 0;
+	uint32_t robo = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
 
 	uint32_t BGM;
 	uint32_t intoro;
+	uint32_t TitleBGM;
 
 	//音声再生
 	uint32_t voiceHandle_ = 0;
@@ -144,6 +140,10 @@ class GameScene {
 	bool PlayFlg = false;
 
 	int checkbutton = 0;
+
+	std::unique_ptr<Sprite> sprite2D;
+	std::unique_ptr<Sprite> start;
+	std::unique_ptr<Sprite> Robo;
 
 	/// <summary>
 	/// ゲームシーン用

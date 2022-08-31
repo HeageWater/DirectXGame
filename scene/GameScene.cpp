@@ -21,12 +21,12 @@ void GameScene::CheckAllCollisions() {
 	posA = player->GetWorldPosition();
 
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-		posB = enemy->GetBulletWorldPosition();
+		posB = bullet->bulletW.translation_;
 
 		Vector3 anser;
 
 		float R1 = player->playerW.scale_.x;
-		float R2 = 1;
+		float R2 = bullet->bulletW.scale_.x;
 
 		anser.x = (posB.x - posA.x) * (posB.x - posA.x);
 		anser.y = (posB.y - posA.y) * (posB.y - posA.y);
@@ -173,21 +173,43 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	Cube = TextureManager::Load("cube//cube.jpg");
+	//Cube = TextureManager::Load("cube//cube.jpg");
+	Cube = TextureManager::Load("Filed.png");
 	Mario = TextureManager::Load("mario.jpg");
 	Skydome = TextureManager::Load("skydome//Fine_Basin.jpg");
 	Filed = TextureManager::Load("white.png");
-	titleEA = TextureManager::Load("T.jpg");
 	StartB = TextureManager::Load("Start.png");
 	P = TextureManager::Load("Player//Player.png");
 	shot = TextureManager::Load("kyu//kyu.png");
-
+	robo = TextureManager::Load("Title.png");
+		
 	modelP = Model::CreateFromOBJ("Player", true);
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
 	Kyu = Model::CreateFromOBJ("kyu", true);
 
+	titleEA = TextureManager::Load("T.jpg");
+
+	Vector2 positon = {640,360};
+	Vector4 color = {1, 1, 1, 1};
+	Vector2 reteli = {0.5,0.5};
+
+	sprite2D.reset(Sprite::Create(titleEA,positon,color,reteli));
+
+	positon = {320, 560};
+	color = {1, 1, 1, 1};
+	reteli = {0.5, 0.5};
+
+	start.reset(Sprite::Create(StartB, positon, color, reteli));
+
+	positon = {640, 240};
+	color = {1, 1, 1, 1};
+	reteli = {0.5, 0.5};
+
+	Robo.reset(Sprite::Create(robo, positon, color, reteli));
+
 	intoro = audio_->LoadWave("SE//intoro.wav");
 	BGM = audio_->LoadWave("SE//ryoutou.wav");
+	TitleBGM = audio_->LoadWave("SE//ryoutou.wav");
 
 	debugcamera = new DebugCamera(1280, 720);
 	model_ = Model::Create();
@@ -211,14 +233,6 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
 
-	//タイトル画面
-	titleEW.Initialize();
-	titleEV.Initialize();
-
-	titleEW.scale_ = {128, 72, 0};
-	UpdateMatrix(titleEW);
-
-	StartW.Initialize();
 
 	//移動する物体
 	// worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
@@ -242,14 +256,6 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-
-	titleEW.scale_ = {15, 10, 0};
-	titleEW.translation_ = {0, 0, 0};
-	UpdateMatrix(titleEW);
-
-	StartW.scale_ = {10, 5, 0};
-	StartW.translation_ = {0, -5, 0};
-	UpdateMatrix(StartW);
 
 	switch (NowPhase) {
 	case Start:
@@ -286,14 +292,14 @@ void GameScene::Update() {
 				audio_->PlayWave(BGM, false, 0.05);
 			}
 
-			/*x += 0.01;
+			x += 0.01;
 			if (x > 935) {
 			    x = 740;
-			}*/
+			}
 
 			debugcamera->Update();
 
-			player->Update();
+			player->Update(enemy->EnemyW);
 
 			enemy->Update(player->playerW);
 
@@ -364,22 +370,20 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	switch (NowPhase) {
 	case Start:
-		model_->Draw(StartW, titleEV, StartB);
-		model_->Draw(titleEW, titleEV, titleEA);
-		// model_->Draw(titleEW, debugcamera->GetViewProjection(), titleE);
+
 		break;
 	case Play:
-		syodome->Draw(debugcamera->GetViewProjection());
+		/*syodome->Draw(debugcamera->GetViewProjection());
 		player->Draw(debugcamera->GetViewProjection());
 		enemy->Draw(debugcamera->GetViewProjection());
-		model_->Draw(filed, debugcamera->GetViewProjection(), Cube);
+		model_->Draw(filed, debugcamera->GetViewProjection(), Cube);*/
 
-		/*syodome->Draw(viewProjection_);
+		syodome->Draw(viewProjection_);
 		model_->Draw(filed, viewProjection_, Cube);
 		if (PlayFlg) {
 			player->Draw(viewProjection_);
 			enemy->Draw(viewProjection_);
-		}*/
+		}
 		break;
 	case Menu:
 		syodome->Draw(viewProjection_);
@@ -400,7 +404,21 @@ void GameScene::Draw() {
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
+	switch (NowPhase) {
+	case Start:
+		sprite2D->Draw();
+		Robo->Draw();
+		start->Draw();
+		break;
+	case Play:
 
+		break;
+	case Menu:
+
+		break;
+	default:
+		break;
+	}
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 
