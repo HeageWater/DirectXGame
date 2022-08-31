@@ -1,5 +1,17 @@
 #include "Enemy.h"
 
+Vector3 Enemy::GetBulletWorldPosition() {
+	Vector3 worldPos;
+
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+		worldPos.x = bullet->bulletW.translation_.x;
+		worldPos.y = bullet->bulletW.translation_.y;
+		worldPos.z = bullet->bulletW.translation_.z;
+	}
+
+	return worldPos;
+}
+
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos;
 
@@ -33,14 +45,14 @@ void Enemy::Draw(ViewProjection viewProjection) {
 	}
 }
 
-void Enemy::Update() {
+void Enemy::Update(WorldTransform play) {
 
 	if (isDead_ != true) {
 
 		Ktimer--;
 
 		if (Ktimer < 0) {
-			Fire();
+			Fire(play);
 			Ktimer = Kfire;
 		}
 
@@ -133,15 +145,16 @@ void Enemy::UpdateMatrix() {
 	EnemyW.TransferMatrix();
 }
 
-void Enemy::Fire() {
+void Enemy::Fire(WorldTransform play) {
 	assert(player_);
 
 	//’e‘¬
-	const float kBulletSpeed = -0.01f;
+	const float kBulletSpeed = -0.05f;
 
 	Vector3 E = GetWorldPosition();
+	Vector3 P = play.translation_;
 
-	// Player* P = player_;
+
 
 	Vector3 velocity(0, 0, kBulletSpeed);
 

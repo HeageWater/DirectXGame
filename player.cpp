@@ -9,6 +9,18 @@ float ReturnRadian(float n) {
 	return n;
 }
 
+Vector3 Player::GetBulletWorldPosition() {
+	Vector3 worldPos;
+
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
+		worldPos.x = bullet->bulletW.translation_.x;
+		worldPos.y = bullet->bulletW.translation_.y;
+		worldPos.z = bullet->bulletW.translation_.z;
+	}
+
+	return worldPos;
+}
+
 Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos;
 
@@ -20,10 +32,12 @@ Vector3 Player::GetWorldPosition() {
 }
 
 //èâä˙âª
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, Model* model2, uint32_t textureHandle) {
 	assert(model);
 
 	this->model = model;
+
+	bulletmodel = model2;
 
 	this->textureHandle = textureHandle;
 
@@ -34,6 +48,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	playerW.translation_ = {0, 0, -10};
 	playerW.scale_ = {3.0f, 3.0f, 3.0f};
+
+	audio = Audio::GetInstance();
+
+	Shot = audio->LoadWave("SE//shot.wav");
 }
 
 //ï`âÊ
@@ -148,6 +166,11 @@ void Player::Update() {
 void Player::Attack() {
 	if (input->TriggerKey(DIK_SPACE)) {
 
+		if (audio->IsPlaying(Shot) != true) {
+
+			audio->PlayWave(Shot, false, 0.05);
+		}
+
 		//íeë¨
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
@@ -157,7 +180,7 @@ void Player::Attack() {
 
 		//íeê∂ê¨
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model, playerW.translation_, velocity);
+		newBullet->Initialize(bulletmodel, playerW.translation_, velocity);
 
 		//íeìoò^
 		bullets.push_back(std::move(newBullet));

@@ -103,7 +103,9 @@ void EnemyBullet::Update() {
 
 //’e•`‰æ
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {
-	model->Draw(bulletW, viewProjection, textureHandle);
+	if (isDead_ != true) {
+		model->Draw(bulletW, viewProjection, textureHandle);
+	}
 }
 
 //“–‚½‚è”»’è

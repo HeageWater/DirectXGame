@@ -19,9 +19,10 @@ class Enemy {
   public:
 	void Initialize(Model* model, uint32_t textureHandle);
 	void Draw(ViewProjection viewProjection);
-	void Update();
+	void Update(WorldTransform play);
 
 	Vector3 GetWorldPosition();
+	Vector3 GetBulletWorldPosition();
 
 	//“–‚½‚è”»’è
 	void OnCollision();
@@ -61,7 +62,7 @@ class Enemy {
 	bool dush_flg = false;
 	int dushcount = 0;
 
-	int32_t Ktimer = 10;
+	int32_t Ktimer = 30;
 
 	Phase phase_ = Phase::Stay;
 
@@ -71,7 +72,7 @@ class Enemy {
 
 	void UpdateMatrix();
 
-	void Fire();
+	void Fire(WorldTransform play);
 
 	bool isDead_ = false;
 };

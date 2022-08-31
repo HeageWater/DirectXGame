@@ -16,6 +16,8 @@ class PlayerBullet {
 	//“–‚½‚è”»’è
 	void OnCollision();
 
+	Vector3 GetPosition();
+
   public:
 	WorldTransform bulletW;
 	Model* model;

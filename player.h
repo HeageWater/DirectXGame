@@ -2,6 +2,7 @@
 #include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
+#include "Audio.h"
 #include "WorldTransform.h"
 #include "playerbullet.h"
 #include <cassert>
@@ -10,11 +11,13 @@
 
 class Player {
   public:
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, Model* model2, uint32_t textureHandle);
 	void Draw(ViewProjection viewProjection);
 	void Update();
 
 	Vector3 GetWorldPosition();
+
+	Vector3 GetBulletWorldPosition();
 
 	//“–‚½‚è”»’è
 	void OnCollision();
@@ -24,8 +27,6 @@ class Player {
 	WorldTransform playerW;
 
 	XINPUT_STATE joyState;
-
-	Vector3 GetBulletWorldPosition();
 
   private:
 	void Trans();
@@ -49,14 +50,18 @@ class Player {
 	bool dush_flg = false;
 	int dushcount = 0;
 
-
 	Model* model = nullptr;
+	Model* bulletmodel = nullptr;
+
+	Audio* audio = nullptr;
 
 	Input* input = nullptr;
 
 	DebugText* debugText = nullptr;
 
 	uint32_t textureHandle = 0u;
+
+	uint32_t Shot = 0u;
 
 	std::list<std::unique_ptr<PlayerBullet>> bullets;
 };

@@ -21,12 +21,12 @@ void GameScene::CheckAllCollisions() {
 	posA = player->GetWorldPosition();
 
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-		posB = enemy->GetWorldPosition();
+		posB = enemy->GetBulletWorldPosition();
 
 		Vector3 anser;
 
 		float R1 = player->playerW.scale_.x;
-		float R2 = enemy->EnemyW.scale_.x;
+		float R2 = 1;
 
 		anser.x = (posB.x - posA.x) * (posB.x - posA.x);
 		anser.y = (posB.y - posA.y) * (posB.y - posA.y);
@@ -60,13 +60,31 @@ void GameScene::CheckAllCollisions() {
 
 		player->OnCollision();
 
-		//enemy->OnCollision();
+		enemy->OnCollision();
 	}
 
 #pragma endregion
 
+	//敵キャラと自弾
 #pragma region
+	posB = enemy->GetWorldPosition();
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		posA = player->GetBulletWorldPosition();
 
+		R1 = 1;
+		R2 = enemy->EnemyW.scale_.x;
+
+		anser.x = (posB.x - posA.x) * (posB.x - posA.x);
+		anser.y = (posB.y - posA.y) * (posB.y - posA.y);
+		anser.z = (posB.z - posA.z) * (posB.z - posA.z);
+
+		if (anser.x + anser.y + anser.z <= (R1 + R2) * (R1 + R2)) {
+
+			bullet->OnCollision();
+
+			enemy->OnCollision();
+		}
+	}
 #pragma endregion
 }
 
@@ -111,6 +129,8 @@ GameScene::~GameScene() {
 	delete enemy;
 	delete syodome;
 	delete modelSkydome;
+	delete modelP;
+	delete Kyu;
 }
 
 // rayの当たり判定
@@ -157,12 +177,17 @@ void GameScene::Initialize() {
 	Mario = TextureManager::Load("mario.jpg");
 	Skydome = TextureManager::Load("skydome//Fine_Basin.jpg");
 	Filed = TextureManager::Load("white.png");
-	titleE = TextureManager::Load("title.png");
+	titleEA = TextureManager::Load("T.jpg");
+	StartB = TextureManager::Load("Start.png");
+	P = TextureManager::Load("Player//Player.png");
+	shot = TextureManager::Load("kyu//kyu.png");
 
+	modelP = Model::CreateFromOBJ("Player", true);
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
+	Kyu = Model::CreateFromOBJ("kyu", true);
 
-
-	BGM = audio_->LoadWave("ryoutou.wav");
+	intoro = audio_->LoadWave("SE//intoro.wav");
+	BGM = audio_->LoadWave("SE//ryoutou.wav");
 
 	debugcamera = new DebugCamera(1280, 720);
 	model_ = Model::Create();
@@ -170,7 +195,7 @@ void GameScene::Initialize() {
 
 	player = new Player();
 
-	player->Initialize(model_, Cube);
+	player->Initialize(modelP, Kyu, P);
 
 	enemy = new Enemy();
 
@@ -192,6 +217,8 @@ void GameScene::Initialize() {
 
 	titleEW.scale_ = {128, 72, 0};
 	UpdateMatrix(titleEW);
+
+	StartW.Initialize();
 
 	//移動する物体
 	// worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
@@ -216,24 +243,25 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
-	titleEW.scale_ = {40, 20, 0};
+	titleEW.scale_ = {15, 10, 0};
 	titleEW.translation_ = {0, 0, 0};
 	UpdateMatrix(titleEW);
 
-	
+	StartW.scale_ = {10, 5, 0};
+	StartW.translation_ = {0, -5, 0};
+	UpdateMatrix(StartW);
 
 	switch (NowPhase) {
 	case Start:
 
 		if (input_->TriggerKey(DIK_SPACE)) {
 			NowPhase = Play;
+			// BGM
+			audio_->PlayWave(intoro, false, 0.05);
 		}
 
 		break;
 	case Play:
-		//BGM
-		if (audio_->IsPlaying(BGM) != true)
-			audio_->PlayWave(BGM, false, 0.1);
 
 		if (x < 740) {
 			x += 1;
@@ -252,16 +280,22 @@ void GameScene::Update() {
 
 		if (PlayFlg) {
 
-			x += 0.01;
-			if (x > 935) {
-				x = 740;
+			// BGM
+			if (audio_->IsPlaying(BGM) != true) {
+
+				audio_->PlayWave(BGM, false, 0.05);
 			}
+
+			/*x += 0.01;
+			if (x > 935) {
+			    x = 740;
+			}*/
 
 			debugcamera->Update();
 
 			player->Update();
 
-			enemy->Update();
+			enemy->Update(player->playerW);
 
 			syodome->Update();
 
@@ -269,6 +303,7 @@ void GameScene::Update() {
 
 			if (input_->TriggerKey(DIK_P)) {
 				NowPhase = Menu;
+				checkbutton = 0;
 			}
 		}
 
@@ -329,27 +364,28 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	switch (NowPhase) {
 	case Start:
-		model_->Draw(titleEW, titleEV, titleE);
-		//model_->Draw(titleEW, debugcamera->GetViewProjection(), titleE);
+		model_->Draw(StartW, titleEV, StartB);
+		model_->Draw(titleEW, titleEV, titleEA);
+		// model_->Draw(titleEW, debugcamera->GetViewProjection(), titleE);
 		break;
 	case Play:
-		/*syodome->Draw(debugcamera->GetViewProjection());
+		syodome->Draw(debugcamera->GetViewProjection());
 		player->Draw(debugcamera->GetViewProjection());
 		enemy->Draw(debugcamera->GetViewProjection());
-		model_->Draw(filed, debugcamera->GetViewProjection(), textureHandle4_);*/
+		model_->Draw(filed, debugcamera->GetViewProjection(), Cube);
 
-		syodome->Draw(viewProjection_);
-		model_->Draw(filed, viewProjection_, Filed);
+		/*syodome->Draw(viewProjection_);
+		model_->Draw(filed, viewProjection_, Cube);
 		if (PlayFlg) {
 			player->Draw(viewProjection_);
 			enemy->Draw(viewProjection_);
-		}
+		}*/
 		break;
 	case Menu:
 		syodome->Draw(viewProjection_);
 		player->Draw(viewProjection_);
 		enemy->Draw(viewProjection_);
-		model_->Draw(filed, viewProjection_, Filed);
+		model_->Draw(filed, viewProjection_, Cube);
 		break;
 	default:
 		break;

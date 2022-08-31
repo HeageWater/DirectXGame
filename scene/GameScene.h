@@ -1,24 +1,24 @@
 ﻿#pragma once
 
 #include "Audio.h"
-#include "DirectXCommon.h"
+#include "DebugCamera.h"
 #include "DebugText.h"
+#include "DirectXCommon.h"
+#include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
-#include "DebugCamera.h"
+#include "Syodome.h"
+#include "Vector3.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Vector3.h"
-#include <DirectXMath.h>
 #include "player.h"
-#include "Enemy.h"
-#include "Syodome.h"
+#include <DirectXMath.h>
 #include <cassert>
-#include <memory>
 #include <list>
-using namespace DirectX; 
+#include <memory>
+using namespace DirectX;
 
 typedef struct Ray {
 	Vector3 position;
@@ -75,8 +75,8 @@ class GameScene {
 	DebugText* debugText_ = nullptr;
 	DebugCamera* debugcamera = nullptr;
 
-	//WorldTransform worldTransform;
-	//ViewProjection viewProjection;
+	// WorldTransform worldTransform;
+	// ViewProjection viewProjection;
 	Model* model_ = nullptr;
 
 	//スプライト
@@ -92,15 +92,23 @@ class GameScene {
 
 	ViewProjection titleEV;
 
+	WorldTransform StartW;
+
 	//テクスチャハンドル
 	uint32_t Cube = 0;
 	uint32_t Mario = 0;
 	uint32_t Skydome = 0;
 	uint32_t Filed = 0;
-	uint32_t titleE = 0;
+	uint32_t titleEA = 0;
+	uint32_t StartB = 0;
+	uint32_t P = 0;
+	uint32_t shot = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
+
+	uint32_t BGM;
+	uint32_t intoro;
 
 	//音声再生
 	uint32_t voiceHandle_ = 0;
@@ -109,14 +117,16 @@ class GameScene {
 
 	Vector3 direction;
 
-	//std::list<std::unique_ptr<Player>> player;
-	//std::list<std::unique_ptr<Enemy>> enemy;
+	// std::list<std::unique_ptr<Player>> player;
+	// std::list<std::unique_ptr<Enemy>> enemy;
 
 	Player* player = nullptr;
 	Enemy* enemy = nullptr;
 	Syodome* syodome = nullptr;
 
 	Model* modelSkydome = nullptr;
+	Model* modelP = nullptr;
+	Model* Kyu = nullptr;
 
 	float viewAngle = 0.0f;
 
@@ -133,7 +143,7 @@ class GameScene {
 
 	bool PlayFlg = false;
 
-	uint32_t BGM;
+	int checkbutton = 0;
 
 	/// <summary>
 	/// ゲームシーン用

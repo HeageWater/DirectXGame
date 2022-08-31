@@ -1,5 +1,15 @@
 #include "playerbullet.h"
 
+Vector3 PlayerBullet::GetPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = bulletW.translation_.x;
+	worldPos.y = bulletW.translation_.y;
+	worldPos.z = bulletW.translation_.z;
+
+	return worldPos;
+}
+
 void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity_) {
 
 	// NULLポインタチェック
@@ -9,7 +19,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	this->model = model;
 
 	//画像データ
-	textureHandle = TextureManager::Load("reimu.png");
+	textureHandle = TextureManager::Load("kyu//kyu.png");
 
 	//初期化
 	bulletW.Initialize();
