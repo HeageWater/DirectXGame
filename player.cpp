@@ -100,7 +100,7 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 	center.y = centerDirection.y / centerV;
 
 	//‰¼ƒxƒNƒgƒ‹‚É‘ã“ü
-//	rightV = temp.cross(center);
+	rightV = temp.cross(center);
 
 	// yŽ²ˆÚ“®
 	if (input->PushKey(DIK_E)) {
@@ -111,16 +111,16 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 
 	// xŽ²ˆÚ“®
 	if (input->PushKey(DIK_D)) {
-		move.x = speed * center.x;
+		move.x = speed * rightV.x;
 	} else if (input->PushKey(DIK_A)) {
-		move.x = -speed * center.x;
+		move.x = -speed * rightV.x;
 	}
 
 	// zŽ²ˆÚ“®
 	if (input->PushKey(DIK_W)) {
-		move.z = speed * center.z;
+		move.z = speed * rightV.z;
 	} else if (input->PushKey(DIK_S)) {
-		move.z = -speed * center.z;
+		move.z = -speed * rightV.z;
 	}
 
 	//‰ñ“]

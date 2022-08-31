@@ -72,4 +72,6 @@ class Player {
 	Vector3 centerDirection;
 
 	Vector3 rightV;
+
+	Vector3 temp = {0, 1, 0};
 };
