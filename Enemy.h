@@ -47,7 +47,11 @@ class Enemy {
 
 	int hp = 100;
 
+	void Reset();
+
   private:
+
+	  int muteki = 0;
 
 	  //ˆÚ“®ŒÀŠE
 	const float kMoveLimitX = 48;

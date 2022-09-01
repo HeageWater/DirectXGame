@@ -98,6 +98,12 @@ class GameScene {
 	uint32_t P = 0;
 	uint32_t shot = 0;
 	uint32_t robo = 0;
+	uint32_t moveUI = 0;
+	uint32_t shotUI = 0;
+	uint32_t dashUI = 0;
+	uint32_t jumpUI = 0;
+	uint32_t spaceUI = 0;
+	uint32_t suku = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
@@ -144,7 +150,24 @@ class GameScene {
 	std::unique_ptr<Sprite> sprite2D;
 	std::unique_ptr<Sprite> start;
 	std::unique_ptr<Sprite> Robo;
+	std::unique_ptr<Sprite> MoveUI;
+	std::unique_ptr<Sprite> DashUI;
+	std::unique_ptr<Sprite> ShotUI;
+	std::unique_ptr<Sprite> JumpUI;
+	std::unique_ptr<Sprite> SpaceUI;
+	std::unique_ptr<Sprite> Suku;
+	std::unique_ptr<Sprite> Suku2;
 
+	Vector2 positon = {640, 360};
+	Vector4 color = {1, 1, 1, 1};
+	Vector2 reteli = {0.5, 0.5};
+
+	float a = 640;
+	float b = 600;
+	float c = 1;
+
+	Vector2 sukuroru = positon;
+	Vector2 asdf = {0, 0};
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

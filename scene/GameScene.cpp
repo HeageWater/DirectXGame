@@ -34,7 +34,7 @@ void GameScene::CheckAllCollisions() {
 
 		if (anser.x + anser.y + anser.z <= (R1 + R2) * (R1 + R2)) {
 
-		//	player->OnCollision();
+			player->OnCollision();
 
 			bullet->OnCollision();
 		}
@@ -69,10 +69,11 @@ void GameScene::CheckAllCollisions() {
 #pragma region
 	posB = enemy->GetWorldPosition();
 	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-		posA = player->GetBulletWorldPosition();
+		// posA = player->GetBulletWorldPosition();
+		posA = bullet->bulletW.translation_;
 
-		R1 = 1;
-		R2 = enemy->EnemyW.scale_.x;
+		R1 = enemy->EnemyW.scale_.x;
+		R2 = bullet->bulletW.scale_.x;
 
 		anser.x = (posB.x - posA.x) * (posB.x - posA.x);
 		anser.y = (posB.y - posA.y) * (posB.y - posA.y);
@@ -173,7 +174,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	//Cube = TextureManager::Load("cube//cube.jpg");
+	// Cube = TextureManager::Load("cube//cube.jpg");
 	Cube = TextureManager::Load("Filed.png");
 	Mario = TextureManager::Load("mario.jpg");
 	Skydome = TextureManager::Load("skydome//Fine_Basin.jpg");
@@ -182,30 +183,58 @@ void GameScene::Initialize() {
 	P = TextureManager::Load("Player//Player.png");
 	shot = TextureManager::Load("kyu//kyu.png");
 	robo = TextureManager::Load("Title.png");
-		
+	moveUI = TextureManager::Load("Move2.png");
+	shotUI = TextureManager::Load("shot.png");
+	dashUI = TextureManager::Load("dash.png");
+	jumpUI = TextureManager::Load("jump.png");
+	spaceUI = TextureManager::Load("space.png");
+	suku = TextureManager::Load("suku.png");
+
 	modelP = Model::CreateFromOBJ("Player", true);
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
 	Kyu = Model::CreateFromOBJ("kyu", true);
 
 	titleEA = TextureManager::Load("T.jpg");
 
-	Vector2 positon = {640,360};
-	Vector4 color = {1, 1, 1, 1};
-	Vector2 reteli = {0.5,0.5};
-
-	sprite2D.reset(Sprite::Create(titleEA,positon,color,reteli));
-
-	positon = {320, 560};
+	positon = {640, 360};
 	color = {1, 1, 1, 1};
 	reteli = {0.5, 0.5};
+
+	sprite2D.reset(Sprite::Create(titleEA, positon, color, reteli));
+
+	positon = {320, 560};
 
 	start.reset(Sprite::Create(StartB, positon, color, reteli));
 
 	positon = {640, 240};
-	color = {1, 1, 1, 1};
-	reteli = {0.5, 0.5};
 
 	Robo.reset(Sprite::Create(robo, positon, color, reteli));
+
+	positon = {1200, 600};
+
+	MoveUI.reset(Sprite::Create(moveUI, positon, color, reteli));
+
+	positon = {1200, 460};
+
+	ShotUI.reset(Sprite::Create(shotUI, positon, color, reteli));
+
+	positon = {1200, 320};
+
+	DashUI.reset(Sprite::Create(dashUI, positon, color, reteli));
+
+	positon = {1200, 180};
+
+	JumpUI.reset(Sprite::Create(jumpUI, positon, color, reteli));
+
+	positon = {640, 480};
+
+	SpaceUI.reset(Sprite::Create(spaceUI, positon, color, reteli));
+
+	Suku.reset(Sprite::Create(suku, sukuroru, color, reteli));
+
+	asdf.x = positon.x;
+	asdf.y = 1080;
+	Suku2.reset(Sprite::Create(suku, asdf, color, reteli));
 
 	intoro = audio_->LoadWave("SE//intoro.wav");
 	BGM = audio_->LoadWave("SE//ryoutou.wav");
@@ -231,7 +260,6 @@ void GameScene::Initialize() {
 	//初期化
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
-
 
 	//移動する物体
 	// worldTransform_.scale_ = {1.0f, 1.0f, 15.0f};
@@ -259,6 +287,37 @@ void GameScene::Update() {
 	switch (NowPhase) {
 	case Start:
 
+		sukuroru.y -= 1;
+		asdf.y -= 1;
+
+		if (sukuroru.y < -360) {
+			sukuroru.y = 1080;
+		}
+
+		if (asdf.y < -360) {
+			asdf.y = 1080;
+		}
+
+		Suku.reset(Sprite::Create(suku, sukuroru, color, reteli));
+
+		Suku2.reset(Sprite::Create(suku, asdf, color, reteli));
+
+
+		b += c;
+
+		if (b >= 640) {
+			c = -0.5f;
+		} else if (b <= 630) {
+			c = 0.5f;
+		}
+
+		positon = {a, b};
+
+		start.reset(Sprite::Create(StartB, positon, color, reteli));
+
+		positon = {a, b - 120};
+		SpaceUI.reset(Sprite::Create(spaceUI, positon, color, reteli));
+
 		if (input_->TriggerKey(DIK_SPACE)) {
 			NowPhase = Play;
 
@@ -277,12 +336,12 @@ void GameScene::Update() {
 			PlayFlg = true;
 		}
 
-		if (input_->TriggerKey(DIK_RIGHT)) {
-			x++;
-		}
-		if (input_->TriggerKey(DIK_LEFT)) {
-			y--;
-		}
+		/*	if (input_->TriggerKey(DIK_RIGHT)) {
+		        x++;
+		    }
+		    if (input_->TriggerKey(DIK_LEFT)) {
+		        y--;
+		    }*/
 
 		if (PlayFlg) {
 
@@ -294,14 +353,14 @@ void GameScene::Update() {
 
 			x += 0.01;
 			if (x > 935) {
-			    x = 740;
+				x = 740;
 			}
 
 			debugcamera->Update();
 
-			player->Update(enemy->EnemyW,viewProjection_);
+			player->Update(enemy->EnemyW, viewProjection_);
 
-			enemy->Update(player->playerW,Kyu);
+			enemy->Update(player->playerW, Kyu);
 
 			syodome->Update();
 
@@ -325,6 +384,14 @@ void GameScene::Update() {
 		break;
 	case Result:
 		if (input_->TriggerKey(DIK_SPACE)) {
+			player->Reset();
+			enemy->Reset();
+
+			x = 600;
+			y = 5;
+
+			PlayFlg = false;
+
 			NowPhase = Start;
 		}
 		break;
@@ -419,11 +486,22 @@ void GameScene::Draw() {
 	switch (NowPhase) {
 	case Start:
 		sprite2D->Draw();
+
+		Suku->Draw();
+
+		Suku2->Draw();
+
 		Robo->Draw();
 		start->Draw();
+		SpaceUI->Draw();
 		break;
 	case Play:
-
+		if (PlayFlg) {
+			MoveUI->Draw();
+			DashUI->Draw();
+			ShotUI->Draw();
+			JumpUI->Draw();
+		}
 		break;
 	case Menu:
 
@@ -439,7 +517,8 @@ void GameScene::Draw() {
 
 	//でバック
 	debugText_->SetPos(50, 50);
-	debugText_->Printf("viewProjection_:(%d,%f,%f)", player->hp, viewProjection_.up.y, viewProjection_.up.z);
+	debugText_->Printf(
+	  "viewProjection_:(%d,%f,%f)", player->hp, viewProjection_.up.y, viewProjection_.up.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(

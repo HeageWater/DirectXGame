@@ -30,6 +30,8 @@ class Player {
 
 	int hp = 100;
 
+	void Reset();
+
   private:
 	void Trans();
 	void Rota();
@@ -47,7 +49,7 @@ class Player {
 	float MaxGravity = 1.0f;
 
 	float jump = 0;
-	float Maxjump = 2;
+	float Maxjump = 2.5;
 
 	bool dush_flg = false;
 	int dushcount = 0;
@@ -77,6 +79,7 @@ class Player {
 
 	Vector3 temp = {0, 1, 0};
 
+	int muteki = 30;
 
 	bool isDead_ = false;
 };

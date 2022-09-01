@@ -1,5 +1,21 @@
 #include "Enemy.h"
 
+void Enemy::Reset() {
+	EnemyW.translation_ = {0, 5, 15};
+
+	EnemyW.scale_ = {2.0f, 2.0f, 2.0};
+
+	hp = 100;
+
+	muteki = 0;
+
+	isDead_ = false;
+
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
+		bullet->isDead_ = true;
+	}
+}
+
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos;
 
@@ -19,13 +35,17 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	EnemyW.Initialize();
 
-	EnemyW.translation_ = {0, 5, -10};
+	EnemyW.translation_ = {0, 5, 15};
 	EnemyW.scale_ = {2.0f, 2.0f, 2.0};
+
+	muteki = 0;
 }
 
 void Enemy::Draw(ViewProjection viewProjection) {
 	if (isDead_ != true) {
-		model->Draw(EnemyW, viewProjection, textureHandle);
+		if (muteki % 2 == 0) {
+			model->Draw(EnemyW, viewProjection, textureHandle);
+		}
 
 		for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
 			bullet->Draw(viewProjection);
@@ -38,6 +58,10 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 	if (isDead_ != true) {
 
 		Ktimer--;
+
+		if (muteki > 0) {
+			muteki--;
+		}
 
 		if (Ktimer < 0) {
 			Fire(play, bulletmodel);
@@ -162,7 +186,10 @@ void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
 }
 
 void Enemy::OnCollision() {
-	hp -= 10;
+	if (muteki <= 1) {
+		hp -= 10;
+		muteki = 30;
+	}
 
 	if (hp <= 0) {
 		isDead_ = true;

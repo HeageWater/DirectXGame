@@ -2,6 +2,22 @@
 
 #define PI 3.1415;
 
+void Player::Reset() {
+
+	playerW.translation_ = {0, 0, -20};
+	playerW.scale_ = {3.0f, 3.0f, 3.0f};
+
+	hp = 100;
+
+	muteki = 0;
+
+	isDead_ = false;
+
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
+		bullet->isDead_ = true;
+	}
+}
+
 //ラディアン返す
 float ReturnRadian(float n) {
 	n *= PI;
@@ -46,7 +62,7 @@ void Player::Initialize(Model* model, Model* model2, uint32_t textureHandle) {
 
 	playerW.Initialize();
 
-	playerW.translation_ = {0, 0, -10};
+	playerW.translation_ = {0, 0, -20};
 	playerW.scale_ = {3.0f, 3.0f, 3.0f};
 
 	audio = Audio::GetInstance();
@@ -54,12 +70,17 @@ void Player::Initialize(Model* model, Model* model2, uint32_t textureHandle) {
 	Shot = audio->LoadWave("SE//shot.wav");
 
 	hp = 100;
+
+	muteki = 0;
 }
 
 //描画
 void Player::Draw(ViewProjection viewProjection) {
 	if (isDead_ != true) {
-		model->Draw(playerW, viewProjection, textureHandle);
+		if (muteki % 2 == 0) {
+
+			model->Draw(playerW, viewProjection, textureHandle);
+		}
 
 		for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 			bullet->Draw(viewProjection);
@@ -106,34 +127,38 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 	//仮ベクトルに代入
 	rightV = temp.cross(center);
 
-	// y軸移動
-	if (input->PushKey(DIK_E)) {
-		move.y = speed;
-	} else if (input->PushKey(DIK_Q)) {
-		move.y = -speed;
-	}
+	//// y軸移動
+	// if (input->PushKey(DIK_E)) {
+	//	move.y = speed;
+	// } else if (input->PushKey(DIK_Q)) {
+	//	move.y = -speed;
+	// }
 
 	// x軸移動
-	if (input->PushKey(DIK_D)) {
-		move.x = speed * rightV.x;
-	} else if (input->PushKey(DIK_A)) {
-		move.x = -speed * rightV.x;
+	if (input->PushKey(DIK_RIGHT)) {
+		move.x = speed;
+		//*rightV.x;
+	} else if (input->PushKey(DIK_LEFT)) {
+		move.x = -speed;
+		//*rightV.x;
 	}
 
 	// z軸移動
-	if (input->PushKey(DIK_W)) {
-		move.z = speed * rightV.z;
-	} else if (input->PushKey(DIK_S)) {
-		move.z = -speed * rightV.z;
+	if (input->PushKey(DIK_UP)) {
+		move.z = speed;
+		//*rightV.z;
+	} else if (input->PushKey(DIK_DOWN)) {
+		move.z = -speed;
+		//*rightV.z;
 	}
 
-	//回転
-	if (input->PushKey(DIK_R)) {
-		playerW.rotation_.y += 0.05f;
-	}
-	if (input->PushKey(DIK_T)) {
-		playerW.rotation_.y -= 0.05f;
-	}
+	////回転
+	// if (input->PushKey(DIK_R)) {
+	//	playerW.rotation_.y += 0.05f;
+	// }
+	// if (input->PushKey(DIK_T)) {
+	//	playerW.rotation_.y -= 0.05f;
+	// }
 
 	// Vector3 E = enemy.translation_;
 	// Vector3 P = playerW.translation_;
@@ -141,7 +166,7 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 	// E.normalize();
 
 	////ベクトルと行列の掛け算
-	// playerW.rotation_.y = E.y;
+	// playerW.rotation_.y = cosf(E.y);
 
 	if (Gravity < MaxGravity) {
 		Gravity += 0.02f;
@@ -164,6 +189,10 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->Update();
+	}
+
+	if (muteki > 0) {
+		muteki--;
 	}
 
 	//移動限界
@@ -337,7 +366,10 @@ void Player::UpdateMatrix() {
 
 //当たった時の処理
 void Player::OnCollision() {
-	hp -= 10;
+	if (muteki <= 1) {
+		hp -= 10;
+		muteki = 30;
+	}
 
 	if (hp <= 0) {
 		isDead_ = true;
@@ -346,9 +378,9 @@ void Player::OnCollision() {
 
 //ジャンプ
 void Player::Jump() {
-	if (input->TriggerKey(DIK_J)) {
+	if (input->TriggerKey(DIK_Z)) {
 
-		if (playerW.translation_.y < 14.1) {
+		if (playerW.translation_.y < -13.9) {
 			Gravity = 0;
 
 			jump = Maxjump;
@@ -364,7 +396,7 @@ void Player::Jump() {
 
 //ダッシュ
 void Player::Dush() {
-	if (input->PushKey(DIK_K)) {
+	if (input->PushKey(DIK_LSHIFT)) {
 		if (dush_flg != true) {
 			dush_flg = true;
 			dushcount = 10;
@@ -381,8 +413,8 @@ void Player::Dush() {
 	if (dush_flg == true) {
 
 		Vector3 move = {
-		  (float)input->PushKey(DIK_D) - (float)input->PushKey(DIK_A), 0.0f,
-		  (float)input->PushKey(DIK_W) - (float)input->PushKey(DIK_S)};
+		  (float)input->PushKey(DIK_RIGHT) - (float)input->PushKey(DIK_LEFT), 0.0f,
+		  (float)input->PushKey(DIK_UP) - (float)input->PushKey(DIK_DOWN)};
 
 		if (move.x == 0 && move.z == 0) {
 			move.z = 1.0f;
