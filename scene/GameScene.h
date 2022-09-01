@@ -104,7 +104,6 @@ class GameScene {
 
 	uint32_t BGM;
 	uint32_t intoro;
-	uint32_t TitleBGM;
 
 	//音声再生
 	uint32_t voiceHandle_ = 0;
@@ -133,6 +132,7 @@ class GameScene {
 		Start,
 		Play,
 		Menu,
+		Result,
 	};
 
 	int NowPhase = Start;

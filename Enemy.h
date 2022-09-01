@@ -45,6 +45,8 @@ class Enemy {
 
 	void Dush();
 
+	int hp = 100;
+
   private:
 
 	  //ˆÚ“®ŒÀŠE
@@ -74,4 +76,5 @@ class Enemy {
 	void Fire(WorldTransform play, Model* bulletmodel);
 
 	bool isDead_ = false;
+
 };

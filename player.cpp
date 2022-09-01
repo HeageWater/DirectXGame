@@ -52,14 +52,18 @@ void Player::Initialize(Model* model, Model* model2, uint32_t textureHandle) {
 	audio = Audio::GetInstance();
 
 	Shot = audio->LoadWave("SE//shot.wav");
+
+	hp = 100;
 }
 
 //描画
 void Player::Draw(ViewProjection viewProjection) {
-	model->Draw(playerW, viewProjection, textureHandle);
+	if (isDead_ != true) {
+		model->Draw(playerW, viewProjection, textureHandle);
 
-	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
-		bullet->Draw(viewProjection);
+		for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
+			bullet->Draw(viewProjection);
+		}
 	}
 }
 
@@ -131,13 +135,13 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 		playerW.rotation_.y -= 0.05f;
 	}
 
-	//Vector3 E = enemy.translation_;
-	//Vector3 P = playerW.translation_;
-	//E = E - P;
-	//E.normalize();
+	// Vector3 E = enemy.translation_;
+	// Vector3 P = playerW.translation_;
+	// E = E - P;
+	// E.normalize();
 
 	////ベクトルと行列の掛け算
-	//playerW.rotation_.y = E.y;
+	// playerW.rotation_.y = E.y;
 
 	if (Gravity < MaxGravity) {
 		Gravity += 0.02f;
@@ -332,14 +336,23 @@ void Player::UpdateMatrix() {
 }
 
 //当たった時の処理
-void Player::OnCollision() {}
+void Player::OnCollision() {
+	hp -= 10;
+
+	if (hp <= 0) {
+		isDead_ = true;
+	}
+}
 
 //ジャンプ
 void Player::Jump() {
 	if (input->TriggerKey(DIK_J)) {
-		Gravity = 0;
 
-		jump = Maxjump;
+		if (playerW.translation_.y < 14.1) {
+			Gravity = 0;
+
+			jump = Maxjump;
+		}
 	}
 
 	/*if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
@@ -367,7 +380,13 @@ void Player::Dush() {
 
 	if (dush_flg == true) {
 
-		Vector3 move = {0.0f, 0.0f, 1.0f};
+		Vector3 move = {
+		  (float)input->PushKey(DIK_D) - (float)input->PushKey(DIK_A), 0.0f,
+		  (float)input->PushKey(DIK_W) - (float)input->PushKey(DIK_S)};
+
+		if (move.x == 0 && move.z == 0) {
+			move.z = 1.0f;
+		}
 		move = move.mat(move, playerW.matWorld_);
 
 		playerW.translation_.x += move.x;

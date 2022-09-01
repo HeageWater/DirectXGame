@@ -28,6 +28,8 @@ class Player {
 
 	//XINPUT_STATE joyState;
 
+	int hp = 100;
+
   private:
 	void Trans();
 	void Rota();
@@ -74,4 +76,7 @@ class Player {
 	Vector3 rightV;
 
 	Vector3 temp = {0, 1, 0};
+
+
+	bool isDead_ = false;
 };

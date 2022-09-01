@@ -34,7 +34,7 @@ void GameScene::CheckAllCollisions() {
 
 		if (anser.x + anser.y + anser.z <= (R1 + R2) * (R1 + R2)) {
 
-			player->OnCollision();
+		//	player->OnCollision();
 
 			bullet->OnCollision();
 		}
@@ -60,7 +60,7 @@ void GameScene::CheckAllCollisions() {
 
 		player->OnCollision();
 
-		//enemy->OnCollision();
+		enemy->OnCollision();
 	}
 
 #pragma endregion
@@ -68,7 +68,7 @@ void GameScene::CheckAllCollisions() {
 	//敵キャラと自弾
 #pragma region
 	posB = enemy->GetWorldPosition();
-	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
 		posA = player->GetBulletWorldPosition();
 
 		R1 = 1;
@@ -82,7 +82,7 @@ void GameScene::CheckAllCollisions() {
 
 			bullet->OnCollision();
 
-			//enemy->OnCollision();
+			enemy->OnCollision();
 		}
 	}
 #pragma endregion
@@ -209,7 +209,6 @@ void GameScene::Initialize() {
 
 	intoro = audio_->LoadWave("SE//intoro.wav");
 	BGM = audio_->LoadWave("SE//ryoutou.wav");
-	TitleBGM = audio_->LoadWave("SE//ryoutou.wav");
 
 	debugcamera = new DebugCamera(1280, 720);
 	model_ = Model::Create();
@@ -262,6 +261,7 @@ void GameScene::Update() {
 
 		if (input_->TriggerKey(DIK_SPACE)) {
 			NowPhase = Play;
+
 			// BGM
 			audio_->PlayWave(intoro, false, 0.05);
 		}
@@ -313,10 +313,19 @@ void GameScene::Update() {
 			}
 		}
 
+		if (enemy->hp <= 0 || player->hp <= 0) {
+			NowPhase = Result;
+		}
+
 		break;
 	case Menu:
 		if (input_->TriggerKey(DIK_P)) {
 			NowPhase = Play;
+		}
+		break;
+	case Result:
+		if (input_->TriggerKey(DIK_SPACE)) {
+			NowPhase = Start;
 		}
 		break;
 	default:
@@ -391,6 +400,9 @@ void GameScene::Draw() {
 		enemy->Draw(viewProjection_);
 		model_->Draw(filed, viewProjection_, Cube);
 		break;
+	case Result:
+
+		break;
 	default:
 		break;
 	}
@@ -416,6 +428,9 @@ void GameScene::Draw() {
 	case Menu:
 
 		break;
+	case Result:
+
+		break;
 	default:
 		break;
 	}
@@ -424,7 +439,7 @@ void GameScene::Draw() {
 
 	//でバック
 	debugText_->SetPos(50, 50);
-	debugText_->Printf("viewProjection_:(%f,%f,%f)", x, viewProjection_.up.y, viewProjection_.up.z);
+	debugText_->Printf("viewProjection_:(%d,%f,%f)", player->hp, viewProjection_.up.y, viewProjection_.up.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(

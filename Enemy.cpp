@@ -161,7 +161,13 @@ void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
 	bullets.push_back(std::move(newBullet));
 }
 
-void Enemy::OnCollision() { isDead_ = true; }
+void Enemy::OnCollision() {
+	hp -= 10;
+
+	if (hp <= 0) {
+		isDead_ = true;
+	}
+}
 
 //ƒWƒƒƒ“ƒv
 void Enemy::Jump() {
