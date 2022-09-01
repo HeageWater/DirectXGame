@@ -49,6 +49,7 @@ class Player {
 	void Dush();
 
 	void UpdateMatrix();
+	void UpdateMatrix(WorldTransform W);
 
 	float Gravity = 0;
 	float MaxGravity = 1.0f;
@@ -56,7 +57,9 @@ class Player {
 	float jump = 0;
 	float Maxjump = 2.5;
 
-	
+	WorldTransform pate[10];
+
+	bool pate_flg = false;
 
 	Model* model = nullptr;
 	Model* bulletmodel = nullptr;

@@ -224,7 +224,7 @@ void GameScene::Initialize() {
 
 	for (int i = 0; i < 15; i++) {
 
-		Eposition[i].x = i * 65 + 300;
+		Eposition[i].x = i * 65 + 360;
 		Eposition[i].y = 10;
 
 		Eirasuto[i].reset(Sprite::Create(eirasuto, Eposition[i], color, reteli));

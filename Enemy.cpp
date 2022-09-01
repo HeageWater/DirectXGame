@@ -13,6 +13,8 @@ void Enemy::Reset() {
 
 	isDead_ = false;
 
+	pate_flg = false;
+
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
 		bullet->isDead_ = true;
 	}
@@ -130,11 +132,14 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 				audio->PlayWave(Shot, false, 0.1);
 			}
 			Fire(play, bulletmodel);
+
+			Fire(play, bulletmodel);
+
 			Ktimer = Kfire;
 
 			a = GetRandom();
 
-			if (a > 5) {
+			if (a > 8) {
 				phase_ = Phase::Stay;
 			} else {
 				phase_ = Phase::Move;
@@ -154,14 +159,13 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 		switch (phase_) {
 		case Phase::Move:
 
-			if (Ktimer < 3) {
-				a = GetRandom();
+			if (Ktimer < 10 && Ktimer > 1) {
 
 				move.x = a - 5;
 
-				a = GetRandom();
+				b = GetRandom();
 
-				move.z = a - 5;
+				move.z = b - 5;
 			}
 
 			//èdóÕ
@@ -185,11 +189,6 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 
 			if (a == 4 || a == -4) {
 				Jump();
-				a = 0;
-			}
-
-			if (a == -2 || a == 2) {
-				Dush();
 				a = 0;
 			}
 
@@ -271,11 +270,23 @@ void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
 	velocity = velocity.mat(velocity, EnemyW.matWorld_);
 
 	//íeê∂ê¨
-	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-	newBullet->Initialize(bulletmodel, EnemyW.translation_, velocity);
 
-	//íeìoò^
-	bullets.push_back(std::move(newBullet));
+	for (int i = 0; i < 3; i++) {
+
+		WorldTransform A = EnemyW;
+
+		if (i == 0)
+			A.translation_.z += 5;
+
+		if (i == 2)
+			A.translation_.z -= 5;
+
+		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+		newBullet->Initialize(bulletmodel, A.translation_, velocity);
+
+		//íeìoò^
+		bullets.push_back(std::move(newBullet));
+	}
 }
 
 void Enemy::OnCollision() {

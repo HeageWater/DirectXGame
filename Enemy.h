@@ -32,7 +32,7 @@ class Enemy {
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets; }
 
 	//”­ŽËŠÔŠu
-	static const int Kfire = 120;
+	static const int Kfire = 60;
 
 	Player* player_ = nullptr;
 
@@ -61,6 +61,8 @@ class Enemy {
   private:
 	float value;
 	int a;
+	int b;
+	int c;
 
 	uint32_t Shot = 0u;
 	Audio* audio = nullptr;
@@ -81,7 +83,7 @@ class Enemy {
 	bool dush_flg = false;
 	int dushcount = 0;
 
-	int32_t Ktimer = 30;
+	int32_t Ktimer = 10;
 
 	Phase phase_ = Phase::Stay;
 

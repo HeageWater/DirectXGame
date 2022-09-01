@@ -18,6 +18,8 @@ void Player::Reset() {
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->isDead_ = true;
 	}
+
+	pate_flg = false;
 }
 
 //ラディアン返す
@@ -89,6 +91,47 @@ void Player::Draw(ViewProjection viewProjection) {
 
 		for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 			bullet->Draw(viewProjection);
+		}
+	}
+
+	if (isDead_ != false && pate_flg != true) {
+		for (int i = 0; i < 10; i++) {
+
+			pate[i].Initialize();
+
+			pate[i].translation_ = playerW.translation_;
+
+			pate[i].scale_ = {1, 1, 1};
+		}
+		pate_flg = true;
+	}
+
+	if (pate_flg) {
+
+		pate[0].translation_.x += 1;
+		pate[1].translation_.x -= 1;
+		pate[2].translation_.y += 1;
+		pate[3].translation_.y -= 1;
+		pate[4].translation_.z += 1;
+		pate[5].translation_.z -= 1;
+
+		pate[6].translation_.x -= 1;
+		pate[6].translation_.z -= 1;
+
+		pate[7].translation_.x += 1;
+		pate[7].translation_.z += 1;
+
+		pate[8].translation_.x += 1;
+		pate[8].translation_.z -= 1;
+
+		pate[9].translation_.x -= 1;
+		pate[9].translation_.z += 1;
+
+		for (int i = 0; i < 10; i++) {
+
+			UpdateMatrix(pate[i]);
+
+			model->Draw(pate[i], viewProjection, textureHandle);
 		}
 	}
 }
@@ -375,6 +418,38 @@ void Player::UpdateMatrix() {
 	playerW.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
 
 	playerW.TransferMatrix();
+}
+
+//拡縮平行回転全部
+void Player::UpdateMatrix(WorldTransform W) {
+
+	Matrix4 matScale, matRot, matTrans;
+
+	// スケール、回転、平行移動行列の計算
+	matScale = MathUtility::Matrix4Identity();
+	matScale.m[0][0] = W.scale_.x;
+	matScale.m[1][1] = W.scale_.y;
+	matScale.m[2][2] = W.scale_.z;
+	matScale.m[3][3] = 1;
+
+	//回転
+	matRot = MathUtility::Matrix4Identity();
+	matRot = MathUtility::Matrix4RotationZ(W.rotation_.z);
+	matRot *= MathUtility::Matrix4RotationX(W.rotation_.x);
+	matRot *= MathUtility::Matrix4RotationY(W.rotation_.y);
+
+	//移動
+	matTrans = MathUtility::Matrix4Identity();
+	matTrans = MathUtility::Matrix4Translation(
+	  W.translation_.x, W.translation_.y, W.translation_.z);
+
+	// ワールド行列の合成
+	W.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
+	W.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
+	W.matWorld_ *= matRot;   // ワールド行列に回転を反映
+	W.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
+
+	W.TransferMatrix();
 }
 
 //当たった時の処理
