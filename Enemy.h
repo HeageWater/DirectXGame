@@ -1,10 +1,13 @@
 #pragma once
+#include "Audio.h"
 #include "EnemyBullet.h"
+#include "Input.h"
 #include "Model.h"
 #include "WorldTransform.h"
 #include <cassert>
 #include <list>
 #include <memory>
+#include <random>
 
 enum class Phase {
 	Move,
@@ -49,11 +52,22 @@ class Enemy {
 
 	void Reset();
 
+	Input* input = nullptr;
+
+	float GetRandom();
+
+	int Maxhp = 150;
+
   private:
+	float value;
+	int a;
 
-	  int muteki = 0;
+	uint32_t Shot = 0u;
+	Audio* audio = nullptr;
 
-	  //ˆÚ“®ŒÀŠE
+	int muteki = 0;
+
+	//ˆÚ“®ŒÀŠE
 	const float kMoveLimitX = 48;
 	const float kMoveLimitZ = 48;
 	const float kMoveLimitY = 14;
@@ -73,12 +87,17 @@ class Enemy {
 
 	Model* model = nullptr;
 
+	WorldTransform pate[10];
+
 	uint32_t textureHandle = 0u;
 
-	void UpdateMatrix();
+	void UpdateMatrix(WorldTransform W);
 
 	void Fire(WorldTransform play, Model* bulletmodel);
 
 	bool isDead_ = false;
 
+	int damege = 10;
+
+	bool pate_flg = false;
 };

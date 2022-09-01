@@ -30,7 +30,12 @@ class Player {
 
 	int hp = 100;
 
+	int Maxhp = 150;
+
 	void Reset();
+
+	bool dush_flg = false;
+	int dushcount = 0;
 
   private:
 	void Trans();
@@ -51,8 +56,7 @@ class Player {
 	float jump = 0;
 	float Maxjump = 2.5;
 
-	bool dush_flg = false;
-	int dushcount = 0;
+	
 
 	Model* model = nullptr;
 	Model* bulletmodel = nullptr;
@@ -65,7 +69,12 @@ class Player {
 
 	uint32_t textureHandle = 0u;
 
-	uint32_t Shot = 0u;
+	int32_t Ktimer = 30;
+
+	uint32_t ShotO = 0u;
+	uint32_t DashO = 0u;
+	uint32_t BomO = 0u;
+	uint32_t JumpO = 0u;
 
 	std::list<std::unique_ptr<PlayerBullet>> bullets;
 
@@ -82,4 +91,6 @@ class Player {
 	int muteki = 30;
 
 	bool isDead_ = false;
+
+	int damege = 10;
 };

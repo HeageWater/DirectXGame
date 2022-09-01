@@ -176,7 +176,7 @@ void GameScene::Initialize() {
 
 	// Cube = TextureManager::Load("cube//cube.jpg");
 	Cube = TextureManager::Load("Filed.png");
-	Mario = TextureManager::Load("mario.jpg");
+	Mario = TextureManager::Load("enemy//enemy.png");
 	Skydome = TextureManager::Load("skydome//Fine_Basin.jpg");
 	Filed = TextureManager::Load("white.png");
 	StartB = TextureManager::Load("Start.png");
@@ -189,16 +189,53 @@ void GameScene::Initialize() {
 	jumpUI = TextureManager::Load("jump.png");
 	spaceUI = TextureManager::Load("space.png");
 	suku = TextureManager::Load("suku.png");
+	over = TextureManager::Load("gameover.png");
+	clear = TextureManager::Load("gameclear.png");
+	oversuku = TextureManager::Load("oversuku.png");
+	plife = TextureManager::Load("Plife.png");
+	elife = TextureManager::Load("Elife.png");
+	pirasuto = TextureManager::Load("playerL.png");
+	eirasuto = TextureManager::Load("enemyL.png");
 
 	modelP = Model::CreateFromOBJ("Player", true);
 	modelSkydome = Model::CreateFromOBJ("skydome", true);
 	Kyu = Model::CreateFromOBJ("kyu", true);
+	EnemyIrasuto = Model::CreateFromOBJ("enemy", true);
 
 	titleEA = TextureManager::Load("T.jpg");
 
-	positon = {640, 360};
+	positon = {100, 620};
 	color = {1, 1, 1, 1};
 	reteli = {0.5, 0.5};
+
+	Plife.reset(Sprite::Create(plife, positon, color, reteli));
+
+	positon = {1050, 80};
+
+	Elife.reset(Sprite::Create(elife, positon, color, reteli));
+
+	for (int i = 0; i < 15; i++) {
+
+		Pposition[i].x = i * 64 + 10; 
+		Pposition[i].y = 700;
+
+		Pirasuto[i].reset(Sprite::Create(pirasuto, Pposition[i], color, reteli));
+	}
+
+	for (int i = 0; i < 15; i++) {
+
+		Eposition[i].x = i * 65 + 300;
+		Eposition[i].y = 10;
+
+		Eirasuto[i].reset(Sprite::Create(eirasuto, Eposition[i], color, reteli));
+	}
+
+	positon = {640, 480};
+
+	Over.reset(Sprite::Create(over, positon, color, reteli));
+	Clear.reset(Sprite::Create(clear, positon, color, reteli));
+
+	positon = {640, 360};
 
 	sprite2D.reset(Sprite::Create(titleEA, positon, color, reteli));
 
@@ -237,6 +274,7 @@ void GameScene::Initialize() {
 	Suku2.reset(Sprite::Create(suku, asdf, color, reteli));
 
 	intoro = audio_->LoadWave("SE//intoro.wav");
+	kettei = audio_->LoadWave("SE//kettei.wav");
 	BGM = audio_->LoadWave("SE//ryoutou.wav");
 
 	debugcamera = new DebugCamera(1280, 720);
@@ -249,7 +287,7 @@ void GameScene::Initialize() {
 
 	enemy = new Enemy();
 
-	enemy->Initialize(model_, Mario);
+	enemy->Initialize(EnemyIrasuto, Mario);
 
 	enemy->SetPlayer(player);
 
@@ -292,16 +330,17 @@ void GameScene::Update() {
 
 		if (sukuroru.y < -360) {
 			sukuroru.y = 1080;
+			asdf.y += 1;
 		}
 
 		if (asdf.y < -360) {
 			asdf.y = 1080;
+			sukuroru.y += 1;
 		}
 
 		Suku.reset(Sprite::Create(suku, sukuroru, color, reteli));
 
 		Suku2.reset(Sprite::Create(suku, asdf, color, reteli));
-
 
 		b += c;
 
@@ -321,6 +360,10 @@ void GameScene::Update() {
 		if (input_->TriggerKey(DIK_SPACE)) {
 			NowPhase = Play;
 
+			resulttimer = 0;
+
+			audio_->PlayWave(kettei, false, 0.05);
+
 			// BGM
 			audio_->PlayWave(intoro, false, 0.05);
 		}
@@ -332,8 +375,9 @@ void GameScene::Update() {
 			x += 1;
 		} else if (y < 10) {
 			y += 0.1f;
-		} else {
+		} else if (PlayFlg != true) {
 			PlayFlg = true;
+			audio_->ResumeWave(BGM);
 		}
 
 		/*	if (input_->TriggerKey(DIK_RIGHT)) {
@@ -366,33 +410,73 @@ void GameScene::Update() {
 
 			CheckAllCollisions();
 
-			if (input_->TriggerKey(DIK_P)) {
-				NowPhase = Menu;
-				checkbutton = 0;
-			}
+			/*if (input_->TriggerKey(DIK_P)) {
+			    NowPhase = Menu;
+			    checkbutton = 0;
+			}*/
 		}
 
-		if (enemy->hp <= 0 || player->hp <= 0) {
-			NowPhase = Result;
+		if (resulttimer > 0) {
+			resulttimer--;
+			if (resulttimer < 1) {
+				NowPhase = Result;
+				timerR = 30;
+			}
+		} else if (enemy->hp <= 0 || player->hp <= 0) {
+			resulttimer = 60;
 		}
 
 		break;
 	case Menu:
-		if (input_->TriggerKey(DIK_P)) {
-			NowPhase = Play;
-		}
+		/*if (input_->TriggerKey(DIK_P)) {
+		    NowPhase = Play;
+		}*/
 		break;
 	case Result:
+
+		audio_->PauseWave(BGM);
+
+		if (timerR > 0) {
+			timerR--;
+		}
+
+		sukuroru.y -= 1;
+		asdf.y -= 1;
+
+		if (sukuroru.y < -360) {
+			sukuroru.y = 1080;
+			asdf.y += 1;
+		}
+
+		if (asdf.y < -360) {
+			asdf.y = 1080;
+			sukuroru.y += 1;
+		}
+
+		Suku.reset(Sprite::Create(suku, sukuroru, color, reteli));
+
+		Suku2.reset(Sprite::Create(suku, asdf, color, reteli));
+
+		/*if (player->hp < 1) {
+
+		} else if (enemy->hp < 1) {
+
+		}*/
+
 		if (input_->TriggerKey(DIK_SPACE)) {
-			player->Reset();
-			enemy->Reset();
+			if (timerR < 1) {
+				audio_->PlayWave(kettei, false, 0.05);
 
-			x = 600;
-			y = 5;
+				player->Reset();
+				enemy->Reset();
 
-			PlayFlg = false;
+				x = 600;
+				y = 5;
 
-			NowPhase = Start;
+				PlayFlg = false;
+
+				NowPhase = Start;
+			}
 		}
 		break;
 	default:
@@ -466,6 +550,7 @@ void GameScene::Draw() {
 		player->Draw(viewProjection_);
 		enemy->Draw(viewProjection_);
 		model_->Draw(filed, viewProjection_, Cube);
+
 		break;
 	case Result:
 
@@ -494,6 +579,12 @@ void GameScene::Draw() {
 		Robo->Draw();
 		start->Draw();
 		SpaceUI->Draw();
+
+		MoveUI->Draw();
+		DashUI->Draw();
+		ShotUI->Draw();
+		JumpUI->Draw();
+
 		break;
 	case Play:
 		if (PlayFlg) {
@@ -501,12 +592,38 @@ void GameScene::Draw() {
 			DashUI->Draw();
 			ShotUI->Draw();
 			JumpUI->Draw();
+			Plife->Draw();
+			Elife->Draw();
+
+			for (int i = 0; i < (player->hp / 10); i++) {
+
+				Pirasuto[i]->Draw();
+			}
+
+			for (int i = 0; i < (enemy->hp / 10); i++) {
+
+				Eirasuto[i]->Draw();
+			}
 		}
 		break;
 	case Menu:
 
 		break;
 	case Result:
+
+		Suku->Draw();
+
+		Suku2->Draw();
+
+		if (player->hp < 1) {
+			Over->Draw();
+		} else if (enemy->hp < 1) {
+			Clear->Draw();
+		}
+
+		if (timerR < 1) {
+			SpaceUI->Draw();
+		}
 
 		break;
 	default:
@@ -516,18 +633,17 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 
 	//でバック
-	debugText_->SetPos(50, 50);
-	debugText_->Printf(
-	  "viewProjection_:(%d,%f,%f)", player->hp, viewProjection_.up.y, viewProjection_.up.z);
+	/*debugText_->SetPos(50, 50);
+	debugText_->Printf("viewProjection_:(%d,%d,%d)", player->hp, timerR, player->dushcount);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(
-	  "rotation:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+	  "rotation:(%d,%f,%f)", player->dush_flg, viewProjection_.eye.y, viewProjection_.eye.z);
 
 	debugText_->SetPos(50, 130);
 	debugText_->Printf(
 	  "trans:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
-	  viewProjection_.target.z);
+	  viewProjection_.target.z);*/
 	/// </summary>
 
 	// デバッグテキストの描画

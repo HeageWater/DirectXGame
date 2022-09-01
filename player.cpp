@@ -7,11 +7,13 @@ void Player::Reset() {
 	playerW.translation_ = {0, 0, -20};
 	playerW.scale_ = {3.0f, 3.0f, 3.0f};
 
-	hp = 100;
+	hp = Maxhp;
 
 	muteki = 0;
 
 	isDead_ = false;
+
+	damege = 10;
 
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets) {
 		bullet->isDead_ = true;
@@ -67,9 +69,12 @@ void Player::Initialize(Model* model, Model* model2, uint32_t textureHandle) {
 
 	audio = Audio::GetInstance();
 
-	Shot = audio->LoadWave("SE//shot.wav");
+	ShotO = audio->LoadWave("SE//shot.wav");
+	DashO = audio->LoadWave("SE//dash.wav");
+	BomO = audio->LoadWave("SE//bom.wav");
+	JumpO = audio->LoadWave("SE//jump.wav");
 
-	hp = 100;
+	hp = Maxhp;
 
 	muteki = 0;
 }
@@ -172,6 +177,10 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 		Gravity += 0.02f;
 	}
 
+	if (Ktimer > 0) {
+
+		Ktimer--;
+	}
 	//çUåÇ
 	Attack(enemy);
 
@@ -223,36 +232,40 @@ void Player::Update(WorldTransform enemy, ViewProjection viewProjection) {
 
 //çUåÇ
 void Player::Attack(WorldTransform enemy) {
-	if (input->TriggerKey(DIK_SPACE)) {
+	if (input->PushKey(DIK_SPACE)) {
+		if (Ktimer < 5) {
 
-		if (audio->IsPlaying(Shot) != true) {
+			Ktimer = 30;
 
-			audio->PlayWave(Shot, false, 0.05);
+			if (audio->IsPlaying(ShotO) != true) {
+
+				audio->PlayWave(ShotO, false, 0.1);
+			}
+
+			//íeë¨
+			const float kBulletSpeed = -0.5f;
+
+			Vector3 P = GetWorldPosition();
+			Vector3 E = enemy.translation_;
+			P = P - E;
+			P.normalize();
+
+			Vector3 velocity(kBulletSpeed, kBulletSpeed, kBulletSpeed);
+
+			velocity.x *= P.x;
+			velocity.y *= P.y;
+			velocity.z *= P.z;
+
+			//ÉxÉNÉgÉãÇ∆çsóÒÇÃä|ÇØéZ
+			velocity = velocity.mat(velocity, playerW.matWorld_);
+
+			//íeê∂ê¨
+			std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+			newBullet->Initialize(bulletmodel, playerW.translation_, velocity);
+
+			//íeìoò^
+			bullets.push_back(std::move(newBullet));
 		}
-
-		//íeë¨
-		const float kBulletSpeed = -0.5f;
-
-		Vector3 P = GetWorldPosition();
-		Vector3 E = enemy.translation_;
-		P = P - E;
-		P.normalize();
-
-		Vector3 velocity(kBulletSpeed, kBulletSpeed, kBulletSpeed);
-
-		velocity.x *= P.x;
-		velocity.y *= P.y;
-		velocity.z *= P.z;
-
-		//ÉxÉNÉgÉãÇ∆çsóÒÇÃä|ÇØéZ
-		velocity = velocity.mat(velocity, playerW.matWorld_);
-
-		//íeê∂ê¨
-		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(bulletmodel, playerW.translation_, velocity);
-
-		//íeìoò^
-		bullets.push_back(std::move(newBullet));
 	}
 }
 
@@ -367,7 +380,7 @@ void Player::UpdateMatrix() {
 //ìñÇΩÇ¡ÇΩéûÇÃèàóù
 void Player::OnCollision() {
 	if (muteki <= 1) {
-		hp -= 10;
+		hp -= damege;
 		muteki = 30;
 	}
 
@@ -381,6 +394,12 @@ void Player::Jump() {
 	if (input->TriggerKey(DIK_Z)) {
 
 		if (playerW.translation_.y < -13.9) {
+
+			if (audio->IsPlaying(JumpO) != true) {
+
+				audio->PlayWave(JumpO, false, 0.1);
+			}
+
 			Gravity = 0;
 
 			jump = Maxjump;
@@ -396,24 +415,27 @@ void Player::Jump() {
 
 //É_ÉbÉVÉÖ
 void Player::Dush() {
-	if (input->PushKey(DIK_LSHIFT)) {
-		if (dush_flg != true) {
+
+	int maxcount = 80;
+	if (input->TriggerKey(DIK_LSHIFT)) {
+		if (dush_flg != true && dushcount < 5) {
+
+			if (audio->IsPlaying(DashO) != true) {
+
+				audio->PlayWave(DashO, false, 0.2);
+			}
+
 			dush_flg = true;
-			dushcount = 10;
+			dushcount = maxcount;
+			muteki = 30;
 		}
 	}
-
-	/*if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
-	    if (dush_flg != true) {
-	        dush_flg = true;
-	        dushcount = 10;
-	    }
-	}*/
 
 	if (dush_flg == true) {
 
 		Vector3 move = {
-		  (float)input->PushKey(DIK_RIGHT) - (float)input->PushKey(DIK_LEFT), 0.0f,
+		  (float)input->PushKey(DIK_RIGHT) - (float)input->PushKey(DIK_LEFT), 
+		  0.0f,
 		  (float)input->PushKey(DIK_UP) - (float)input->PushKey(DIK_DOWN)};
 
 		if (move.x == 0 && move.z == 0) {
@@ -424,12 +446,14 @@ void Player::Dush() {
 		playerW.translation_.x += move.x;
 		playerW.translation_.y += move.y;
 		playerW.translation_.z += move.z;
-
-		dushcount--;
 	}
 
-	if (dushcount < 0) {
+	if (dushcount == maxcount - 10 && dush_flg == true) {
 		dush_flg = false;
+	}
+
+	if (dushcount > 1) {
+		dushcount--;
 	}
 }
 

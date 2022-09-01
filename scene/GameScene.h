@@ -104,12 +104,20 @@ class GameScene {
 	uint32_t jumpUI = 0;
 	uint32_t spaceUI = 0;
 	uint32_t suku = 0;
+	uint32_t over = 0;
+	uint32_t clear = 0;
+	uint32_t oversuku = 0;
+	uint32_t plife = 0;
+	uint32_t elife = 0;
+	uint32_t pirasuto = 0;
+	uint32_t eirasuto = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
 
 	uint32_t BGM;
 	uint32_t intoro;
+	uint32_t kettei;
 
 	//音声再生
 	uint32_t voiceHandle_ = 0;
@@ -128,6 +136,7 @@ class GameScene {
 	Model* modelSkydome = nullptr;
 	Model* modelP = nullptr;
 	Model* Kyu = nullptr;
+	Model* EnemyIrasuto = nullptr;
 
 	float viewAngle = 0.0f;
 
@@ -157,6 +166,12 @@ class GameScene {
 	std::unique_ptr<Sprite> SpaceUI;
 	std::unique_ptr<Sprite> Suku;
 	std::unique_ptr<Sprite> Suku2;
+	std::unique_ptr<Sprite> Over;
+	std::unique_ptr<Sprite> Clear;
+	std::unique_ptr<Sprite> Plife;
+	std::unique_ptr<Sprite> Pirasuto[15];
+	std::unique_ptr<Sprite> Elife;
+	std::unique_ptr<Sprite> Eirasuto[15];
 
 	Vector2 positon = {640, 360};
 	Vector4 color = {1, 1, 1, 1};
@@ -166,8 +181,16 @@ class GameScene {
 	float b = 600;
 	float c = 1;
 
+	int timerR = 120;
+
 	Vector2 sukuroru = positon;
 	Vector2 asdf = {0, 0};
+
+	Vector2 Pposition[15];
+	Vector2 Eposition[15];
+
+	int resulttimer = 60;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

@@ -5,7 +5,9 @@ void Enemy::Reset() {
 
 	EnemyW.scale_ = {2.0f, 2.0f, 2.0};
 
-	hp = 100;
+	hp = Maxhp;
+
+	damege = 10;
 
 	muteki = 0;
 
@@ -33,12 +35,26 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	this->textureHandle = textureHandle;
 
+	input = Input::GetInstance();
+
 	EnemyW.Initialize();
 
 	EnemyW.translation_ = {0, 5, 15};
 	EnemyW.scale_ = {2.0f, 2.0f, 2.0};
 
+	audio = Audio::GetInstance();
+
+	Shot = audio->LoadWave("SE//Eshot.wav");
+
+	hp = Maxhp;
+
 	muteki = 0;
+
+	for (int i = 0; i < 10; i++) {
+
+		pate[i].translation_ = {1, 1, 1};
+		pate[i].scale_ = {1, 1, 1};
+	}
 }
 
 void Enemy::Draw(ViewProjection viewProjection) {
@@ -51,6 +67,47 @@ void Enemy::Draw(ViewProjection viewProjection) {
 			bullet->Draw(viewProjection);
 		}
 	}
+
+	if (isDead_ != false && pate_flg != true) {
+		for (int i = 0; i < 10; i++) {
+
+			pate[i].Initialize();
+
+			pate[i].translation_ = EnemyW.translation_;
+
+			pate[i].scale_ = {1, 1, 1};
+		}
+		pate_flg = true;
+	}
+
+	if (pate_flg) {
+
+		pate[0].translation_.x += 1;
+		pate[1].translation_.x -= 1;
+		pate[2].translation_.y += 1;
+		pate[3].translation_.y -= 1;
+		pate[4].translation_.z += 1;
+		pate[5].translation_.z -= 1;
+
+		pate[6].translation_.x -= 1;
+		pate[6].translation_.z -= 1;
+
+		pate[7].translation_.x += 1;
+		pate[7].translation_.z += 1;
+
+		pate[8].translation_.x += 1;
+		pate[8].translation_.z -= 1;
+
+		pate[9].translation_.x -= 1;
+		pate[9].translation_.z += 1;
+
+		for (int i = 0; i < 10; i++) {
+
+			UpdateMatrix(pate[i]);
+
+			model->Draw(pate[i], viewProjection, textureHandle);
+		}
+	}
 }
 
 void Enemy::Update(WorldTransform play, Model* bulletmodel) {
@@ -59,20 +116,36 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 
 		Ktimer--;
 
+		if (input->TriggerKey(DIK_P)) {
+			damege = Maxhp;
+		}
+
 		if (muteki > 0) {
 			muteki--;
 		}
 
 		if (Ktimer < 0) {
+			if (audio->IsPlaying(Shot) != true) {
+
+				audio->PlayWave(Shot, false, 0.1);
+			}
 			Fire(play, bulletmodel);
 			Ktimer = Kfire;
+
+			a = GetRandom();
+
+			if (a > 5) {
+				phase_ = Phase::Stay;
+			} else {
+				phase_ = Phase::Move;
+			}
 		}
 
 		//スピード
 		const float speed = 0.3f;
 
 		//最終的にransに足す値
-		Vector3 move = {0, 0, -speed};
+		Vector3 move = {0, 0, 0};
 
 		for (std::unique_ptr<EnemyBullet>& bullet : bullets) {
 			bullet->Update();
@@ -80,6 +153,16 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 
 		switch (phase_) {
 		case Phase::Move:
+
+			if (Ktimer < 3) {
+				a = GetRandom();
+
+				move.x = a - 5;
+
+				a = GetRandom();
+
+				move.z = a - 5;
+			}
 
 			//重力
 			if (Gravity < MaxGravity) {
@@ -100,6 +183,16 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 			EnemyW.translation_.y += move.y;
 			EnemyW.translation_.z += move.z;
 
+			if (a == 4 || a == -4) {
+				Jump();
+				a = 0;
+			}
+
+			if (a == -2 || a == 2) {
+				Dush();
+				a = 0;
+			}
+
 			//範囲を超えない処理
 			EnemyW.translation_.x = max(EnemyW.translation_.x, -kMoveLimitX);
 			EnemyW.translation_.x = min(EnemyW.translation_.x, +kMoveLimitX);
@@ -108,53 +201,53 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 			EnemyW.translation_.z = max(EnemyW.translation_.z, -kMoveLimitZ);
 			EnemyW.translation_.z = min(EnemyW.translation_.z, +kMoveLimitZ);
 			//上全部
-			UpdateMatrix();
+			UpdateMatrix(EnemyW);
 			break;
 		case Phase::Stay:
 
 			//上全部
-			UpdateMatrix();
+			UpdateMatrix(EnemyW);
 			break;
 		default:
 			EnemyW.translation_ += move;
 
 			//上全部
-			UpdateMatrix();
+			UpdateMatrix(EnemyW);
 			break;
 		}
 	}
 }
 
 //拡縮平行回転全部
-void Enemy::UpdateMatrix() {
+void Enemy::UpdateMatrix(WorldTransform W) {
 
 	Matrix4 matScale, matRot, matTrans;
 
 	// スケール、回転、平行移動行列の計算
 	matScale = MathUtility::Matrix4Identity();
-	matScale.m[0][0] = EnemyW.scale_.x;
-	matScale.m[1][1] = EnemyW.scale_.y;
-	matScale.m[2][2] = EnemyW.scale_.z;
+	matScale.m[0][0] = W.scale_.x;
+	matScale.m[1][1] = W.scale_.y;
+	matScale.m[2][2] = W.scale_.z;
 	matScale.m[3][3] = 1;
 
 	//回転
 	matRot = MathUtility::Matrix4Identity();
-	matRot = MathUtility::Matrix4RotationZ(EnemyW.rotation_.z);
-	matRot *= MathUtility::Matrix4RotationX(EnemyW.rotation_.x);
-	matRot *= MathUtility::Matrix4RotationY(EnemyW.rotation_.y);
+	matRot = MathUtility::Matrix4RotationZ(W.rotation_.z);
+	matRot *= MathUtility::Matrix4RotationX(W.rotation_.x);
+	matRot *= MathUtility::Matrix4RotationY(W.rotation_.y);
 
 	//移動
 	matTrans = MathUtility::Matrix4Identity();
-	matTrans = MathUtility::Matrix4Translation(
-	  EnemyW.translation_.x, EnemyW.translation_.y, EnemyW.translation_.z);
+	matTrans =
+	  MathUtility::Matrix4Translation(W.translation_.x, W.translation_.y, W.translation_.z);
 
 	// ワールド行列の合成
-	EnemyW.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
-	EnemyW.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
-	EnemyW.matWorld_ *= matRot;   // ワールド行列に回転を反映
-	EnemyW.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
+	W.matWorld_ = MathUtility::Matrix4Identity(); // 変形をリセット
+	W.matWorld_ *= matScale; // ワールド行列にスケーリングを反映
+	W.matWorld_ *= matRot;   // ワールド行列に回転を反映
+	W.matWorld_ *= matTrans; // ワールド行列に平行移動を反映
 
-	EnemyW.TransferMatrix();
+	W.TransferMatrix();
 }
 
 void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
@@ -187,7 +280,7 @@ void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
 
 void Enemy::OnCollision() {
 	if (muteki <= 1) {
-		hp -= 10;
+		hp -= damege;
 		muteki = 30;
 	}
 
@@ -198,9 +291,12 @@ void Enemy::OnCollision() {
 
 //ジャンプ
 void Enemy::Jump() {
-	Gravity = 0;
+	if (EnemyW.translation_.y < -13.9) {
 
-	jump = Maxjump;
+		Gravity = 0;
+
+		jump = Maxjump;
+	}
 }
 
 //ダッシュ
@@ -212,7 +308,7 @@ void Enemy::Dush() {
 
 	if (dush_flg == true) {
 
-		Vector3 move = {0.0f, 0.0f, 1.0f};
+		Vector3 move = {0.1f, 0.1f, 0.1f};
 		move = move.mat(move, EnemyW.matWorld_);
 
 		EnemyW.translation_.x += move.x;
@@ -225,4 +321,16 @@ void Enemy::Dush() {
 	if (dushcount < 0) {
 		dush_flg = false;
 	}
+}
+
+float Enemy::GetRandom() {
+	std::random_device seed_gen;
+
+	std::mt19937_64 engine(seed_gen());
+
+	std::uniform_real_distribution<float> dist(0, 10);
+
+	value = dist(engine);
+
+	return value;
 }
