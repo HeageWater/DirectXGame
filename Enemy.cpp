@@ -135,7 +135,14 @@ void Enemy::Update(WorldTransform play, Model* bulletmodel) {
 
 			Fire(play, bulletmodel);
 
-			Ktimer = Kfire;
+			if (hp > 100)
+				Ktimer = Kfire;
+
+			if (hp <= 100 && hp > 50)
+				Ktimer = 70;
+
+			if (hp <= 50)
+				Ktimer = 90;
 
 			a = GetRandom();
 
@@ -271,21 +278,62 @@ void Enemy::Fire(WorldTransform play, Model* bulletmodel) {
 
 	//’e¶¬
 
-	for (int i = 0; i < 3; i++) {
+	if (hp > 100) {
+		for (int i = 0; i < 3; i++) {
 
-		WorldTransform A = EnemyW;
+			WorldTransform A = EnemyW;
 
-		if (i == 0)
-			A.translation_.z += 5;
+			if (i == 0)
+				A.translation_.z += 5;
 
-		if (i == 2)
-			A.translation_.z -= 5;
+			if (i == 2)
+				A.translation_.z -= 5;
 
-		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-		newBullet->Initialize(bulletmodel, A.translation_, velocity);
+			std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+			newBullet->Initialize(bulletmodel, A.translation_, velocity);
 
-		//’e“o˜^
-		bullets.push_back(std::move(newBullet));
+			//’e“o˜^
+			bullets.push_back(std::move(newBullet));
+		}
+	} else if (hp > 50) {
+		for (int i = 0; i < 10; i++) {
+
+			WorldTransform A = EnemyW;
+
+			A.translation_.x += i * 5 - 25;
+
+			std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+			newBullet->Initialize(bulletmodel, A.translation_, velocity);
+
+			//’e“o˜^
+			bullets.push_back(std::move(newBullet));
+		}
+	} else if (hp <= 50) {
+		for (int i = 0; i < 8; i++) {
+
+			WorldTransform A = EnemyW;
+
+			A.translation_.z += i * 5 - 20;
+
+			std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+			newBullet->Initialize(bulletmodel, A.translation_, velocity);
+
+			//’e“o˜^
+			bullets.push_back(std::move(newBullet));
+		}
+
+		for (int i = 0; i < 8; i++) {
+
+			WorldTransform A = EnemyW;
+
+			A.translation_.x += i * 5 - 20;
+
+			std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+			newBullet->Initialize(bulletmodel, A.translation_, velocity);
+
+			//’e“o˜^
+			bullets.push_back(std::move(newBullet));
+		}
 	}
 }
 

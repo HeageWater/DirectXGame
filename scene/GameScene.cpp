@@ -392,7 +392,7 @@ void GameScene::Update() {
 			// BGM
 			if (audio_->IsPlaying(BGM) != true) {
 
-				audio_->PlayWave(BGM, false, 0.05);
+				audio_->PlayWave(BGM, true, 0.05);
 			}
 
 			x += 0.01;
