@@ -39,7 +39,7 @@ void ViewProjection::UpdateMatrix() {
 	// ビュー行列の生成
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-	// 透視投影による射影行列の生成
+	// 透視投影による射影行列の生成%
 	matProjection = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, nearZ, farZ);
 
 	// 定数バッファに書き込み
