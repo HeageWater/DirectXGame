@@ -61,12 +61,6 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// 衝突判定と応答
-	/// </summary>
-	void CheckAllCollisions();
-
-	bool dires(Ray ray, Sphere sphere);
 
   private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -75,8 +69,6 @@ class GameScene {
 	DebugText* debugText_ = nullptr;
 	DebugCamera* debugcamera = nullptr;
 
-	// WorldTransform worldTransform;
-	// ViewProjection viewProjection;
 	Model* model_ = nullptr;
 
 	//スプライト
@@ -90,106 +82,19 @@ class GameScene {
 
 	//テクスチャハンドル
 	uint32_t Cube = 0;
-	uint32_t Mario = 0;
-	uint32_t Skydome = 0;
 	uint32_t Filed = 0;
-	uint32_t titleEA = 0;
-	uint32_t StartB = 0;
 	uint32_t P = 0;
-	uint32_t shot = 0;
-	uint32_t robo = 0;
-	uint32_t moveUI = 0;
-	uint32_t shotUI = 0;
-	uint32_t dashUI = 0;
-	uint32_t jumpUI = 0;
-	uint32_t spaceUI = 0;
-	uint32_t suku = 0;
-	uint32_t over = 0;
-	uint32_t clear = 0;
-	uint32_t oversuku = 0;
-	uint32_t plife = 0;
-	uint32_t elife = 0;
 	uint32_t pirasuto = 0;
-	uint32_t eirasuto = 0;
 
 	//サウンド
 	uint32_t soundDateHandle_ = 0;
 
-	uint32_t BGM;
-	uint32_t intoro;
-	uint32_t kettei;
-
 	//音声再生
 	uint32_t voiceHandle_ = 0;
 
-	uint32_t value_ = 0;
-
-	Vector3 direction;
-
-	// std::list<std::unique_ptr<Player>> player;
-	// std::list<std::unique_ptr<Enemy>> enemy;
-
 	Player* player = nullptr;
-	Enemy* enemy = nullptr;
-	Syodome* syodome = nullptr;
 
-	Model* modelSkydome = nullptr;
 	Model* modelP = nullptr;
-	Model* Kyu = nullptr;
-	Model* EnemyIrasuto = nullptr;
-
-	float viewAngle = 0.0f;
-
-	float x = 600;
-	float y = 5;
-
-	enum Phase {
-		Start,
-		Play,
-		Menu,
-		Result,
-	};
-
-	int NowPhase = Start;
-
-	bool PlayFlg = false;
-
-	int checkbutton = 0;
-
-	std::unique_ptr<Sprite> sprite2D;
-	std::unique_ptr<Sprite> start;
-	std::unique_ptr<Sprite> Robo;
-	std::unique_ptr<Sprite> MoveUI;
-	std::unique_ptr<Sprite> DashUI;
-	std::unique_ptr<Sprite> ShotUI;
-	std::unique_ptr<Sprite> JumpUI;
-	std::unique_ptr<Sprite> SpaceUI;
-	std::unique_ptr<Sprite> Suku;
-	std::unique_ptr<Sprite> Suku2;
-	std::unique_ptr<Sprite> Over;
-	std::unique_ptr<Sprite> Clear;
-	std::unique_ptr<Sprite> Plife;
-	std::unique_ptr<Sprite> Pirasuto[15];
-	std::unique_ptr<Sprite> Elife;
-	std::unique_ptr<Sprite> Eirasuto[15];
-
-	Vector2 positon = {640, 360};
-	Vector4 color = {1, 1, 1, 1};
-	Vector2 reteli = {0.5, 0.5};
-
-	float a = 640;
-	float b = 600;
-	float c = 1;
-
-	int timerR = 120;
-
-	Vector2 sukuroru = positon;
-	Vector2 asdf = {0, 0};
-
-	Vector2 Pposition[15];
-	Vector2 Eposition[15];
-
-	int resulttimer = 60;
 
 	/// <summary>
 	/// ゲームシーン用
