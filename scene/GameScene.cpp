@@ -90,7 +90,7 @@ void GameScene::Initialize() {
 
 	viewProjection_.target = {0, 0, 0};
 
-
+	//代入
 	viewProjection_.up = {0.0f, 1.0f, 0.0f};
 
 	viewProjection_.eye = {0.0f, 90.0f,0.0f};
