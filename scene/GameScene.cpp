@@ -70,7 +70,7 @@ void GameScene::Initialize() {
 
 	//プレイヤー初期化
 	player = new Player();
-	player->Initialize(modelP,P);
+	player->Initialize(modelP, P);
 
 	//初期化
 	worldTransform_.Initialize();
@@ -93,7 +93,7 @@ void GameScene::Initialize() {
 	//代入
 	viewProjection_.up = {0.0f, 1.0f, 0.0f};
 
-	viewProjection_.eye = {0.0f, 90.0f,0.0f};
+	viewProjection_.eye = {0.0f, 90.0f, 0.0f};
 
 	viewProjection_.target = {0.0f, 0.0f, sinf((64) / XM_PI)};
 }
@@ -147,9 +147,11 @@ void GameScene::Draw() {
 
 	// ここに前景スプライトの描画処理を追加できる
 
-	debugText_->SetPos(50, 90);
-	debugText_->Printf(
-	  "rotation:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+	debugText_->SetPos(30, 60);
+	debugText_->Printf("space:jump");
+
+	debugText_->SetPos(30, 90);
+	debugText_->Printf("arrow:move");
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
