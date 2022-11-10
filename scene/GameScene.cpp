@@ -3,7 +3,6 @@
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
 #include <cassert>
-
 #define PI = 3.1415;
 
 using namespace DirectX;
@@ -72,9 +71,17 @@ void GameScene::Initialize() {
 	player = new Player();
 	player->Initialize(modelP, P);
 
+	//プレイヤー初期化
+	player2 = new Player();
+	player2->Initialize(modelP, P);
+
 	//初期化
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
+	Camera1.Initialize();
+	Camera2.Initialize();
+	Camera3.Initialize();
+	HozonCamera.Initialize();
 
 	//フィールド初期化
 	filed.Initialize();
@@ -96,16 +103,48 @@ void GameScene::Initialize() {
 	viewProjection_.eye = {0.0f, 90.0f, 0.0f};
 
 	viewProjection_.target = {0.0f, 0.0f, sinf((64) / XM_PI)};
+
+	Camera1.up = viewProjection_.up;
+	Camera1.eye = {60, 60, 60};
+	Camera1.target = {0, 0, 0};
 }
 
 void GameScene::Update() {
 
 	//更新
 	UpdateMatrix(filed);
+
+	player2->playerWorldTransform.translation_ = {0, 0, 0};
+
 	player->Update(viewProjection_);
+	player2->Update(viewProjection_);
+
+	if (input_->TriggerKey(DIK_SPACE) && a == 0) {
+		a = 1;
+		HozonCamera = viewProjection_;
+		viewProjection_ = Camera1;
+	} else if (input_->TriggerKey(DIK_SPACE) && a == 1) {
+		a = 0;
+		viewProjection_ = HozonCamera;
+	}
+
+	if (input_->PushKey(DIK_D))
+		viewProjection_.eye.x++;
+	if (input_->PushKey(DIK_A))
+		viewProjection_.eye.x--;
+
+	if (input_->PushKey(DIK_W))
+		viewProjection_.eye.y++;
+	if (input_->PushKey(DIK_S))
+		viewProjection_.eye.y--;
 
 	//行列の再計算
+
+	viewProjection_.target =
+	  (player->playerWorldTransform.translation_ - player2->playerWorldTransform.translation_) / 2;
+
 	viewProjection_.UpdateMatrix();
+	Camera1.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -135,6 +174,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	model_->Draw(filed, viewProjection_, Cube);
 	player->Draw(viewProjection_);
+	player2->Draw(viewProjection_);
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理

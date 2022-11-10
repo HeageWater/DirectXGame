@@ -80,6 +80,12 @@ class GameScene {
 
 	ViewProjection viewProjection_;
 
+	ViewProjection Camera1;
+	ViewProjection Camera2;
+	ViewProjection Camera3;
+
+	ViewProjection HozonCamera;
+
 	//テクスチャハンドル
 	uint32_t Cube = 0;
 	uint32_t Filed = 0;
@@ -93,8 +99,11 @@ class GameScene {
 	uint32_t voiceHandle_ = 0;
 
 	Player* player = nullptr;
+	Player* player2 = nullptr;
 
 	Model* modelP = nullptr;
+
+	int a = 0;
 
 	/// <summary>
 	/// ゲームシーン用

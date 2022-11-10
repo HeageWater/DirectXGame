@@ -99,13 +99,13 @@ void Player::Update(ViewProjection viewProjection) {
 	playerWorldTransform.translation_.y += move.y;
 	playerWorldTransform.translation_.z += move.z;
 
-	//”ÍˆÍ‚ð’´‚¦‚È‚¢ˆ—
-	playerWorldTransform.translation_.x = max(playerWorldTransform.translation_.x, -kMoveLimitX);
-	playerWorldTransform.translation_.x = min(playerWorldTransform.translation_.x, +kMoveLimitX);
+	////”ÍˆÍ‚ð’´‚¦‚È‚¢ˆ—
+	//playerWorldTransform.translation_.x = max(playerWorldTransform.translation_.x, -kMoveLimitX);
+	//playerWorldTransform.translation_.x = min(playerWorldTransform.translation_.x, +kMoveLimitX);
 	playerWorldTransform.translation_.y = max(playerWorldTransform.translation_.y, -kMoveLimitY);
 	playerWorldTransform.translation_.y = min(playerWorldTransform.translation_.y, +kMoveLimitY);
-	playerWorldTransform.translation_.z = max(playerWorldTransform.translation_.z, -kMoveLimitZ);
-	playerWorldTransform.translation_.z = min(playerWorldTransform.translation_.z, +kMoveLimitZ);
+	//playerWorldTransform.translation_.z = max(playerWorldTransform.translation_.z, -kMoveLimitZ);
+	//playerWorldTransform.translation_.z = min(playerWorldTransform.translation_.z, +kMoveLimitZ);
 
 	//ã‘S•”
 	UpdateMatrix();
@@ -254,7 +254,7 @@ void Player::UpdateMatrix(WorldTransform W) {
 
 //ƒWƒƒƒ“ƒv
 void Player::Jump() {
-	if (input->TriggerKey(DIK_SPACE)) {
+	if (input->TriggerKey(DIK_Z)) {
 
 		if (playerWorldTransform.translation_.y < -13.9) {
 
